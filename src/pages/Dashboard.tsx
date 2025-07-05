@@ -1,0 +1,449 @@
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Music, Search, Upload, Users, Star, Play, Heart, Share2, 
+  MessageCircle, TrendingUp, Bell, Settings, LogOut, Filter,
+  Mic, Video, Headphones, Camera, MapPin, Clock
+} from 'lucide-react';
+
+const Dashboard = () => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Mock data for demonstration
+  const mockProjects = [
+    {
+      id: 1,
+      title: 'Punjabi Folk Fusion Album',
+      artist: 'Simran Kaur',
+      role: 'Singer',
+      thumbnail: '🎤',
+      plays: '12.5K',
+      likes: '892',
+      duration: '3:45',
+      genre: 'Punjabi Folk',
+      isCollaborative: true
+    },
+    {
+      id: 2,
+      title: 'Modern Bhangra Beat',
+      artist: 'Arjun Singh',
+      role: 'Music Director',
+      thumbnail: '🎵',
+      plays: '8.2K',
+      likes: '543',
+      duration: '4:12',
+      genre: 'Bhangra',
+      isCollaborative: false
+    },
+    {
+      id: 3,
+      title: 'Sufi Soul Music Video',
+      artist: 'Priya Sharma',
+      role: 'Video Editor',
+      thumbnail: '🎬',
+      plays: '15.3K',
+      likes: '1.2K',
+      duration: '5:20',
+      genre: 'Sufi',
+      isCollaborative: true
+    }
+  ];
+
+  const mockNotifications = [
+    { id: 1, type: 'collaboration', message: 'Armaan Singh wants to collaborate on a new track', time: '2h ago' },
+    { id: 2, type: 'like', message: 'Your track "Dil Da Mamla" received 50 new likes', time: '4h ago' },
+    { id: 3, type: 'message', message: 'New message from Priya Kaur about the upcoming project', time: '6h ago' }
+  ];
+
+  const mockProfessionals = [
+    {
+      id: 1,
+      name: 'Armaan Singh',
+      role: 'Singer',
+      location: 'Punjab, India',
+      rating: 4.9,
+      experience: 'Professional (7 years)',
+      isVerified: true,
+      isOnline: true,
+      specialization: 'Punjabi Folk'
+    },
+    {
+      id: 2,
+      name: 'Priya Kaur',
+      role: 'Music Director',
+      location: 'Mumbai, India',
+      rating: 4.8,
+      experience: 'Expert (12 years)',
+      isVerified: true,
+      isOnline: false,
+      specialization: 'Bollywood'
+    },
+    {
+      id: 3,
+      name: 'Ravi Sharma',
+      role: 'Sound Engineer',
+      location: 'Toronto, Canada',
+      rating: 4.7,
+      experience: 'Professional (5 years)',
+      isVerified: false,
+      isOnline: true,
+      specialization: 'Mixing & Mastering'
+    }
+  ];
+
+  const getRoleIcon = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'singer': return <Mic className="w-4 h-4" />;
+      case 'music director': return <Music className="w-4 h-4" />;
+      case 'video editor': return <Video className="w-4 h-4" />;
+      case 'sound engineer': return <Headphones className="w-4 h-4" />;
+      default: return <Music className="w-4 h-4" />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-purple-cosmic">
+      {/* Navigation */}
+      <nav className="glass border-b border-white/10 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gold-shimmer rounded-lg flex items-center justify-center">
+                  <Music className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gradient">SoundConnect</span>
+              </div>
+              
+              <div className="hidden md:flex relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
+                <Input
+                  type="text"
+                  placeholder="Search professionals, projects, or genres..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 w-80 glass border-white/20 text-white placeholder:text-white/50"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Button className="btn-cosmic">
+                <Upload className="w-4 h-4 mr-2" />
+                Upload
+              </Button>
+              
+              <div className="relative">
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                  <Bell className="w-5 h-5" />
+                </Button>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+              </div>
+
+              <Avatar className="w-10 h-10 cursor-pointer border-2 border-gold-400">
+                <AvatarFallback className="bg-cosmic-gradient text-white font-semibold">
+                  JS
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-4 gap-8">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <Card className="glass-card mb-6">
+              <CardContent className="p-6">
+                <div className="text-center mb-6">
+                  <Avatar className="w-20 h-20 mx-auto mb-4 border-3 border-gold-400">
+                    <AvatarFallback className="bg-cosmic-gradient text-2xl text-white">
+                      JS
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-white font-semibold text-lg">Jasbir Singh</h3>
+                  <div className="flex items-center justify-center space-x-2 mt-2">
+                    <Badge className="bg-cosmic-600 text-white">Singer</Badge>
+                    <Star className="w-4 h-4 text-gold-400" />
+                  </div>
+                  <p className="text-white/70 text-sm mt-2">Punjabi Folk Specialist</p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">Profile Views</span>
+                    <span className="text-white font-medium">1,234</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">Collaborations</span>
+                    <span className="text-white font-medium">23</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">Rating</span>
+                    <span className="text-gold-400 font-medium flex items-center">
+                      4.9 <Star className="w-3 h-3 ml-1 fill-current" />
+                    </span>
+                  </div>
+                </div>
+
+                <Button className="w-full mt-6 btn-gold" onClick={() => navigate('/profile')}>
+                  View Full Profile
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Notifications */}
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="text-white text-lg flex items-center">
+                  <Bell className="w-5 h-5 mr-2" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-0">
+                <div className="space-y-4">
+                  {mockNotifications.map((notification) => (
+                    <div key={notification.id} className="flex space-x-3">
+                      <div className="w-2 h-2 bg-cosmic-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div>
+                        <p className="text-white/80 text-sm">{notification.message}</p>
+                        <p className="text-white/50 text-xs mt-1">{notification.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <Tabs defaultValue="feed" className="w-full">
+              <TabsList className="glass mb-8 w-full justify-start">
+                <TabsTrigger value="feed" className="data-[state=active]:bg-cosmic-600">
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Feed
+                </TabsTrigger>
+                <TabsTrigger value="discover" className="data-[state=active]:bg-cosmic-600">
+                  <Search className="w-4 h-4 mr-2" />
+                  Discover
+                </TabsTrigger>
+                <TabsTrigger value="projects" className="data-[state=active]:bg-cosmic-600">
+                  <Music className="w-4 h-4 mr-2" />
+                  My Projects
+                </TabsTrigger>
+                <TabsTrigger value="network" className="data-[state=active]:bg-cosmic-600">
+                  <Users className="w-4 h-4 mr-2" />
+                  Network
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="feed" className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">Latest from Your Network</h2>
+                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                    <Filter className="w-4 h-4 mr-2" />
+                    Filter
+                  </Button>
+                </div>
+
+                {mockProjects.map((project) => (
+                  <Card key={project.id} className="floating-card group">
+                    <CardContent className="p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-16 h-16 bg-cosmic-gradient rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                          {project.thumbnail}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="text-white font-semibold text-lg group-hover:text-gold-400 transition-colors">
+                                {project.title}
+                              </h3>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <span className="text-white/70">by {project.artist}</span>
+                                <Badge variant="secondary" className="bg-cosmic-600/50 text-white text-xs">
+                                  {project.role}
+                                </Badge>
+                                {project.isCollaborative && (
+                                  <Badge className="bg-gold-600/50 text-gold-200 text-xs">
+                                    Collaborative
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <Button size="icon" className="btn-cosmic opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Play className="w-4 h-4" />
+                            </Button>
+                          </div>
+
+                          <div className="flex items-center space-x-4 text-sm text-white/60 mb-4">
+                            <span className="flex items-center">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {project.duration}
+                            </span>
+                            <span>{project.genre}</span>
+                            <span>{project.plays} plays</span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-red-400 hover:bg-red-400/10">
+                                <Heart className="w-4 h-4 mr-2" />
+                                {project.likes}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
+                                <MessageCircle className="w-4 h-4 mr-2" />
+                                Comment
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
+                                <Share2 className="w-4 h-4 mr-2" />
+                                Share
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="discover" className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">Discover Professionals</h2>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filters
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {mockProfessionals.map((professional) => (
+                    <Card key={professional.id} className="floating-card group">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="relative">
+                              <Avatar className="w-12 h-12 border-2 border-cosmic-500">
+                                <AvatarFallback className="bg-cosmic-gradient text-white">
+                                  {professional.name.split(' ').map(n => n[0]).join('')}
+                                </AvatarFallback>
+                              </Avatar>
+                              {professional.isOnline && (
+                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <h3 className="text-white font-semibold">{professional.name}</h3>
+                                {professional.isVerified && (
+                                  <Star className="w-4 h-4 text-gold-400 fill-current" />
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-2 mt-1">
+                                {getRoleIcon(professional.role)}
+                                <span className="text-white/70 text-sm">{professional.role}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="text-right">
+                            <div className="flex items-center text-gold-400 text-sm mb-1">
+                              <Star className="w-3 h-3 mr-1 fill-current" />
+                              {professional.rating}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center text-white/60 text-sm">
+                            <MapPin className="w-3 h-3 mr-2" />
+                            {professional.location}
+                          </div>
+                          <p className="text-white/80 text-sm">{professional.specialization}</p>
+                          <p className="text-white/60 text-xs">{professional.experience}</p>
+                        </div>
+
+                        <div className="flex space-x-2">
+                          <Button size="sm" className="btn-cosmic flex-1">
+                            Connect
+                          </Button>
+                          <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                            <MessageCircle className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="projects" className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">My Projects</h2>
+                  <Button className="btn-cosmic">
+                    <Upload className="w-4 h-4 mr-2" />
+                    New Project
+                  </Button>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Card className="floating-card border-dashed border-white/30">
+                    <CardContent className="p-8 text-center">
+                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Upload className="w-8 h-8 text-white/50" />
+                      </div>
+                      <h3 className="text-white font-medium mb-2">Upload Your First Project</h3>
+                      <p className="text-white/60 text-sm mb-4">Share your music, videos, or creative work with the community</p>
+                      <Button className="btn-gold">
+                        Get Started
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="network" className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">My Network</h2>
+                  <Button className="btn-cosmic">
+                    <Users className="w-4 h-4 mr-2" />
+                    Find Connections
+                  </Button>
+                </div>
+
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-10 h-10 text-white/50" />
+                  </div>
+                  <h3 className="text-white font-semibold text-xl mb-2">Build Your Network</h3>
+                  <p className="text-white/70 mb-6 max-w-md mx-auto">
+                    Connect with other music professionals to collaborate, learn, and grow your career together.
+                  </p>
+                  <Button className="btn-cosmic">
+                    Discover Professionals
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
