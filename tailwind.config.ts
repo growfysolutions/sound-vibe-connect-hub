@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,6 +66,7 @@ export default {
 					400: '#fbbf24',
 					500: '#f59e0b',
 					600: '#d97706',
+					700: '#b45309',
 				},
 				punjabi: {
 					orange: '#ff6b35',
