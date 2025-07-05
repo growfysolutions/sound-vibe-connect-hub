@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Play, Users, Music, Star, CheckCircle, ArrowRight, Headphones, Mic, Video, Camera, Bell, Heart, TrendingUp, Award, Zap, Sparkles } from 'lucide-react';
+import { ImagesSlider } from '@/components/ui/images-slider';
+import { motion } from 'framer-motion';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -13,6 +14,12 @@ const Index = () => {
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const heroImages = [
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2848&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=2848&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2848&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  ];
 
   const bubbleStats = [
     { number: '50K+', label: 'Creators', color: 'bg-youtube-red' },
@@ -111,41 +118,70 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Mega Hero Section */}
-      <section className="relative z-10 py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      {/* Hero Section with ImagesSlider */}
+      <section className="relative z-10 h-screen">
+        <ImagesSlider className="h-full" images={heroImages}>
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: -80,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.6,
+            }}
+            className="z-50 flex flex-col justify-center items-center text-center px-4"
+          >
             {/* Trending badge */}
-            <div className="inline-flex items-center gap-2 bg-youtube-red text-white px-6 py-2 rounded-full font-bold mb-8 animate-bounce-in">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="inline-flex items-center gap-2 bg-youtube-red text-white px-6 py-2 rounded-full font-bold mb-8"
+            >
               <TrendingUp className="w-5 h-5" />
               #1 Music Creator Platform
-            </div>
+            </motion.div>
 
-            <h1 className="text-mega text-youtube-gray-dark mb-6 animate-slide-up">
+            <motion.h1 
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.8 }}
+              className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-6 leading-tight"
+            >
               Create. Connect. 
-              <span className="text-lively block animate-wiggle">Go VIRAL!</span>
-            </h1>
-            
-            <p className="text-2xl md:text-3xl text-youtube-gray mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
-              Join the <strong className="text-youtube">hottest music platform</strong> where creators become superstars! 
-              🌟 Build your fanbase, find collaborators, and make music that matters.
-            </p>
-
-            {/* Giant Play Button */}
-            <div className="flex justify-center mb-12">
-              <div 
-                className="play-button-giant !w-40 !h-40 cursor-pointer animate-pulse-grow hover:animate-none"
-                onClick={() => setPlayingDemo(!playingDemo)}
+              <motion.span 
+                animate={{ rotate: [0, 2, -2, 0] }}
+                transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+                className="text-vibrant-gold block"
               >
-                <Play className="w-20 h-20 text-white ml-2" />
-              </div>
-            </div>
+                Go VIRAL!
+              </motion.span>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+            >
+              Join the <strong className="text-vibrant-gold">hottest music platform</strong> where creators become superstars! 
+              🌟 Build your fanbase, find collaborators, and make music that matters.
+            </motion.p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <motion.div 
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+            >
               <Button 
                 size="lg" 
-                className="btn-youtube text-xl px-12 py-6"
+                className="btn-youtube text-xl px-12 py-6 hover:scale-110 transition-transform"
                 onClick={() => navigate('/auth?role=creator')}
               >
                 <Zap className="mr-3 w-6 h-6" />
@@ -153,42 +189,58 @@ const Index = () => {
               </Button>
               <Button 
                 size="lg" 
-                className="btn-lively text-xl px-12 py-6"
+                className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 text-xl px-12 py-6 hover:scale-105 transition-all"
                 onClick={() => navigate('/discover')}
               >
                 <Sparkles className="mr-3 w-6 h-6" />
                 Discover Talent
               </Button>
-            </div>
+            </motion.div>
 
             {/* Trending Hashtags */}
-            <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="flex flex-wrap justify-center gap-3"
+            >
               {trendingHashtags.map((tag, index) => (
-                <span 
+                <motion.span 
                   key={index}
-                  className={`bg-white px-4 py-2 rounded-full text-youtube-red font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer animate-pop-in delay-${index * 100}`}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.8 + (index * 0.1), duration: 0.4 }}
+                  className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white font-semibold hover:bg-white/30 transition-all duration-300 hover:scale-105 cursor-pointer"
                 >
                   {tag}
-                </span>
+                </motion.span>
               ))}
-            </div>
+            </motion.div>
+          </motion.div>
+        </ImagesSlider>
+      </section>
 
-            {/* Bubble Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-              {bubbleStats.map((stat, index) => (
-                <div 
-                  key={index} 
-                  className={`bubble-stat ${stat.color} text-white animate-bounce-in delay-${(index + 1) * 100}`}
-                >
-                  <div className="text-3xl md:text-4xl font-black mb-1">
-                    {stat.number}
-                  </div>
-                  <div className="text-sm md:text-base font-semibold">
-                    {stat.label}
-                  </div>
+      {/* Stats Section */}
+      <section className="relative z-10 py-20 px-4 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {bubbleStats.map((stat, index) => (
+              <motion.div 
+                key={index} 
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                viewport={{ once: true }}
+                className={`bubble-stat ${stat.color} text-white`}
+              >
+                <div className="text-3xl md:text-4xl font-black mb-1">
+                  {stat.number}
                 </div>
-              ))}
-            </div>
+                <div className="text-sm md:text-base font-semibold">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
