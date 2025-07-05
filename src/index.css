@@ -3,38 +3,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* SoundConnect Cosmic Theme Design System */
+/* YouTube-Inspired Lively Design System */
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 239 84% 67%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 13%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 13%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 239 84% 67%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 }
 
@@ -44,102 +44,224 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 50%, #4c1d95 100%);
-    min-height: 100vh;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    @apply bg-lively-bg text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'YouTube Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
   }
 
-  /* Glassmorphism utility classes */
-  .glass {
-    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  /* Wavy section dividers */
+  .wave-divider {
+    position: relative;
+    overflow: hidden;
   }
 
-  .glass-card {
-    @apply backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl;
+  .wave-divider::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: currentColor;
+    clip-path: polygon(0 20px, 100% 0, 100% 100%, 0 100%);
   }
 
-  .premium-gradient {
-    background: linear-gradient(135deg, rgba(102, 102, 255, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%);
+  /* Blob shapes */
+  .blob {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: blob-morph 8s ease-in-out infinite;
   }
 
-  /* Custom scrollbar */
+  @keyframes blob-morph {
+    0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+    50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+    75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+  }
+
+  /* Custom scrollbar - YouTube style */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(15, 15, 35, 0.5);
+    background: #F9F9F9;
+    border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    border-radius: 4px;
+    background: linear-gradient(45deg, #FF0000, #FF4444);
+    border-radius: 10px;
+    border: 2px solid #F9F9F9;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(45deg, #CC0000, #FF0000);
   }
 }
 
 @layer components {
-  .btn-cosmic {
-    @apply relative overflow-hidden bg-gradient-to-r from-cosmic-600 to-purple-600 hover:from-cosmic-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl;
+  /* YouTube-style buttons */
+  .btn-youtube {
+    @apply relative overflow-hidden bg-youtube-red hover:bg-youtube-red-dark text-white font-bold py-4 px-8 rounded-5xl transition-all duration-300 transform hover:scale-110 shadow-youtube hover:shadow-chunky-hover;
   }
 
-  .btn-cosmic:before {
+  .btn-youtube::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700;
+    @apply absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -translate-x-full transition-transform duration-500;
   }
 
-  .btn-cosmic:hover:before {
+  .btn-youtube:hover::before {
     @apply translate-x-full;
   }
 
-  .btn-gold {
-    @apply bg-gradient-to-r from-gold-400 to-gold-600 hover:from-gold-500 hover:to-gold-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl;
+  .btn-lively {
+    @apply bg-cheerful-gradient hover:scale-110 text-white font-bold py-4 px-8 rounded-5xl transition-all duration-300 transform shadow-chunky hover:shadow-chunky-hover animate-glow-pulse;
   }
 
-  .text-gradient {
-    @apply bg-gradient-to-r from-cosmic-400 via-purple-400 to-gold-400 bg-clip-text text-transparent;
+  .btn-subscribe {
+    @apply bg-youtube-red hover:bg-youtube-red-dark text-white font-bold py-3 px-6 rounded-full transition-all duration-200 transform hover:scale-105 flex items-center gap-2;
   }
 
-  .text-gold-gradient {
-    @apply bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent;
+  /* Chunky cards with oversized elements */
+  .chunky-card {
+    @apply bg-white rounded-5xl p-8 shadow-chunky hover:shadow-chunky-hover transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border-4 border-transparent hover:border-youtube-red/20;
   }
 
-  .floating-card {
-    @apply glass-card p-6 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-cosmic-500/25;
+  .mega-card {
+    @apply chunky-card relative overflow-hidden;
   }
 
-  .hero-text {
-    @apply text-5xl md:text-7xl font-bold leading-tight;
+  .mega-card::before {
+    content: '';
+    @apply absolute top-0 left-0 w-2 h-full bg-cheerful-gradient;
   }
 
-  .section-padding {
-    @apply py-20 px-4 md:px-8;
+  /* YouTube creator card style */
+  .creator-card {
+    @apply bg-white rounded-4xl p-6 shadow-chunky hover:shadow-chunky-hover transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-gray-100 hover:border-youtube-red/30;
+  }
+
+  /* Oversized icons */
+  .icon-mega {
+    @apply w-16 h-16 md:w-20 md:h-20;
+  }
+
+  .icon-giant {
+    @apply w-24 h-24 md:w-32 md:h-32;
+  }
+
+  /* Text styles */
+  .text-youtube {
+    @apply text-youtube-red font-bold;
+  }
+
+  .text-mega {
+    @apply text-6xl md:text-8xl lg:text-9xl font-black leading-tight;
+  }
+
+  .text-chunky {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
+  }
+
+  .text-lively {
+    @apply bg-cheerful-gradient bg-clip-text text-transparent font-black;
+  }
+
+  /* Bubble stats */
+  .bubble-stat {
+    @apply bg-white rounded-full w-32 h-32 md:w-40 md:h-40 flex flex-col items-center justify-center shadow-chunky hover:shadow-chunky-hover transition-all duration-300 transform hover:scale-110 border-4 border-youtube-red/20 hover:border-youtube-red/40;
+  }
+
+  /* Energetic layout helpers */
+  .tilt-left {
+    transform: rotate(-2deg);
+  }
+
+  .tilt-right {
+    transform: rotate(2deg);
+  }
+
+  .zigzag-border {
+    position: relative;
+  }
+
+  .zigzag-border::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(45deg, transparent 33.333%, currentColor 33.333%, currentColor 66.667%, transparent 66.667%);
+    background-size: 20px 20px;
+  }
+
+  /* Play button styles */
+  .play-button-giant {
+    @apply w-32 h-32 bg-youtube-red rounded-full flex items-center justify-center shadow-youtube hover:shadow-chunky-hover transition-all duration-300 transform hover:scale-110 cursor-pointer animate-pulse-grow;
+  }
+
+  .play-button-overlay {
+    @apply absolute inset-0 bg-black/20 rounded-4xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
+  }
+
+  /* Glass morphism with YouTube twist */
+  .glass-youtube {
+    @apply backdrop-blur-lg bg-white/80 border border-youtube-red/20 rounded-4xl;
+  }
+
+  /* Navigation styles */
+  .nav-youtube {
+    @apply bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm;
   }
 }
 
-/* Animation utilities */
 @layer utilities {
-  .animate-fade-in-up {
-    animation: fade-in-up 0.8s ease-out;
+  /* Animation utilities */
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out;
   }
 
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
   }
 
-  .stagger-1 { animation-delay: 0.1s; }
-  .stagger-2 { animation-delay: 0.2s; }
-  .stagger-3 { animation-delay: 0.3s; }
-  .stagger-4 { animation-delay: 0.4s; }
+  .animate-pulse-grow {
+    animation: pulse-grow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out;
+  }
+
+  .animate-pop-in {
+    animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .animate-float-gentle {
+    animation: float-gentle 4s ease-in-out infinite;
+  }
+
+  /* Stagger delays for sequential animations */
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+  .delay-600 { animation-delay: 0.6s; }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-2;
+  }
+
+  .hover-grow {
+    @apply transition-transform duration-300 hover:scale-110;
+  }
+
+  .hover-bounce {
+    @apply transition-transform duration-200 hover:scale-95 active:scale-105;
+  }
 }
