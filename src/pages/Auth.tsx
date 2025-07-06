@@ -77,8 +77,8 @@ const Auth = () => {
     <div className="min-h-screen bg-purple-cosmic relative overflow-hidden flex items-center justify-center p-4">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cosmic-500/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
       </div>
 
       <div className="relative z-10 w-full max-w-4xl">
@@ -86,7 +86,7 @@ const Auth = () => {
         <div className="text-center mb-8">
           <Button 
             variant="ghost" 
-            className="text-white/70 hover:text-white mb-4"
+            className="text-white/70 hover:text-white mb-4 hover:bg-white/10"
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -99,7 +99,7 @@ const Auth = () => {
             </div>
             <span className="text-3xl font-bold text-gradient">SoundConnect</span>
           </div>
-          <p className="text-white/70 text-lg">Join the music community</p>
+          <p className="text-white/80 text-lg">Join the music community</p>
         </div>
 
         <Card className="glass-card max-w-2xl mx-auto">
@@ -110,36 +110,54 @@ const Auth = () => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue={initialMode} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 glass">
-                <TabsTrigger value="signin" className="data-[state=active]:bg-cosmic-600">Sign In</TabsTrigger>
-                <TabsTrigger value="signup" className="data-[state=active]:bg-cosmic-600">Sign Up</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 glass mb-6">
+                <TabsTrigger 
+                  value="signin" 
+                  className="data-[state=active]:bg-purple-600/80 data-[state=active]:text-white text-white/70"
+                >
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signup" 
+                  className="data-[state=active]:bg-purple-600/80 data-[state=active]:text-white text-white/70"
+                >
+                  Sign Up
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="signin" className="space-y-6 mt-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
+                    <label htmlFor="signin-email" className="block text-white/90 text-sm font-medium mb-2">
+                      Email Address
+                    </label>
                     <Input
+                      id="signin-email"
                       type="email"
                       name="email"
-                      placeholder="Email address"
+                      placeholder="Enter your email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="glass border-white/20 text-white placeholder:text-white/50"
+                      className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
                       required
                     />
                   </div>
                   <div>
+                    <label htmlFor="signin-password" className="block text-white/90 text-sm font-medium mb-2">
+                      Password
+                    </label>
                     <Input
+                      id="signin-password"
                       type="password"
                       name="password"
-                      placeholder="Password"
+                      placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="glass border-white/20 text-white placeholder:text-white/50"
+                      className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full btn-cosmic">
+                  <Button type="submit" className="w-full btn-cosmic h-12 text-lg">
                     Sign In to SoundConnect
                   </Button>
                 </form>
@@ -151,62 +169,98 @@ const Auth = () => {
                   <div className="space-y-4">
                     <h3 className="text-white font-semibold text-lg">Basic Information</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <Input
-                        type="text"
-                        name="fullName"
-                        placeholder="Full Name"
-                        value={formData.fullName}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                        required
-                      />
-                      <Input
-                        type="email"
-                        name="email"
-                        placeholder="Email Address"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                        required
-                      />
+                      <div>
+                        <label htmlFor="fullName" className="block text-white/90 text-sm font-medium mb-2">
+                          Full Name
+                        </label>
+                        <Input
+                          id="fullName"
+                          type="text"
+                          name="fullName"
+                          placeholder="Enter your full name"
+                          value={formData.fullName}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="email" className="block text-white/90 text-sm font-medium mb-2">
+                          Email Address
+                        </label>
+                        <Input
+                          id="email"
+                          type="email"
+                          name="email"
+                          placeholder="Enter your email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                          required
+                        />
+                      </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <Input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                        required
-                      />
-                      <Input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                        required
-                      />
+                      <div>
+                        <label htmlFor="password" className="block text-white/90 text-sm font-medium mb-2">
+                          Password
+                        </label>
+                        <Input
+                          id="password"
+                          type="password"
+                          name="password"
+                          placeholder="Create a password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="confirmPassword" className="block text-white/90 text-sm font-medium mb-2">
+                          Confirm Password
+                        </label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          name="confirmPassword"
+                          placeholder="Confirm your password"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                          required
+                        />
+                      </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <Input
-                        type="tel"
-                        name="phone"
-                        placeholder="Phone Number"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                      />
-                      <Input
-                        type="text"
-                        name="location"
-                        placeholder="Location (City, State)"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        className="glass border-white/20 text-white placeholder:text-white/50"
-                      />
+                      <div>
+                        <label htmlFor="phone" className="block text-white/90 text-sm font-medium mb-2">
+                          Phone Number
+                        </label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          name="phone"
+                          placeholder="Enter your phone number"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="location" className="block text-white/90 text-sm font-medium mb-2">
+                          Location
+                        </label>
+                        <Input
+                          id="location"
+                          type="text"
+                          name="location"
+                          placeholder="City, State"
+                          value={formData.location}
+                          onChange={handleInputChange}
+                          className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -214,7 +268,7 @@ const Auth = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="text-white font-semibold text-lg">Your Professional Roles</h3>
-                      <Badge variant="secondary" className="bg-cosmic-600/50 text-white">
+                      <Badge variant="secondary" className="bg-purple-600/50 text-white">
                         {selectedRoles.length} selected
                       </Badge>
                     </div>
@@ -228,8 +282,8 @@ const Auth = () => {
                           className={`
                             relative cursor-pointer p-4 rounded-xl border-2 transition-all duration-300
                             ${selectedRoles.includes(role.id)
-                              ? 'border-gold-400 bg-gold-400/10 scale-105' 
-                              : 'border-white/20 hover:border-white/40 glass'
+                              ? 'border-purple-400 bg-purple-400/20 scale-105 shadow-lg' 
+                              : 'border-purple-500/30 hover:border-purple-400/60 glass hover:scale-102'
                             }
                           `}
                         >
@@ -244,7 +298,7 @@ const Auth = () => {
                           </div>
                           {selectedRoles.includes(role.id) && (
                             <div className="absolute top-2 right-2">
-                              <CheckCircle className="w-5 h-5 text-gold-400" />
+                              <CheckCircle className="w-5 h-5 text-purple-400" />
                             </div>
                           )}
                         </div>
@@ -254,7 +308,7 @@ const Auth = () => {
 
                   <Button 
                     type="submit" 
-                    className="w-full btn-cosmic"
+                    className="w-full btn-cosmic h-12 text-lg"
                     disabled={selectedRoles.length === 0}
                   >
                     Create Account & Continue

@@ -98,8 +98,9 @@
 @layer components {
   /* Glass morphism buttons */
   .btn-cosmic {
-    @apply relative overflow-hidden bg-space-deep-blue/20 backdrop-blur-md border border-space-aurora-cyan/30 text-space-stellar-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-cosmic-glow hover:shadow-cosmic-glow-lg;
-    background: linear-gradient(135deg, rgba(0, 102, 204, 0.2) 0%, rgba(0, 255, 255, 0.1) 100%);
+    @apply relative overflow-hidden backdrop-blur-md border text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%);
+    border-color: rgba(139, 92, 246, 0.8);
   }
 
   .btn-cosmic::before {
@@ -112,8 +113,9 @@
   }
 
   .btn-cosmic:hover {
-    @apply border-space-aurora-cyan/60;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    border-color: rgba(139, 92, 246, 1);
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
   }
 
   .btn-stellar {
@@ -122,12 +124,26 @@
 
   /* Glass morphism cards */
   .glass-card {
-    @apply bg-space-deep-blue/20 backdrop-blur-md rounded-3xl p-8 shadow-glass-cosmic border border-white/10 hover:border-space-aurora-cyan/30 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2;
+    @apply backdrop-blur-xl rounded-3xl p-8 shadow-xl border transition-all duration-500 transform hover:scale-105 hover:-translate-y-2;
+    background: rgba(15, 15, 35, 0.4);
+    border-color: rgba(139, 92, 246, 0.3);
   }
 
   .glass-card:hover {
-    @apply shadow-cosmic-glow-lg;
-    background: linear-gradient(135deg, rgba(26, 11, 46, 0.3) 0%, rgba(15, 15, 35, 0.2) 100%);
+    border-color: rgba(139, 92, 246, 0.6);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+  }
+
+  /* Glass inputs for better visibility */
+  .glass {
+    @apply backdrop-blur-md rounded-lg;
+    background: rgba(15, 15, 35, 0.8);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+  }
+
+  .glass:focus-within {
+    border-color: rgba(139, 92, 246, 0.8);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
   }
 
   /* Cosmic navigation */
@@ -144,6 +160,13 @@
   .text-stellar-glow {
     @apply bg-aurora-gradient bg-clip-text text-transparent font-bold;
     filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 50%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .text-nebula {
@@ -208,6 +231,20 @@
   /* Glass morphism with cosmic twist */
   .glass-cosmic {
     @apply backdrop-blur-xl bg-space-deep-blue/20 border border-space-aurora-cyan/20 rounded-3xl shadow-glass-cosmic;
+  }
+
+  /* Background gradients */
+  .bg-purple-cosmic {
+    background: radial-gradient(ellipse at center, #1A0B2E 0%, #0F0F23 40%, #0A0A0F 100%);
+  }
+
+  .bg-gold-shimmer {
+    background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  }
+
+  /* Animation for floating elements */
+  .animate-float {
+    animation: float-gentle 4s ease-in-out infinite;
   }
 }
 
