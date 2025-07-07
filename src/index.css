@@ -99,8 +99,9 @@
   /* Glass morphism buttons */
   .btn-cosmic {
     @apply relative overflow-hidden backdrop-blur-md border text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%);
-    border-color: rgba(139, 92, 246, 0.8);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%) !important;
+    border-color: rgba(139, 92, 246, 0.8) !important;
+    color: white !important;
   }
 
   .btn-cosmic::before {
@@ -137,13 +138,19 @@
   /* Glass inputs for better visibility */
   .glass {
     @apply backdrop-blur-md rounded-lg;
-    background: rgba(15, 15, 35, 0.8);
-    border: 1px solid rgba(139, 92, 246, 0.4);
+    background: rgba(15, 15, 35, 0.8) !important;
+    border: 1px solid rgba(139, 92, 246, 0.4) !important;
+    color: white !important;
   }
 
-  .glass:focus-within {
-    border-color: rgba(139, 92, 246, 0.8);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  .glass:focus-within,
+  .glass:focus {
+    border-color: rgba(139, 92, 246, 0.8) !important;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2) !important;
+  }
+
+  .glass::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
   }
 
   /* Cosmic navigation */
