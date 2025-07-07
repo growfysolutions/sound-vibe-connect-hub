@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play, Users, Music, Star, CheckCircle, ArrowRight, Headphones, Mic, Video, Camera, Bell, Heart, TrendingUp, Award, Zap, Sparkles, Upload, Globe, MonitorPlay, Disc3 } from 'lucide-react';
+import { Play, Users, Music, Star, CheckCircle, ArrowRight, Headphones, Mic, Video, Camera, Bell, Heart, TrendingUp, Award, Zap, Sparkles, Upload, Globe, MonitorPlay, Disc3, Search } from 'lucide-react';
 import { ImagesSlider } from '@/components/ui/images-slider';
 import { motion } from 'framer-motion';
 
@@ -22,10 +22,10 @@ const Index = () => {
   ];
 
   const platformStats = [
-    { number: '2M+', label: 'Music Videos', gradient: 'from-space-stellar-blue to-space-aurora-cyan', icon: Video },
-    { number: '500K+', label: 'Songs Uploaded', gradient: 'from-space-nebula-pink to-space-cosmic-purple', icon: Music },
-    { number: '50K+', label: 'Artists', gradient: 'from-space-aurora-cyan to-space-electric-blue', icon: Mic },
-    { number: '100K+', label: 'Collaborations', gradient: 'from-space-electric-blue to-space-stellar-blue', icon: Users }
+    { number: '15K+', label: 'Active Projects', gradient: 'from-space-stellar-blue to-space-aurora-cyan', icon: Video },
+    { number: '50K+', label: 'Music Professionals', gradient: 'from-space-nebula-pink to-space-cosmic-purple', icon: Users },
+    { number: '8K+', label: 'Successful Collabs', gradient: 'from-space-aurora-cyan to-space-electric-blue', icon: Star },
+    { number: '₹2.5M+', label: 'Earnings Generated', gradient: 'from-space-electric-blue to-space-stellar-blue', icon: TrendingUp }
   ];
 
   const musicProfessionals = [
@@ -76,21 +76,21 @@ const Index = () => {
 
   const platformFeatures = [
     {
-      icon: Upload,
-      title: 'Upload Music & Videos',
-      description: 'Share your music videos, songs, and behind-the-scenes content with the world.',
+      icon: Users,
+      title: 'Hire Music Professionals',
+      description: 'Browse portfolios, check ratings, and hire verified singers, producers, engineers, and directors for your projects.',
       gradient: 'from-space-stellar-blue to-space-aurora-cyan'
     },
     {
       icon: Globe,
-      title: 'Discover New Talent',
-      description: 'Explore music across genres, find new artists, and discover your next favorite song.',
+      title: 'Showcase Your Work',
+      description: 'Build a professional profile, display your portfolio, set your rates, and get discovered by potential clients.',
       gradient: 'from-space-aurora-cyan to-space-electric-blue'
     },
     {
-      icon: Users,
-      title: 'Connect & Collaborate',
-      description: 'Network with music professionals, find collaborators, and build your dream team.',
+      icon: TrendingUp,
+      title: 'Secure Project Management',
+      description: 'Built-in contracts, milestone payments, file sharing, and communication tools for seamless collaboration.',
       gradient: 'from-space-nebula-pink to-space-cosmic-purple'
     }
   ];
@@ -118,10 +118,10 @@ const Index = () => {
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#discover" className="text-space-cosmic-gray hover-glow font-medium">Discover</a>
-              <a href="#artists" className="text-space-cosmic-gray hover-glow font-medium">Artists</a>
-              <a href="#upload" className="text-space-cosmic-gray hover-glow font-medium">Upload</a>
-              <a href="#community" className="text-space-cosmic-gray hover-glow font-medium">Community</a>
+              <a href="#professionals" className="text-space-cosmic-gray hover-glow font-medium">Find Talent</a>
+              <a href="#projects" className="text-space-cosmic-gray hover-glow font-medium">Browse Projects</a>
+              <a href="#how-it-works" className="text-space-cosmic-gray hover-glow font-medium">How It Works</a>
+              <a href="#success-stories" className="text-space-cosmic-gray hover-glow font-medium">Success Stories</a>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -179,7 +179,7 @@ const Index = () => {
               transition={{ delay: 0.1, duration: 1 }}
               className="text-nebula mb-8 leading-tight animate-cosmic-glow"
             >
-              Where Music 
+              Music Industry
               <motion.span 
                 animate={{ 
                   scale: [1, 1.05, 1],
@@ -188,7 +188,7 @@ const Index = () => {
                 transition={{ repeat: Infinity, duration: 3, delay: 1 }}
                 className="block text-cosmic-glow"
               >
-                Comes ALIVE!
+                COLLABORATION HUB
               </motion.span>
             </motion.h1>
             
@@ -198,8 +198,8 @@ const Index = () => {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="text-xl md:text-2xl text-space-stellar-white/90 mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
             >
-              Upload your <strong className="text-stellar-glow">music videos & songs</strong>, discover amazing talent, 
-              and connect with music industry professionals. Join the cosmic music universe! 🎵✨
+              The <strong className="text-stellar-glow">LinkedIn meets Fiverr</strong> for music professionals. 
+              Find collaborators, hire experts, and build your dream team. 🎵✨
             </motion.p>
 
             {/* Music CTA Buttons */}
@@ -212,18 +212,18 @@ const Index = () => {
               <Button 
                 size="lg" 
                 className="btn-cosmic text-xl px-12 py-6"
-                onClick={() => navigate('/auth?role=artist')}
+                onClick={() => navigate('/auth?mode=signup')}
               >
-                <Upload className="mr-3 w-6 h-6" />
-                Upload Your Music
+                <Users className="mr-3 w-6 h-6" />
+                Join as Professional
               </Button>
               <Button 
                 size="lg" 
                 className="glass-cosmic text-space-stellar-white hover:scale-105 text-xl px-12 py-6 transition-all duration-300"
                 onClick={() => navigate('/discover')}
               >
-                <MonitorPlay className="mr-3 w-6 h-6" />
-                Discover Music
+                <Search className="mr-3 w-6 h-6" />
+                Find Collaborators
               </Button>
             </motion.div>
 
