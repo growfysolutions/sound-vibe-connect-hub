@@ -257,7 +257,7 @@ const Dashboard = () => {
                 </div>
 
                 {mockProjects.map((project) => (
-                  <Card key={project.id} className="floating-card group">
+                  <Card key={project.id} className="glass-card group">
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
                         <div className="w-16 h-16 bg-cosmic-gradient rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
@@ -332,7 +332,7 @@ const Dashboard = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {mockProfessionals.map((professional) => (
-                    <Card key={professional.id} className="floating-card group">
+                    <Card key={professional.id} className="glass-card group">
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
@@ -401,7 +401,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Card className="floating-card border-dashed border-white/30">
+                  <Card className="glass-card border-dashed border-white/30">
                     <CardContent className="p-8 text-center">
                       <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <Upload className="w-8 h-8 text-white/50" />

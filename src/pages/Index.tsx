@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Play, Users, Music, Star, CheckCircle, ArrowRight, Headphones, Mic, Video, Camera, Bell, Heart, TrendingUp, Award, Zap, Sparkles, Upload, Globe, MonitorPlay, Disc3, Search } from 'lucide-react';
+import { Play, Users, Music, Star, CheckCircle, ArrowRight, Headphones, Mic, Video, Camera, Bell, Heart, TrendingUp, Award, Zap, Sparkles, Upload, Globe, MonitorPlay, Disc3 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { ImagesSlider } from '@/components/ui/images-slider';
 import { motion } from 'framer-motion';
 
