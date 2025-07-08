@@ -97,44 +97,38 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-space-dark relative overflow-hidden">
-      {/* Floating cosmic orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="cosmic-orb top-20 left-10 w-32 h-32 delay-cosmic-100"></div>
-        <div className="cosmic-orb top-40 right-20 w-24 h-24 delay-cosmic-200"></div>
-        <div className="cosmic-orb bottom-40 left-20 w-40 h-40 delay-cosmic-300"></div>
-        <div className="cosmic-orb bottom-20 right-40 w-28 h-28 delay-cosmic-400"></div>
-        <div className="cosmic-orb top-1/2 left-1/2 w-20 h-20 delay-cosmic-500"></div>
-      </div>
+    <div className="min-h-screen bg-premium-gradient relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-glass-pattern pointer-events-none"></div>
 
-      {/* Cosmic Navigation */}
-      <nav className="nav-cosmic sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      {/* Premium Navigation */}
+      <nav className="nav-premium sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="icon-cosmic !w-12 !h-12">
-                <Music className="w-6 h-6 text-space-aurora-cyan" />
+            <div className="flex items-center space-x-4">
+              <div className="icon-premium">
+                <Music className="w-8 h-8 text-primary" />
               </div>
-              <span className="text-3xl font-bold text-stellar-glow">SoundConnect</span>
+              <span className="text-3xl font-bold text-gradient-primary">SoundConnect</span>
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#professionals" className="text-space-cosmic-gray hover-glow font-medium">Find Talent</a>
-              <a href="#projects" className="text-space-cosmic-gray hover-glow font-medium">Browse Projects</a>
-              <a href="#how-it-works" className="text-space-cosmic-gray hover-glow font-medium">How It Works</a>
-              <a href="#success-stories" className="text-space-cosmic-gray hover-glow font-medium">Success Stories</a>
+              <a href="#professionals" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Find Talent</a>
+              <a href="#projects" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Browse Projects</a>
+              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground font-medium transition-colors">How It Works</a>
+              <a href="#success-stories" className="text-muted-foreground hover:text-foreground font-medium transition-colors">Success Stories</a>
             </div>
 
             <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
-                className="text-space-cosmic-gray hover:bg-space-deep-blue/20 hover:text-space-aurora-cyan font-medium hover-glow"
+                className="text-muted-foreground hover:text-foreground font-medium"
                 onClick={() => navigate('/auth')}
               >
                 Sign In
               </Button>
               <Button 
-                className="btn-cosmic"
+                className="btn-premium"
                 onClick={() => navigate('/auth?mode=signup')}
               >
                 <Upload className="w-5 h-5 mr-2" />
@@ -163,31 +157,30 @@ const Index = () => {
             }}
             className="z-50 flex flex-col justify-center items-center text-center px-4"
           >
-            {/* Music platform badge */}
+            {/* Platform badge */}
             <motion.div 
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="inline-flex items-center gap-2 glass-cosmic text-space-stellar-white px-6 py-3 rounded-full font-semibold mb-8 shadow-cosmic-glow"
+              className="inline-flex items-center gap-2 btn-glass text-white px-6 py-3 rounded-full font-semibold mb-8"
             >
-              <TrendingUp className="w-5 h-5 text-space-aurora-cyan" />
-              #1 Music Creator Platform
+              <TrendingUp className="w-5 h-5 text-primary" />
+              #1 Music Collaboration Platform
             </motion.div>
 
             <motion.h1 
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1, duration: 1 }}
-              className="text-nebula mb-8 leading-tight animate-cosmic-glow"
+              className="text-6xl md:text-8xl lg:text-9xl font-bold leading-tight mb-8 text-display"
             >
-              Music Industry
+              <span className="text-white">Music Industry</span>
               <motion.span 
                 animate={{ 
-                  scale: [1, 1.05, 1],
-                  filter: ["brightness(1)", "brightness(1.3)", "brightness(1)"]
+                  scale: [1, 1.02, 1],
                 }}
-                transition={{ repeat: Infinity, duration: 3, delay: 1 }}
-                className="block text-cosmic-glow"
+                transition={{ repeat: Infinity, duration: 4, delay: 1 }}
+                className="block text-gradient-primary"
               >
                 COLLABORATION HUB
               </motion.span>
@@ -197,13 +190,13 @@ const Index = () => {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="text-xl md:text-2xl text-space-stellar-white/90 mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+              className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
             >
-              The <strong className="text-stellar-glow">LinkedIn meets Fiverr</strong> for music professionals. 
-              Find collaborators, hire experts, and build your dream team. 🎵✨
+              The <strong className="text-gradient-gold">LinkedIn meets Fiverr</strong> for music professionals. 
+              Connect, collaborate, and create with the industry's finest talent.
             </motion.p>
 
-            {/* Music CTA Buttons */}
+            {/* CTA Buttons */}
             <motion.div 
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -212,7 +205,7 @@ const Index = () => {
             >
               <Button 
                 size="lg" 
-                className="btn-cosmic text-xl px-12 py-6"
+                className="btn-premium text-xl px-12 py-6 hover-scale"
                 onClick={() => navigate('/auth?mode=signup')}
               >
                 <Users className="mr-3 w-6 h-6" />
@@ -220,7 +213,7 @@ const Index = () => {
               </Button>
               <Button 
                 size="lg" 
-                className="glass-cosmic text-space-stellar-white hover:scale-105 text-xl px-12 py-6 transition-all duration-300"
+                className="btn-glass text-white hover-scale text-xl px-12 py-6"
                 onClick={() => navigate('/discover')}
               >
                 <Search className="mr-3 w-6 h-6" />
@@ -241,7 +234,7 @@ const Index = () => {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 1 + (index * 0.1), duration: 0.6 }}
-                  className="glass-cosmic px-4 py-2 rounded-full text-space-stellar-white font-medium hover-cosmic cursor-pointer"
+                  className="btn-glass px-4 py-2 rounded-full text-white/80 font-medium hover-scale cursor-pointer text-sm"
                 >
                   {genre}
                 </motion.span>
@@ -252,26 +245,25 @@ const Index = () => {
       </section>
 
       {/* Platform Stats Section */}
-      <section className="relative z-10 py-20 px-4 bg-cosmic-glow">
+      <section className="relative z-10 py-20 px-6 bg-background">
         <div className="container mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
             {platformStats.map((stat, index) => (
               <motion.div 
                 key={index} 
                 initial={{ scale: 0, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ delay: index * 0.2, duration: 0.8 }}
+                transition={{ delay: index * 0.15, duration: 0.8 }}
                 viewport={{ once: true }}
-                className="cosmic-stat animate-fade-glow"
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="stat-card hover-lift"
               >
-                <div className={`icon-cosmic mx-auto mb-4 !w-16 !h-16 bg-gradient-to-r ${stat.gradient}`}>
-                  <stat.icon className="w-8 h-8 text-white" />
+                <div className="icon-premium mx-auto mb-6">
+                  <stat.icon className="w-8 h-8 text-primary" />
                 </div>
-                <div className={`text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-gradient-primary">
                   {stat.number}
                 </div>
-                <div className="text-sm md:text-base font-medium text-space-stellar-white">
+                <div className="text-sm md:text-base font-medium text-muted-foreground">
                   {stat.label}
                 </div>
               </motion.div>
