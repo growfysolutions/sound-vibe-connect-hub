@@ -110,46 +110,46 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-purple-cosmic">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="glass border-b border-white/10 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-3">
+      <nav className="nav-premium sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gold-shimmer rounded-lg flex items-center justify-center">
-                  <Music className="w-5 h-5 text-white" />
+              <div className="flex items-center space-x-3">
+                <div className="icon-premium">
+                  <Music className="w-6 h-6 text-primary" />
                 </div>
-                <span className="text-xl font-bold text-gradient">SoundConnect</span>
+                <span className="text-xl font-bold text-gradient-primary">SoundConnect</span>
               </div>
               
               <div className="hidden md:flex relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/50" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search professionals, projects, or genres..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-80 glass border-white/20 text-white placeholder:text-white/50"
+                  className="pl-10 w-80 input-premium"
                 />
               </div>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Button className="btn-cosmic">
+              <Button className="btn-premium">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload
               </Button>
               
               <div className="relative">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                   <Bell className="w-5 h-5" />
                 </Button>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full"></div>
               </div>
 
-              <Avatar className="w-10 h-10 cursor-pointer border-2 border-gold-400">
-                <AvatarFallback className="bg-cosmic-gradient text-white font-semibold">
+              <Avatar className="w-10 h-10 cursor-pointer border-2 border-primary">
+                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                   JS
                 </AvatarFallback>
               </Avatar>
@@ -162,49 +162,49 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="glass-card mb-6">
+            <Card className="floating-card mb-6">
               <CardContent className="p-6">
                 <div className="text-center mb-6">
-                  <Avatar className="w-20 h-20 mx-auto mb-4 border-3 border-gold-400">
-                    <AvatarFallback className="bg-cosmic-gradient text-2xl text-white">
+                  <Avatar className="w-20 h-20 mx-auto mb-4 border-3 border-primary">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                       JS
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="text-white font-semibold text-lg">Jasbir Singh</h3>
+                  <h3 className="font-semibold text-lg">Jasbir Singh</h3>
                   <div className="flex items-center justify-center space-x-2 mt-2">
-                    <Badge className="bg-cosmic-600 text-white">Singer</Badge>
-                    <Star className="w-4 h-4 text-gold-400" />
+                    <Badge className="bg-primary text-primary-foreground">Singer</Badge>
+                    <Star className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-white/70 text-sm mt-2">Punjabi Folk Specialist</p>
+                  <p className="text-muted-foreground text-sm mt-2">Punjabi Folk Specialist</p>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/70">Profile Views</span>
-                    <span className="text-white font-medium">1,234</span>
+                    <span className="text-muted-foreground">Profile Views</span>
+                    <span className="font-medium">1,234</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/70">Collaborations</span>
-                    <span className="text-white font-medium">23</span>
+                    <span className="text-muted-foreground">Collaborations</span>
+                    <span className="font-medium">23</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/70">Rating</span>
-                    <span className="text-gold-400 font-medium flex items-center">
+                    <span className="text-muted-foreground">Rating</span>
+                    <span className="text-primary font-medium flex items-center">
                       4.9 <Star className="w-3 h-3 ml-1 fill-current" />
                     </span>
                   </div>
                 </div>
 
-                <Button className="w-full mt-6 btn-gold" onClick={() => navigate('/profile')}>
+                <Button className="w-full mt-6 btn-premium" onClick={() => navigate('/profile')}>
                   View Full Profile
                 </Button>
               </CardContent>
             </Card>
 
             {/* Notifications */}
-            <Card className="glass-card">
+            <Card className="floating-card">
               <CardHeader>
-                <CardTitle className="text-white text-lg flex items-center">
+                <CardTitle className="text-lg flex items-center">
                   <Bell className="w-5 h-5 mr-2" />
                   Recent Activity
                 </CardTitle>
@@ -213,10 +213,10 @@ const Dashboard = () => {
                 <div className="space-y-4">
                   {mockNotifications.map((notification) => (
                     <div key={notification.id} className="flex space-x-3">
-                      <div className="w-2 h-2 bg-cosmic-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                       <div>
-                        <p className="text-white/80 text-sm">{notification.message}</p>
-                        <p className="text-white/50 text-xs mt-1">{notification.time}</p>
+                        <p className="text-foreground text-sm">{notification.message}</p>
+                        <p className="text-muted-foreground text-xs mt-1">{notification.time}</p>
                       </div>
                     </div>
                   ))}
@@ -228,20 +228,20 @@ const Dashboard = () => {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <Tabs defaultValue="feed" className="w-full">
-              <TabsList className="glass mb-8 w-full justify-start">
-                <TabsTrigger value="feed" className="data-[state=active]:bg-cosmic-600">
+              <TabsList className="bg-card/80 backdrop-blur-md mb-8 w-full justify-start border border-border/50">
+                <TabsTrigger value="feed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   Feed
                 </TabsTrigger>
-                <TabsTrigger value="discover" className="data-[state=active]:bg-cosmic-600">
+                <TabsTrigger value="discover" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Search className="w-4 h-4 mr-2" />
                   Discover
                 </TabsTrigger>
-                <TabsTrigger value="projects" className="data-[state=active]:bg-cosmic-600">
+                <TabsTrigger value="projects" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Music className="w-4 h-4 mr-2" />
                   My Projects
                 </TabsTrigger>
-                <TabsTrigger value="network" className="data-[state=active]:bg-cosmic-600">
+                <TabsTrigger value="network" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Users className="w-4 h-4 mr-2" />
                   Network
                 </TabsTrigger>
@@ -249,45 +249,45 @@ const Dashboard = () => {
 
               <TabsContent value="feed" className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Latest from Your Network</h2>
-                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                  <h2 className="text-2xl font-bold">Latest from Your Network</h2>
+                  <Button variant="outline" className="hover-scale">
                     <Filter className="w-4 h-4 mr-2" />
                     Filter
                   </Button>
                 </div>
 
                 {mockProjects.map((project) => (
-                  <Card key={project.id} className="glass-card group">
+                  <Card key={project.id} className="floating-card group hover-lift">
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
-                        <div className="w-16 h-16 bg-cosmic-gradient rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
+                        <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
                           {project.thumbnail}
                         </div>
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h3 className="text-white font-semibold text-lg group-hover:text-gold-400 transition-colors">
+                              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                                 {project.title}
                               </h3>
                               <div className="flex items-center space-x-2 mt-1">
-                                <span className="text-white/70">by {project.artist}</span>
-                                <Badge variant="secondary" className="bg-cosmic-600/50 text-white text-xs">
+                                <span className="text-muted-foreground">by {project.artist}</span>
+                                <Badge variant="secondary" className="text-xs">
                                   {project.role}
                                 </Badge>
                                 {project.isCollaborative && (
-                                  <Badge className="bg-gold-600/50 text-gold-200 text-xs">
+                                  <Badge className="bg-primary/20 text-primary text-xs">
                                     Collaborative
                                   </Badge>
                                 )}
                               </div>
                             </div>
-                            <Button size="icon" className="btn-cosmic opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button size="icon" className="btn-premium opacity-0 group-hover:opacity-100 transition-opacity">
                               <Play className="w-4 h-4" />
                             </Button>
                           </div>
 
-                          <div className="flex items-center space-x-4 text-sm text-white/60 mb-4">
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
                             <span className="flex items-center">
                               <Clock className="w-3 h-3 mr-1" />
                               {project.duration}
@@ -298,15 +298,15 @@ const Dashboard = () => {
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
-                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-red-400 hover:bg-red-400/10">
+                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
                                 <Heart className="w-4 h-4 mr-2" />
                                 {project.likes}
                               </Button>
-                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
+                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                                 <MessageCircle className="w-4 h-4 mr-2" />
                                 Comment
                               </Button>
-                              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
+                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                                 <Share2 className="w-4 h-4 mr-2" />
                                 Share
                               </Button>
@@ -321,9 +321,9 @@ const Dashboard = () => {
 
               <TabsContent value="discover" className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Discover Professionals</h2>
+                  <h2 className="text-2xl font-bold">Discover Professionals</h2>
                   <div className="flex space-x-2">
-                    <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                    <Button variant="outline" className="hover-scale">
                       <Filter className="w-4 h-4 mr-2" />
                       Filters
                     </Button>
@@ -332,36 +332,36 @@ const Dashboard = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {mockProfessionals.map((professional) => (
-                    <Card key={professional.id} className="glass-card group">
+                    <Card key={professional.id} className="floating-card group hover-lift">
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center space-x-3">
                             <div className="relative">
-                              <Avatar className="w-12 h-12 border-2 border-cosmic-500">
-                                <AvatarFallback className="bg-cosmic-gradient text-white">
+                              <Avatar className="w-12 h-12 border-2 border-primary">
+                                <AvatarFallback className="bg-primary text-primary-foreground">
                                   {professional.name.split(' ').map(n => n[0]).join('')}
                                 </AvatarFallback>
                               </Avatar>
                               {professional.isOnline && (
-                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
                               )}
                             </div>
                             <div>
                               <div className="flex items-center space-x-2">
-                                <h3 className="text-white font-semibold">{professional.name}</h3>
+                                <h3 className="font-semibold">{professional.name}</h3>
                                 {professional.isVerified && (
-                                  <Star className="w-4 h-4 text-gold-400 fill-current" />
+                                  <Star className="w-4 h-4 text-primary fill-current" />
                                 )}
                               </div>
                               <div className="flex items-center space-x-2 mt-1">
                                 {getRoleIcon(professional.role)}
-                                <span className="text-white/70 text-sm">{professional.role}</span>
+                                <span className="text-muted-foreground text-sm">{professional.role}</span>
                               </div>
                             </div>
                           </div>
                           
                           <div className="text-right">
-                            <div className="flex items-center text-gold-400 text-sm mb-1">
+                            <div className="flex items-center text-primary text-sm mb-1">
                               <Star className="w-3 h-3 mr-1 fill-current" />
                               {professional.rating}
                             </div>
@@ -369,19 +369,19 @@ const Dashboard = () => {
                         </div>
 
                         <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-white/60 text-sm">
+                          <div className="flex items-center text-muted-foreground text-sm">
                             <MapPin className="w-3 h-3 mr-2" />
                             {professional.location}
                           </div>
-                          <p className="text-white/80 text-sm">{professional.specialization}</p>
-                          <p className="text-white/60 text-xs">{professional.experience}</p>
+                          <p className="text-sm">{professional.specialization}</p>
+                          <p className="text-muted-foreground text-xs">{professional.experience}</p>
                         </div>
 
                         <div className="flex space-x-2">
-                          <Button size="sm" className="btn-cosmic flex-1">
+                          <Button size="sm" className="btn-premium flex-1">
                             Connect
                           </Button>
-                          <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+                          <Button size="sm" variant="outline" className="hover-scale">
                             <MessageCircle className="w-4 h-4" />
                           </Button>
                         </div>
@@ -393,22 +393,22 @@ const Dashboard = () => {
 
               <TabsContent value="projects" className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">My Projects</h2>
-                  <Button className="btn-cosmic">
+                  <h2 className="text-2xl font-bold">My Projects</h2>
+                  <Button className="btn-premium">
                     <Upload className="w-4 h-4 mr-2" />
                     New Project
                   </Button>
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Card className="glass-card border-dashed border-white/30">
+                  <Card className="floating-card border-dashed border-border">
                     <CardContent className="p-8 text-center">
-                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Upload className="w-8 h-8 text-white/50" />
+                      <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Upload className="w-8 h-8 text-muted-foreground" />
                       </div>
-                      <h3 className="text-white font-medium mb-2">Upload Your First Project</h3>
-                      <p className="text-white/60 text-sm mb-4">Share your music, videos, or creative work with the community</p>
-                      <Button className="btn-gold">
+                      <h3 className="font-medium mb-2">Upload Your First Project</h3>
+                      <p className="text-muted-foreground text-sm mb-4">Share your music, videos, or creative work with the community</p>
+                      <Button className="btn-premium">
                         Get Started
                       </Button>
                     </CardContent>
@@ -418,22 +418,22 @@ const Dashboard = () => {
 
               <TabsContent value="network" className="space-y-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">My Network</h2>
-                  <Button className="btn-cosmic">
+                  <h2 className="text-2xl font-bold">My Network</h2>
+                  <Button className="btn-premium">
                     <Users className="w-4 h-4 mr-2" />
                     Find Connections
                   </Button>
                 </div>
 
                 <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Users className="w-10 h-10 text-white/50" />
+                  <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Users className="w-10 h-10 text-muted-foreground" />
                   </div>
-                  <h3 className="text-white font-semibold text-xl mb-2">Build Your Network</h3>
-                  <p className="text-white/70 mb-6 max-w-md mx-auto">
+                  <h3 className="font-semibold text-xl mb-2">Build Your Network</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                     Connect with other music professionals to collaborate, learn, and grow your career together.
                   </p>
-                  <Button className="btn-cosmic">
+                  <Button className="btn-premium">
                     Discover Professionals
                   </Button>
                 </div>
