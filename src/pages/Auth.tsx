@@ -169,47 +169,47 @@ const Auth = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
-                    <h3 className="text-white font-semibold text-lg">Basic Information</h3>
+                    <h3 className="font-semibold text-lg text-slate-950">Basic Information</h3>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="fullName" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="fullName" className="block text-white/90 text-sm font-medium mb-2 bg-slate-400">
                           Full Name
                         </label>
-                        <Input id="fullName" type="text" name="fullName" placeholder="Enter your full name" value={formData.fullName} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" required />
+                        <Input id="fullName" type="text" name="fullName" placeholder="Enter your full name" value={formData.fullName} onChange={handleInputChange} required className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-400" />
                       </div>
                       <div>
-                        <label htmlFor="email" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="email" className="block text-white/90 text-sm font-medium mb-2 bg-slate-400">
                           Email Address
                         </label>
-                        <Input id="email" type="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" required />
+                        <Input id="email" type="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleInputChange} required className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-400" />
                       </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="password" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="password" className="block text-white/90 text-sm font-medium mb-2 bg-slate-950">
                           Password
                         </label>
-                        <Input id="password" type="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" required />
+                        <Input id="password" type="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleInputChange} required className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-400" />
                       </div>
                       <div>
-                        <label htmlFor="confirmPassword" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="confirmPassword" className="block text-white/90 text-sm font-medium mb-2 bg-slate-950">
                           Confirm Password
                         </label>
-                        <Input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" required />
+                        <Input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleInputChange} required className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-400" />
                       </div>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="phone" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="phone" className="block text-white/90 text-sm font-medium mb-2 bg-slate-950">
                           Phone Number
                         </label>
-                        <Input id="phone" type="tel" name="phone" placeholder="Enter your phone number" value={formData.phone} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" />
+                        <Input id="phone" type="tel" name="phone" placeholder="Enter your phone number" value={formData.phone} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-950" />
                       </div>
                       <div>
-                        <label htmlFor="location" className="block text-white/90 text-sm font-medium mb-2">
+                        <label htmlFor="location" className="block text-white/90 text-sm font-medium mb-2 bg-slate-950">
                           Location
                         </label>
-                        <Input id="location" type="text" name="location" placeholder="City, State" value={formData.location} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12" />
+                        <Input id="location" type="text" name="location" placeholder="City, State" value={formData.location} onChange={handleInputChange} className="glass text-white placeholder:text-white/60 border-purple-500/50 focus:border-purple-400 h-12 bg-slate-950" />
                       </div>
                     </div>
                   </div>
@@ -217,12 +217,12 @@ const Auth = () => {
                   {/* Role Selection */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold text-lg">Your Professional Roles</h3>
+                      <h3 className="font-semibold text-lg text-slate-950">Your Professional Roles</h3>
                       <Badge variant="secondary" className="bg-purple-600/50 text-white">
                         {selectedRoles.length} selected
                       </Badge>
                     </div>
-                    <p className="text-white/70 text-sm">Select all that apply to you</p>
+                    <p className="text-sm text-slate-950">Select all that apply to you</p>
                     
                     <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                       {roles.map(role => <div key={role.id} onClick={() => handleRoleToggle(role.id)} className={`
@@ -235,7 +235,7 @@ const Auth = () => {
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-white font-medium text-sm">{role.name}</h4>
-                              <p className="text-white/60 text-xs mt-1">{role.description}</p>
+                              <p className="text-xs mt-1 text-slate-950">{role.description}</p>
                             </div>
                           </div>
                           {selectedRoles.includes(role.id) && <div className="absolute top-2 right-2">
