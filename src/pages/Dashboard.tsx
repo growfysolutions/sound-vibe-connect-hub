@@ -10,8 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Music, Search, Upload, Users, Star, Play, Heart, Share2, 
   MessageCircle, TrendingUp, Bell, Settings, LogOut, Filter,
-  Mic, Video, Headphones, Camera, MapPin, Clock
+  Mic, Video, Headphones, Camera, MapPin, Clock, Gamepad2
 } from 'lucide-react';
+
+// Import new components
+import UserProfileCard from '@/components/dashboard/UserProfileCard';
+import ActivityFeed from '@/components/dashboard/ActivityFeed';
+import GameficationPanel from '@/components/dashboard/GameficationPanel';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -161,68 +166,9 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="floating-card mb-6">
-              <CardContent className="p-6">
-                <div className="text-center mb-6">
-                  <Avatar className="w-20 h-20 mx-auto mb-4 border-3 border-primary">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                      JS
-                    </AvatarFallback>
-                  </Avatar>
-                  <h3 className="font-semibold text-lg">Jasbir Singh</h3>
-                  <div className="flex items-center justify-center space-x-2 mt-2">
-                    <Badge className="bg-primary text-primary-foreground">Singer</Badge>
-                    <Star className="w-4 h-4 text-primary" />
-                  </div>
-                  <p className="text-muted-foreground text-sm mt-2">Punjabi Folk Specialist</p>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Profile Views</span>
-                    <span className="font-medium">1,234</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Collaborations</span>
-                    <span className="font-medium">23</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Rating</span>
-                    <span className="text-primary font-medium flex items-center">
-                      4.9 <Star className="w-3 h-3 ml-1 fill-current" />
-                    </span>
-                  </div>
-                </div>
-
-                <Button className="w-full mt-6 btn-premium" onClick={() => navigate('/profile')}>
-                  View Full Profile
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Notifications */}
-            <Card className="floating-card">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center">
-                  <Bell className="w-5 h-5 mr-2" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                <div className="space-y-4">
-                  {mockNotifications.map((notification) => (
-                    <div key={notification.id} className="flex space-x-3">
-                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <p className="text-foreground text-sm">{notification.message}</p>
-                        <p className="text-muted-foreground text-xs mt-1">{notification.time}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          <div className="lg:col-span-1 space-y-6">
+            <UserProfileCard />
+            <ActivityFeed />
           </div>
 
           {/* Main Content */}
@@ -244,6 +190,10 @@ const Dashboard = () => {
                 <TabsTrigger value="network" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <Users className="w-4 h-4 mr-2" />
                   Network
+                </TabsTrigger>
+                <TabsTrigger value="gamification" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Gamepad2 className="w-4 h-4 mr-2" />
+                  Progress
                 </TabsTrigger>
               </TabsList>
 
@@ -437,6 +387,17 @@ const Dashboard = () => {
                     Discover Professionals
                   </Button>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="gamification" className="space-y-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">Your Progress Journey</h2>
+                  <Badge className="bg-primary text-primary-foreground">
+                    Level 3 • Rising Star
+                  </Badge>
+                </div>
+
+                <GameficationPanel />
               </TabsContent>
             </Tabs>
           </div>
