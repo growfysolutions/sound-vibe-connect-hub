@@ -1,3 +1,4 @@
+
 "use client";
 
 // this is a client component
@@ -11,11 +12,11 @@ import { Button } from "@/components/ui/button";
 export function Hero() {
 
   return (
-    <section id="home">
+    <section id="home" className="pt-20">
       <div className="animation-delay-8 animate-fadeIn flex flex-col items-center justify-center px-4 text-center">
-        <div className="z-10 mb-6 sm:justify-center md:mb-4">
+        <div className="z-10 mb-6 sm:justify-center md:mb-8">
           <Link to="/auth" className="block">
-            <div className="flex items-center whitespace-nowrap rounded-full border border-white/20 bg-slate-900 px-4 py-2 text-sm leading-6 text-white hover:bg-slate-800 transition-colors">
+            <div className="flex items-center whitespace-nowrap rounded-full border border-white/20 bg-slate-900/80 backdrop-blur-sm px-4 py-2 text-sm leading-6 text-white hover:bg-slate-800/80 transition-colors shadow-lg">
               <Radio className="h-5 p-1 text-sky-400" />
               <span className="ml-2">Introducing Sound Vibe Connect Hub.</span>
               <span className="ml-2 font-semibold text-sky-400">Explore</span>
