@@ -1,167 +1,220 @@
-
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Music, Search, Upload, Users, Star, Play, Heart, Share2, 
-  MessageCircle, TrendingUp, Bell, Settings, LogOut, Filter,
-  Mic, Video, Headphones, Camera, MapPin, Clock, Gamepad2
-} from 'lucide-react';
+import { Music, Users, Search, Gamepad2, TrendingUp } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-// Import new components
+// Import components
 import UserProfileCard from '@/components/dashboard/UserProfileCard';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import GameficationPanel from '@/components/dashboard/GameficationPanel';
+import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
+import DashboardNav from '@/components/dashboard/DashboardNav';
+import { Project } from '@/components/dashboard/ProjectCard';
+import { Profile } from '@/components/dashboard/UserProfileCard';
+import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
+import FeedTab from '@/components/dashboard/FeedTab';
+import DiscoverTab from '@/components/dashboard/DiscoverTab';
+import { FilterValues } from '@/components/dashboard/FilterDrawer';
+import NetworkTab from '@/components/dashboard/NetworkTab';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeSearchQuery, setActiveSearchQuery] = useState('');
+  const [activeFilters, setActiveFilters] = useState<FilterValues>({ roles: [], experience: '' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [allProfessionals, setAllProfessionals] = useState<Profile[]>([]);
+  const [filteredProfessionals, setFilteredProfessionals] = useState<Profile[]>([]);
+  const [pendingConnections, setPendingConnections] = useState<string[]>([]);
+  const [connections, setConnections] = useState<Profile[]>([]);
 
-  // Mock data for demonstration
-  const mockProjects = [
-    {
-      id: 1,
-      title: 'Punjabi Folk Fusion Album',
-      artist: 'Simran Kaur',
-      role: 'Singer',
-      thumbnail: '🎤',
-      plays: '12.5K',
-      likes: '892',
-      duration: '3:45',
-      genre: 'Punjabi Folk',
-      isCollaborative: true
-    },
-    {
-      id: 2,
-      title: 'Modern Bhangra Beat',
-      artist: 'Arjun Singh',
-      role: 'Music Director',
-      thumbnail: '🎵',
-      plays: '8.2K',
-      likes: '543',
-      duration: '4:12',
-      genre: 'Bhangra',
-      isCollaborative: false
-    },
-    {
-      id: 3,
-      title: 'Sufi Soul Music Video',
-      artist: 'Priya Sharma',
-      role: 'Video Editor',
-      thumbnail: '🎬',
-      plays: '15.3K',
-      likes: '1.2K',
-      duration: '5:20',
-      genre: 'Sufi',
-      isCollaborative: true
-    }
-  ];
-
-  const mockNotifications = [
-    { id: 1, type: 'collaboration', message: 'Armaan Singh wants to collaborate on a new track', time: '2h ago' },
-    { id: 2, type: 'like', message: 'Your track "Dil Da Mamla" received 50 new likes', time: '4h ago' },
-    { id: 3, type: 'message', message: 'New message from Priya Kaur about the upcoming project', time: '6h ago' }
-  ];
-
-  const mockProfessionals = [
-    {
-      id: 1,
-      name: 'Armaan Singh',
-      role: 'Singer',
-      location: 'Punjab, India',
-      rating: 4.9,
-      experience: 'Professional (7 years)',
-      isVerified: true,
-      isOnline: true,
-      specialization: 'Punjabi Folk'
-    },
-    {
-      id: 2,
-      name: 'Priya Kaur',
-      role: 'Music Director',
-      location: 'Mumbai, India',
-      rating: 4.8,
-      experience: 'Expert (12 years)',
-      isVerified: true,
-      isOnline: false,
-      specialization: 'Bollywood'
-    },
-    {
-      id: 3,
-      name: 'Ravi Sharma',
-      role: 'Sound Engineer',
-      location: 'Toronto, Canada',
-      rating: 4.7,
-      experience: 'Professional (5 years)',
-      isVerified: false,
-      isOnline: true,
-      specialization: 'Mixing & Mastering'
-    }
-  ];
-
-  const getRoleIcon = (role: string) => {
-    switch (role.toLowerCase()) {
-      case 'singer': return <Mic className="w-4 h-4" />;
-      case 'music director': return <Music className="w-4 h-4" />;
-      case 'video editor': return <Video className="w-4 h-4" />;
-      case 'sound engineer': return <Headphones className="w-4 h-4" />;
-      default: return <Music className="w-4 h-4" />;
+  const handleConnectionUpdate = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await fetchConnections(user.id);
     }
   };
 
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleSendMessage = (id: string) => {
+    const professional = allProfessionals.find(p => p.id === id);
+    toast.info(`Opening message composer for ${professional?.full_name || 'user'}...`);
+  };
+
+  const handleViewProfile = (id: string) => {
+    const professional = allProfessionals.find(p => p.id === id);
+    toast.info(`Navigating to ${professional?.full_name || 'user'}'s profile...`);
+    navigate(`/profile/${id}`);
+  };
+
+  const handleFindConnections = () => {
+    toast.info('Searching for new connections...');
+  };
+
+  const handleConnect = async (addresseeId: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error('You must be logged in to connect.');
+      return;
+    }
+
+    if (user.id === addresseeId) {
+      toast.error("You can't connect with yourself.");
+      return;
+    }
+
+    const { error } = await supabase.from('connections').insert({
+      requester_id: user.id,
+      addressee_id: addresseeId,
+      status: 'pending',
+    });
+
+    if (error) {
+      if (error.code === '23505') { // Unique constraint violation
+        toast.error('Connection request already sent.');
+      } else {
+        toast.error('Failed to send connection request.');
+        console.error('Error sending connection request:', error);
+      }
+    } else {
+      const professional = allProfessionals.find(p => p.id === addresseeId);
+      toast.success(`Connection request sent to ${professional?.full_name || 'user'}!`);
+      setPendingConnections([...pendingConnections, addresseeId]);
+    }
+  };
+
+  const handleSearch = (query: string) => {
+    setActiveSearchQuery(query);
+  };
+
+  const handleApplyFilters = (filters: FilterValues) => {
+    setActiveFilters(filters);
+  };
+
+
+
+  const fetchProfessionals = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .neq('id', user.id); // Exclude the current user
+
+    if (error) {
+      toast.error('Could not fetch professionals.');
+      console.error(error);
+    } else {
+      setAllProfessionals(data as Profile[]);
+      setFilteredProfessionals(data as Profile[]);
+    }
+  };
+
+  const fetchConnections = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('connections')
+      .select(`
+        requester:requester_id(id, full_name, username, role, location, avatar_url, is_online, is_verified, specialization, experience, tags),
+        addressee:addressee_id(id, full_name, username, role, location, avatar_url, is_online, is_verified, specialization, experience, tags)
+      `)
+      .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
+      .eq('status', 'accepted');
+
+    if (error) {
+      toast.error('Could not fetch connections.');
+      console.error(error);
+    } else {
+      const connectedProfiles = data.map((c: any) => {
+        return c.requester.id === userId ? c.addressee : c.requester;
+      }).filter(p => p.id !== userId);
+      setConnections(connectedProfiles as Profile[]);
+    }
+  };
+
+  const fetchPendingConnections = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('connections')
+      .select('addressee_id')
+      .eq('requester_id', userId)
+      .eq('status', 'pending');
+
+    if (error) {
+      toast.error('Could not fetch pending connections.');
+      console.error(error);
+    } else {
+      setPendingConnections(data.map(c => c.addressee_id));
+    }
+  };
+
+  const fetchProjects = async () => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) return;
+
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', userData.user.id);
+
+    if (error) {
+      toast.error('Could not fetch projects.');
+      console.error(error);
+    } else {
+      setProjects(data as Project[]);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await Promise.all([
+          fetchProjects(),
+          fetchProfessionals(),
+          fetchPendingConnections(user.id),
+          fetchConnections(user.id)
+        ]);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    let results = [...allProfessionals];
+
+    if (activeSearchQuery) {
+      const lowercasedQuery = activeSearchQuery.toLowerCase();
+      results = results.filter(prof => 
+        prof.full_name?.toLowerCase().includes(lowercasedQuery) ||
+        prof.username?.toLowerCase().includes(lowercasedQuery) ||
+        prof.role?.toLowerCase().includes(lowercasedQuery) ||
+        prof.tags?.some(tag => tag.toLowerCase().includes(lowercasedQuery))
+      );
+    }
+
+    if (activeFilters.roles.length > 0) {
+      results = results.filter(prof => activeFilters.roles.includes(prof.role));
+    }
+
+    if (activeFilters.experience) {
+      results = results.filter(prof => prof.experience === activeFilters.experience);
+    }
+
+    setFilteredProfessionals(results);
+  }, [activeSearchQuery, activeFilters, allProfessionals]);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="nav-premium sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-3">
-                <div className="icon-premium">
-                  <Music className="w-6 h-6 text-primary" />
-                </div>
-                <span className="text-xl font-bold text-gradient-primary">SoundConnect</span>
-              </div>
-              
-              <div className="hidden md:flex relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search professionals, projects, or genres..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-80 input-premium"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button className="btn-premium">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload
-              </Button>
-              
-              <div className="relative">
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                  <Bell className="w-5 h-5" />
-                </Button>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full"></div>
-              </div>
-
-              <Avatar className="w-10 h-10 cursor-pointer border-2 border-primary">
-                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-                  JS
-                </AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <DashboardNav 
+        searchQuery={activeSearchQuery} 
+        setSearchQuery={setActiveSearchQuery} 
+        handleOpenModal={handleOpenModal}
+        onConnectionUpdate={handleConnectionUpdate}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
@@ -197,214 +250,45 @@ const Dashboard = () => {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="feed" className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Latest from Your Network</h2>
-                  <Button variant="outline" className="hover-scale">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filter
-                  </Button>
-                </div>
-
-                {mockProjects.map((project) => (
-                  <Card key={project.id} className="floating-card group hover-lift">
-                    <CardContent className="p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-                          {project.thumbnail}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                                {project.title}
-                              </h3>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <span className="text-muted-foreground">by {project.artist}</span>
-                                <Badge variant="secondary" className="text-xs">
-                                  {project.role}
-                                </Badge>
-                                {project.isCollaborative && (
-                                  <Badge className="bg-primary/20 text-primary text-xs">
-                                    Collaborative
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <Button size="icon" className="btn-premium opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Play className="w-4 h-4" />
-                            </Button>
-                          </div>
-
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
-                            <span className="flex items-center">
-                              <Clock className="w-3 h-3 mr-1" />
-                              {project.duration}
-                            </span>
-                            <span>{project.genre}</span>
-                            <span>{project.plays} plays</span>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
-                                <Heart className="w-4 h-4 mr-2" />
-                                {project.likes}
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                <MessageCircle className="w-4 h-4 mr-2" />
-                                Comment
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                <Share2 className="w-4 h-4 mr-2" />
-                                Share
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <TabsContent value="feed">
+                <FeedTab projects={projects} />
               </TabsContent>
 
-              <TabsContent value="discover" className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Discover Professionals</h2>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" className="hover-scale">
-                      <Filter className="w-4 h-4 mr-2" />
-                      Filters
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  {mockProfessionals.map((professional) => (
-                    <Card key={professional.id} className="floating-card group hover-lift">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <div className="relative">
-                              <Avatar className="w-12 h-12 border-2 border-primary">
-                                <AvatarFallback className="bg-primary text-primary-foreground">
-                                  {professional.name.split(' ').map(n => n[0]).join('')}
-                                </AvatarFallback>
-                              </Avatar>
-                              {professional.isOnline && (
-                                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background"></div>
-                              )}
-                            </div>
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <h3 className="font-semibold">{professional.name}</h3>
-                                {professional.isVerified && (
-                                  <Star className="w-4 h-4 text-primary fill-current" />
-                                )}
-                              </div>
-                              <div className="flex items-center space-x-2 mt-1">
-                                {getRoleIcon(professional.role)}
-                                <span className="text-muted-foreground text-sm">{professional.role}</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="text-right">
-                            <div className="flex items-center text-primary text-sm mb-1">
-                              <Star className="w-3 h-3 mr-1 fill-current" />
-                              {professional.rating}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-muted-foreground text-sm">
-                            <MapPin className="w-3 h-3 mr-2" />
-                            {professional.location}
-                          </div>
-                          <p className="text-sm">{professional.specialization}</p>
-                          <p className="text-muted-foreground text-xs">{professional.experience}</p>
-                        </div>
-
-                        <div className="flex space-x-2">
-                          <Button size="sm" className="btn-premium flex-1">
-                            Connect
-                          </Button>
-                          <Button size="sm" variant="outline" className="hover-scale">
-                            <MessageCircle className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              <TabsContent value="discover">
+                <DiscoverTab 
+                  professionals={filteredProfessionals} 
+                  pendingConnections={pendingConnections}
+                  handleConnect={handleConnect}
+                  handleSendMessage={handleSendMessage}
+                  handleSearch={handleSearch}
+                  onApplyFilters={handleApplyFilters}
+                />
               </TabsContent>
 
-              <TabsContent value="projects" className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">My Projects</h2>
-                  <Button className="btn-premium">
-                    <Upload className="w-4 h-4 mr-2" />
-                    New Project
-                  </Button>
-                </div>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <Card className="floating-card border-dashed border-border">
-                    <CardContent className="p-8 text-center">
-                      <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Upload className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                      <h3 className="font-medium mb-2">Upload Your First Project</h3>
-                      <p className="text-muted-foreground text-sm mb-4">Share your music, videos, or creative work with the community</p>
-                      <Button className="btn-premium">
-                        Get Started
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
+              <TabsContent value="projects">
+                <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
               </TabsContent>
 
-              <TabsContent value="network" className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">My Network</h2>
-                  <Button className="btn-premium">
-                    <Users className="w-4 h-4 mr-2" />
-                    Find Connections
-                  </Button>
-                </div>
-
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <Users className="w-10 h-10 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold text-xl mb-2">Build Your Network</h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    Connect with other music professionals to collaborate, learn, and grow your career together.
-                  </p>
-                  <Button className="btn-premium">
-                    Discover Professionals
-                  </Button>
-                </div>
+              <TabsContent value="network">
+                <NetworkTab 
+                  professionals={connections}
+                  handleFindConnections={handleFindConnections}
+                  handleViewProfile={handleViewProfile}
+                  handleSendMessage={handleSendMessage}
+                />
               </TabsContent>
 
-              <TabsContent value="gamification" className="space-y-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Your Progress Journey</h2>
-                  <Badge className="bg-primary text-primary-foreground">
-                    Level 3 • Rising Star
-                  </Badge>
-                </div>
-
+              <TabsContent value="gamification">
                 <GameficationPanel />
               </TabsContent>
             </Tabs>
           </div>
         </div>
       </div>
+      <CreateProjectModal isOpen={isModalOpen} onClose={handleCloseModal} onProjectCreated={fetchProjects} />
     </div>
   );
 };
 
 export default Dashboard;
+
