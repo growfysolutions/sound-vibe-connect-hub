@@ -19,30 +19,17 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Completely bypass TypeScript compilation
     rollupOptions: {
       external: []
     }
   },
   esbuild: {
-    // Use esbuild exclusively for TypeScript compilation
     target: 'esnext',
-    // Suppress all TypeScript-related warnings and errors
     logOverride: { 
       'this-is-undefined-in-esm': 'silent',
       'tsconfig-json': 'silent'
-    },
-    // Skip type checking entirely
-    tsconfigRaw: {
-      compilerOptions: {
-        skipLibCheck: true,
-        noEmit: false,
-        composite: false,
-        references: []
-      }
     }
   },
-  // Skip all TypeScript project reference checking
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   },
