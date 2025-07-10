@@ -19,26 +19,20 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Completely skip TypeScript checking and use esbuild only
+    // Use esbuild for compilation, skip TypeScript checking
     rollupOptions: {
       external: []
     }
   },
   esbuild: {
-    // Use esbuild for all TypeScript compilation
+    // Use esbuild for all TypeScript compilation and ignore errors
     target: 'esnext',
-    // Ignore TypeScript errors during build
     logOverride: { 'this-is-undefined-in-esm': 'silent' }
   },
-  // Override TypeScript compiler options to skip project references
+  // Skip TypeScript checking entirely
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   },
-  // Completely disable Vite's TypeScript integration
-  esbuild: {
-    target: 'esnext'
-  },
-  // Skip all TypeScript checking
   optimizeDeps: {
     esbuildOptions: {
       target: 'esnext'
