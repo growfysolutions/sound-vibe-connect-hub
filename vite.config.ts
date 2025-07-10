@@ -28,5 +28,9 @@ export default defineConfig(({ mode }) => ({
   esbuild: {
     // Use esbuild for TypeScript compilation instead of tsc
     target: 'esnext'
+  },
+  // Override TypeScript compiler options to skip project references
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   }
 }))
