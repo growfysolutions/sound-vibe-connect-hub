@@ -26,7 +26,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <main className="pt-24 px-6">
+      <main className="pt-12 px-6">
         <Hero />
 
         {/* Features Section */}
