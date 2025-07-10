@@ -1,123 +1,193 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Star, Trophy, Target, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { MapPin, Edit } from 'lucide-react';
+
+export interface Profile {
+  id: string;
+  username: string;
+  full_name: string;
+  avatar_url: string;
+  website: string;
+  role: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  level: number;
+  experience?: string;
+  is_verified?: boolean;
+  is_online?: boolean;
+  specialization?: string;
+  tags?: string[];
+}
 
 const UserProfileCard = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [projectCount, setProjectCount] = useState(0);
+  const [connectionsCount, setConnectionsCount] = useState(0);
+  const [collaborationsCount, setCollaborationsCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const achievements = [
-    { id: 1, name: 'First Collaboration', icon: '🤝', unlocked: true },
-    { id: 2, name: 'Rising Star', icon: '⭐', unlocked: true },
-    { id: 3, name: 'Community Builder', icon: '🏆', unlocked: false },
-    { id: 4, name: 'Master Mixer', icon: '🎧', unlocked: false }
-  ];
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
 
-  const profileCompletion = 75;
-  const currentLevel = 3;
-  const nextLevelProgress = 60;
+        if (profileError && profileError.code === 'PGRST116') {
+          // Profile not found, create one with some default professional data for testing
+          const { data: newProfile, error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              username: user.email ? user.email.split('@')[0] : `user-${user.id.slice(0, 8)}`,
+              full_name: user.email ? user.email.split('@')[0] : 'New User',
+              role: 'Producer',
+              location: 'Los Angeles, CA',
+              experience: '5-10 years',
+              is_verified: true,
+              is_online: true,
+              specialization: 'Hip Hop, R&B',
+              tags: ['mixing', 'mastering', 'beatmaking'],
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            toast.error('Failed to create user profile.');
+            console.error('Error creating profile:', insertError);
+          } else {
+            setProfile(newProfile as Profile);
+          }
+        } else if (profileError) {
+          toast.error('Could not fetch user profile.');
+          console.error('Error fetching profile:', profileError);
+        } else {
+          setProfile(profileData as Profile);
+        }
+
+        const { count, error: countError } = await supabase
+          .from('projects')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        if (countError) {
+          toast.error('Could not fetch project count.');
+        } else {
+          setProjectCount(count || 0);
+        }
+
+        const { count: connectionsCount, error: connectionsError } = await supabase
+          .from('connections')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+
+        if (connectionsError) {
+          toast.error('Could not fetch connections count.');
+        } else {
+          setConnectionsCount(connectionsCount || 0);
+        }
+
+        const { count: collaborationsCount, error: collaborationsError } = await supabase
+          .from('project_collaborators')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id);
+
+        if (collaborationsError) {
+          toast.error('Could not fetch collaborations count.');
+        } else {
+          setCollaborationsCount(collaborationsCount || 0);
+        }
+      } else {
+        navigate('/login');
+      }
+      setLoading(false);
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <Card className="floating-card">
+        <CardHeader>
+          <div className="animate-pulse flex flex-col items-center space-y-4">
+            <div className="rounded-full bg-muted h-20 w-20"></div>
+            <div className="h-6 bg-muted rounded w-3/4"></div>
+            <div className="h-4 bg-muted rounded w-1/2"></div>
+          </div>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
-    <Card className="floating-card mb-6">
-      <CardContent className="p-6">
-        <div className="text-center mb-6">
-          <div className="relative inline-block">
-            <Avatar className="w-20 h-20 mx-auto mb-4 border-3 border-primary">
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                JS
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold">
-              {currentLevel}
-            </div>
-          </div>
-          
-          <h3 className="font-semibold text-lg">Jasbir Singh</h3>
-          <div className="flex items-center justify-center space-x-2 mt-2">
-            <Badge className="bg-primary text-primary-foreground">Singer</Badge>
-            <div className="flex items-center text-primary">
-              <Star className="w-4 h-4 mr-1 fill-current" />
-              <span className="text-sm font-medium">4.9</span>
-            </div>
-          </div>
-          <p className="text-muted-foreground text-sm mt-2">Punjabi Folk Specialist</p>
+    <Card className="floating-card">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <Avatar className="w-20 h-20 border-4 border-primary">
+            <AvatarFallback className="text-3xl bg-primary text-primary-foreground">
+              {profile?.full_name?.charAt(0).toUpperCase() || profile?.username?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <Button variant="outline" size="icon" onClick={() => navigate('/settings')}>
+            <Edit className="w-4 h-4" />
+          </Button>
         </div>
-
-        {/* Level Progress */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-muted-foreground">Level {currentLevel} Progress</span>
-            <span className="text-primary font-medium">{nextLevelProgress}%</span>
-          </div>
-          <Progress value={nextLevelProgress} className="h-2" />
+        <h2 className="text-xl font-bold">{profile?.full_name || profile?.username || user?.email?.split('@')[0] || 'New User'}</h2>
+        <p className="text-muted-foreground mb-2">{profile?.role || 'Role not set'}</p>
+        <div className="flex items-center justify-center text-muted-foreground text-sm mb-4">
+          <MapPin className="w-4 h-4 mr-1" />
+          {profile?.location || 'Location not set'}
         </div>
-
-        {/* Profile Completion */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-muted-foreground">Profile Completion</span>
-            <span className="text-primary font-medium">{profileCompletion}%</span>
+        <div className="flex justify-center space-x-4 mb-4">
+          <div className="text-center">
+            <p className="font-bold text-lg">{profile?.rating?.toFixed(1) || '0.0'}</p>
+            <p className="text-xs text-muted-foreground">Rating</p>
           </div>
-          <Progress value={profileCompletion} className="h-2" />
-        </div>
-
-        {/* Achievements */}
-        <div className="mb-4">
-          <h4 className="text-sm font-medium text-foreground mb-3 flex items-center">
-            <Trophy className="w-4 h-4 mr-2 text-primary" />
-            Recent Achievements
-          </h4>
-          <div className="grid grid-cols-4 gap-2">
-            {achievements.map((achievement) => (
-              <div
-                key={achievement.id}
-                className={`p-2 rounded-lg border text-center transition-all ${
-                  achievement.unlocked
-                    ? 'border-primary bg-primary/10 transform hover:scale-105'
-                    : 'border-border bg-muted/30 opacity-50'
-                }`}
-              >
-                <div className="text-lg mb-1">{achievement.icon}</div>
-                <div className="text-xs text-muted-foreground">{achievement.name}</div>
-              </div>
-            ))}
+          <div className="text-center">
+            <p className="font-bold text-lg">{profile?.reviews || 0}</p>
+            <p className="text-xs text-muted-foreground">Reviews</p>
           </div>
         </div>
-
-        {/* Stats */}
-        <div className="space-y-3 mb-6">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Profile Views</span>
-            <span className="font-medium flex items-center">
-              <Target className="w-3 h-3 mr-1 text-primary" />
-              1,234
-            </span>
+        <div className="w-full bg-muted rounded-full h-2.5 mb-2">
+          <div className="bg-primary h-2.5 rounded-full" style={{ width: `${(profile?.level || 1) * 10}%` }}></div>
+        </div>
+        <p className="text-center text-xs text-muted-foreground">Level {profile?.level || 1}</p>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-around text-center p-4 bg-muted/50 rounded-lg">
+          <div>
+            <h4 className="font-bold text-lg">{projectCount}</h4>
+            <p className="text-xs text-muted-foreground">Projects</p>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Collaborations</span>
-            <span className="font-medium flex items-center">
-              <Zap className="w-3 h-3 mr-1 text-primary" />
-              23
-            </span>
+          <div>
+            <h4 className="font-bold text-lg">{connectionsCount}</h4>
+            <p className="text-xs text-muted-foreground">Connections</p>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Rating</span>
-            <span className="text-primary font-medium flex items-center">
-              4.9 <Star className="w-3 h-3 ml-1 fill-current" />
-            </span>
+          <div>
+            <h4 className="font-bold text-lg">{collaborationsCount}</h4>
+            <p className="text-xs text-muted-foreground">Collaborations</p>
           </div>
         </div>
-
-        <Button className="w-full btn-premium" onClick={() => navigate('/profile')}>
-          View Full Profile
-        </Button>
       </CardContent>
     </Card>
   );
 };
 
 export default UserProfileCard;
+
