@@ -3,7 +3,7 @@
 
 // this is a client component
 import { Link } from "react-router-dom";
-import { ArrowRight, Plus, Radio } from 'lucide-react';
+import { ArrowRight, Radio } from 'lucide-react';
 
 import { Suspense, lazy } from 'react';
 const CanvasAnimation = lazy(() => import('@/components/ui/CanvasAnimation'));
@@ -30,22 +30,6 @@ export function Hero() {
           <div className="px-2">
             <div className="border-ali relative mx-auto h-full max-w-7xl border p-6 [mask-image:radial-gradient(800rem_96rem_at_center,white,transparent)] md:px-12 md:py-20">
               <h1 className="relative select-none px-3 py-2 text-center text-5xl font-semibold leading-none tracking-tight md:text-8xl">
-                <Plus
-                  strokeWidth={4}
-                  className="text-ali absolute -left-5 -top-5 h-10 w-10"
-                />
-                <Plus
-                  strokeWidth={4}
-                  className="text-ali absolute -bottom-5 -left-5 h-10 w-10"
-                />
-                <Plus
-                  strokeWidth={4}
-                  className="text-ali absolute -right-5 -top-5 h-10 w-10"
-                />
-                <Plus
-                  strokeWidth={4}
-                  className="text-ali absolute -bottom-5 -right-5 h-10 w-10"
-                />
                 <div>Your complete platform for Music Collaboration.</div>
               </h1>
               <div className="flex items-center justify-center gap-1">
