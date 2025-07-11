@@ -9,6 +9,7 @@ import Settings from './pages/Settings';
 import ProfileSetup from "./pages/ProfileSetup";
 import Login from "./pages/Login";
 import DashboardPage from './pages/Dashboard';
+import ProfilePage from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ const App = () => (
             <Route path="/auth" element={<Login />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile-setup" element={<ProfileSetup />} />
-            <Route path="/profile" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
