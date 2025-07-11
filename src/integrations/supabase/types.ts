@@ -1,321 +1,298 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = | string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export type Database = {
-  // Allows to automatically instanciate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
-  }
+export interface Database {
   public: {
     Tables: {
-      connections: {
+      comments: {
         Row: {
-          addressee_id: string
-          created_at: string
-          id: number
-          requester_id: string
-          status: string
-          updated_at: string
-        }
+          id: string;
+          created_at: string;
+          content: string;
+          user_id: string;
+          post_id: string;
+        };
         Insert: {
-          addressee_id: string
-          created_at?: string
-          id?: never
-          requester_id: string
-          status: string
-          updated_at?: string
-        }
+          id?: string;
+          created_at?: string;
+          content: string;
+          user_id: string;
+          post_id: string;
+        };
         Update: {
-          addressee_id?: string
-          created_at?: string
-          id?: never
-          requester_id?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          bio: string | null
-          experience: string | null
-          full_name: string | null
-          id: string
-          is_online: boolean | null
-          is_verified: boolean | null
-          level: number | null
-          location: string | null
-          portfolio: Json | null
-          rating: number | null
-          reviews: number | null
-          role: string | null
-          specialization: string | null
-          tags: string[] | null
-          updated_at: string | null
-          username: string | null
-          website: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          bio?: string | null
-          experience?: string | null
-          full_name?: string | null
-          id: string
-          is_online?: boolean | null
-          is_verified?: boolean | null
-          level?: number | null
-          location?: string | null
-          portfolio?: Json | null
-          rating?: number | null
-          reviews?: number | null
-          role?: string | null
-          specialization?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-          username?: string | null
-          website?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          bio?: string | null
-          experience?: string | null
-          full_name?: string | null
-          id?: string
-          is_online?: boolean | null
-          is_verified?: boolean | null
-          level?: number | null
-          location?: string | null
-          portfolio?: Json | null
-          rating?: number | null
-          reviews?: number | null
-          role?: string | null
-          specialization?: string | null
-          tags?: string[] | null
-          updated_at?: string | null
-          username?: string | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      project_collaborators: {
-        Row: {
-          created_at: string
-          id: number
-          project_id: number
-          role: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: never
-          project_id: number
-          role: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: never
-          project_id?: number
-          role?: string
-          user_id?: string
-        }
+          id?: string;
+          created_at?: string;
+          content?: string;
+          user_id?: string;
+          post_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "project_collaborators_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
+            foreignKeyName: "comments_post_id_fkey";
+            columns: ["post_id"];
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+          {
+            foreignKeyName: "comments_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      connections: {
+        Row: {
+          id: number;
+          created_at: string;
+          requester_id: string;
+          addressee_id: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          requester_id: string;
+          addressee_id: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          requester_id?: string;
+          addressee_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "connections_addressee_id_fkey";
+            columns: ["addressee_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "connections_requester_id_fkey";
+            columns: ["requester_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      likes: {
+        Row: {
+          id: string;
+          created_at: string;
+          user_id: string;
+          post_id: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          user_id: string;
+          post_id: string;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          user_id?: string;
+          post_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "likes_post_id_fkey";
+            columns: ["post_id"];
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      posts: {
+        Row: {
+          id: string;
+          created_at: string;
+          content: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          content: string;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          content?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      profiles: {
+        Row: {
+          id: string;
+          updated_at: string | null;
+          username: string | null;
+          full_name: string | null;
+          avatar_url: string | null;
+          website: string | null;
+          specialization: string | null;
+          role: string | null;
+          experience: string | null;
+          skills: string[] | null;
+          portfolio_url: string | null;
+          bio: string | null;
+          location: string | null;
+          rating: number | null;
+          reviews: number | null;
+          level: number | null;
+        };
+        Insert: {
+          id: string;
+          updated_at?: string | null;
+          username?: string | null;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          website?: string | null;
+          specialization?: string | null;
+          role?: string | null;
+          experience?: string | null;
+          skills?: string[] | null;
+          portfolio_url?: string | null;
+          bio?: string | null;
+          location?: string | null;
+          rating?: number | null;
+          reviews?: number | null;
+          level?: number | null;
+        };
+        Update: {
+          id?: string;
+          updated_at?: string | null;
+          username?: string | null;
+          full_name?: string | null;
+          avatar_url?: string | null;
+          website?: string | null;
+          specialization?: string | null;
+          role?: string | null;
+          experience?: string | null;
+          skills?: string[] | null;
+          portfolio_url?: string | null;
+          bio?: string | null;
+          location?: string | null;
+          rating?: number | null;
+          reviews?: number | null;
+          level?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      project_collaborators: {
+        Row: {
+          project_id: number;
+          user_id: string;
+          role: string;
+        };
+        Insert: {
+          project_id: number;
+          user_id: string;
+          role: string;
+        };
+        Update: {
+          project_id?: number;
+          user_id?: string;
+          role?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "project_collaborators_project_id_fkey";
+            columns: ["project_id"];
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "project_collaborators_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       projects: {
         Row: {
-          artist: string
-          created_at: string
-          duration: string | null
-          genre: string | null
-          id: number
-          is_collaborative: boolean | null
-          likes: number | null
-          plays: number | null
-          role: string
-          thumbnail: string | null
-          title: string
-          user_id: string
-        }
+          id: number;
+          created_at: string;
+          title: string;
+          user_id: string;
+          artist: string;
+          role: string;
+          is_collaborative: boolean | null;
+          genre: string | null;
+          thumbnail: string | null;
+          duration: string | null;
+          plays: number | null;
+          likes: number | null;
+        };
         Insert: {
-          artist: string
-          created_at?: string
-          duration?: string | null
-          genre?: string | null
-          id?: never
-          is_collaborative?: boolean | null
-          likes?: number | null
-          plays?: number | null
-          role: string
-          thumbnail?: string | null
-          title: string
-          user_id: string
-        }
+          id?: number;
+          created_at?: string;
+          title: string;
+          user_id: string;
+          artist: string;
+          role: string;
+          is_collaborative?: boolean | null;
+          genre?: string | null;
+          thumbnail?: string | null;
+          duration?: string | null;
+          plays?: number | null;
+          likes?: number | null;
+        };
         Update: {
-          artist?: string
-          created_at?: string
-          duration?: string | null
-          genre?: string | null
-          id?: never
-          is_collaborative?: boolean | null
-          likes?: number | null
-          plays?: number | null
-          role?: string
-          thumbnail?: string | null
-          title?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
+          id?: number;
+          created_at?: string;
+          title?: string;
+          user_id?: string;
+          artist?: string;
+          role?: string;
+          is_collaborative?: boolean | null;
+          genre?: string | null;
+          thumbnail?: string | null;
+          duration?: string | null;
+          plays?: number | null;
+          likes?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+    };
+    Views: { [_ in never]: never };
+    Functions: { [_ in never]: never };
+    Enums: { [_ in never]: never };
+    CompositeTypes: { [_ in never]: never };
+  };
 }
-
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
-
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
-
-export type Tables<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
-
-export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
-
-export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
-
-export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
-  }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
-
-export const Constants = {
-  public: {
-    Enums: {},
-  },
-} as const

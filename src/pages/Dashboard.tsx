@@ -14,7 +14,7 @@ import DashboardNav from '@/components/dashboard/DashboardNav';
 import { Project } from '@/components/dashboard/ProjectCard';
 import { Profile } from '@/components/dashboard/UserProfileCard';
 import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
-import FeedTab from '@/components/dashboard/FeedTab';
+import { FeedTimeline } from '@/components/feed/FeedTimeline';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import { FilterValues } from '@/components/dashboard/FilterDrawer';
 import NetworkTab from '@/components/dashboard/NetworkTab';
@@ -164,7 +164,21 @@ const Dashboard = () => {
       toast.error('Could not fetch projects.');
       console.error(error);
     } else {
-      setProjects(data as Project[]);
+      if (data) {
+        const transformedProjects: Project[] = data.map((project) => ({
+          id: project.id,
+          title: project.title,
+          artist: project.artist,
+          role: project.role,
+          thumbnail: project.thumbnail || '🎵',
+          plays: String(project.plays || 0),
+          likes: String(project.likes || 0),
+          duration: project.duration || '0:00',
+          genre: project.genre || 'Unknown',
+          isCollaborative: project.is_collaborative || false,
+        }));
+        setProjects(transformedProjects);
+      }
     }
   };
 
@@ -251,7 +265,7 @@ const Dashboard = () => {
               </TabsList>
 
               <TabsContent value="feed">
-                <FeedTab projects={projects} />
+                <FeedTimeline />
               </TabsContent>
 
               <TabsContent value="discover">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, SlidersHorizontal } from 'lucide-react';
@@ -16,7 +16,7 @@ interface DiscoverTabProps {
 }
 
 const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnections, handleConnect, handleSendMessage, handleSearch, onApplyFilters }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -25,8 +25,7 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnect
           <Input 
             placeholder="Search by name, role, or genre..." 
             className="pl-10 w-full" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -36,9 +35,7 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnect
               Filters
             </Button>
           </FilterDrawer>
-          <Button className="btn-premium" onClick={() => handleSearch(searchQuery)}>
-            Search
-          </Button>
+          
         </div>
       </div>
 
