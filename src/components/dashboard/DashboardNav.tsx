@@ -15,6 +15,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Profile } from './UserProfileCard';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface ConnectionRequest {
   id: number;
@@ -110,6 +111,8 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
               <Upload className="w-4 h-4 mr-2" />
               Upload
             </Button>
+
+            <ThemeToggle />
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
