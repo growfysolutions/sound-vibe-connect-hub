@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
@@ -17,14 +16,17 @@ interface CreateProjectModalProps {
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose, onProjectCreated }) => {
   const [title, setTitle] = useState('');
   const [genre, setGenre] = useState('');
-  const [description, setDescription] = useState('');
+  const [artist, setArtist] = useState('');
+  const [role, setRole] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const resetForm = () => {
     setTitle('');
     setGenre('');
-    setDescription('');
+    setArtist('');
+    setRole('');
     setFile(null);
   };
 
@@ -47,7 +49,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `projects/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('projects')
         .upload(filePath, file);
 
@@ -55,19 +57,51 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
         throw uploadError;
       }
 
-      const { data: urlData } = supabase.storage
-        .from('projects')
-        .getPublicUrl(filePath);
-
-      const { error: dbError } = await supabase.from('projects').insert([
+      const { data: newProject, error: dbError } = await supabase.from('projects').insert(
         {
           title,
           genre,
-          description,
-          audio_url: urlData.publicUrl,
+          artist,
+          role,
+          audio_path: uploadData.path,
           user_id: user.id,
         },
-      ]);
+      ).select('id').single();
+
+      if (dbError || !newProject) {
+        throw dbError || new Error('Failed to create project or get its ID.');
+      }
+
+      // Create a group chat for the project
+      const { data: newConversation, error: chatError } = await supabase
+        .from('conversations')
+        .insert({
+          project_id: newProject.id,
+          name: `${title} Chat`,
+          is_group_chat: true,
+          created_by: user.id,
+        })
+        .select('id')
+        .single();
+
+      if (chatError || !newConversation) {
+        throw chatError || new Error('Failed to create project chat.');
+      }
+
+      // Add the creator as the first participant
+      const { error: participantError } = await supabase
+        .from('conversation_participants')
+        .insert({
+          conversation_id: newConversation.id,
+          user_id: user.id,
+        });
+
+      if (participantError) {
+        // If adding participant fails, we should ideally roll back the chat creation
+        // For now, we'll just log the error and notify the user
+        console.error('Failed to add creator to project chat:', participantError);
+        toast.warning('Project created, but failed to set up chat room correctly.');
+      }
 
       if (dbError) {
         throw dbError;
@@ -86,8 +120,36 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+      e.dataTransfer.clearData();
     }
   };
 
@@ -111,19 +173,33 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
               <Input id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">Description</Label>
-              <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="col-span-3" />
+              <Label htmlFor="artist" className="text-right">Artist</Label>
+              <Input id="artist" value={artist} onChange={(e) => setArtist(e.target.value)} className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="track-upload" className="text-right">Track</Label>
-              <div className="col-span-3">
-                <Button asChild variant="outline">
-                  <label htmlFor="track-upload-input" className="cursor-pointer flex items-center w-full">
-                    <Upload className="w-4 h-4 mr-2" />
-                    {file ? file.name : 'Upload Audio File'}
-                    <input id="track-upload-input" type="file" className="sr-only" onChange={handleFileChange} accept="audio/*" />
-                  </label>
-                </Button>
+              <Label htmlFor="role" className="text-right">Your Role</Label>
+              <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} className="col-span-3" required />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="track-upload" className="text-right pt-2">Track</Label>
+              <div
+                className={`col-span-3 border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
+                  ${isDragging ? 'border-primary bg-primary/10' : 'border-muted hover:border-primary/50'}`}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('track-upload-input')?.click()}
+              >
+                <input id="track-upload-input" type="file" className="sr-only" onChange={handleFileChange} accept="audio/*" />
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <Upload className="w-8 h-8 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-semibold text-primary">Click to upload</span> or drag and drop
+                  </p>
+                  <p className="text-xs text-muted-foreground">Audio files (MP3, WAV, etc.)</p>
+                  {file && <p className="text-sm font-medium mt-2">{file.name}</p>}
+                </div>
               </div>
             </div>
           </div>

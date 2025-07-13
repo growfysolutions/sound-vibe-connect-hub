@@ -1,20 +1,9 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Play, Heart, MessageCircle, Share2, Clock } from 'lucide-react';
+import { Play, Heart, MessageCircle, Share2, Clock, Music } from 'lucide-react';
+import { Database } from '@/types/supabase';
 
-export interface Project {
-  id: number;
-  title: string;
-  artist: string;
-  role: string;
-  thumbnail: string;
-  plays: string;
-  likes: string;
-  duration: string;
-  genre: string;
-  isCollaborative: boolean;
-}
+export type Project = Database['public']['Tables']['projects']['Row'];
 
 interface ProjectCardProps {
   project: Project;
@@ -26,7 +15,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       <CardContent className="p-6">
         <div className="flex items-start space-x-4">
           <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-            {project.thumbnail}
+            <Music className="w-8 h-8 text-primary" />
           </div>
           
           <div className="flex-1 min-w-0">
@@ -35,17 +24,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
-                <div className="flex items-center space-x-2 mt-1">
-                  <span className="text-muted-foreground">by {project.artist}</span>
-                  <Badge variant="secondary" className="text-xs">
-                    {project.role}
-                  </Badge>
-                  {project.isCollaborative && (
-                    <Badge className="bg-primary/20 text-primary text-xs">
-                      Collaborative
-                    </Badge>
-                  )}
-                </div>
+                <p className="text-sm text-muted-foreground truncate">
+                  {project.description}
+                </p>
               </div>
               <Button size="icon" className="btn-premium opacity-0 group-hover:opacity-100 transition-opacity">
                 <Play className="w-4 h-4" />
@@ -55,17 +36,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
               <span className="flex items-center">
                 <Clock className="w-3 h-3 mr-1" />
-                {project.duration}
+                {new Date(project.created_at).toLocaleDateString()}
               </span>
-              <span>{project.genre}</span>
-              <span>{project.plays} plays</span>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
                   <Heart className="w-4 h-4 mr-2" />
-                  {project.likes}
+                  0
                 </Button>
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                   <MessageCircle className="w-4 h-4 mr-2" />

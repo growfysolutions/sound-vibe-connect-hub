@@ -1,23 +1,30 @@
 import React from 'react';
+import { useProfile } from '@/contexts/ProfileContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, ShieldCheck, Zap } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
-const GameficationPanel = () => {
+interface GameficationPanelProps {
+  connectionsCount: number;
+  projectsCount: number;
+}
+
+const GameficationPanel: React.FC<GameficationPanelProps> = ({ connectionsCount, projectsCount }) => {
+  const { profile } = useProfile();
   const userProgress = {
-    level: 3,
-    levelName: 'Rising Star',
-    progress: 65,
-    points: 2850,
-    nextLevelPoints: 5000,
+    level: profile?.level ?? 1,
+    levelName: 'Rising Star', // This can be made dynamic later based on level
+    progress: profile?.xp ? (profile.xp % 1000) / 10 : 0, // Example: 1000xp per level
+    points: profile?.xp ?? 0,
+    nextLevelPoints: (profile?.level ?? 1) * 1000,
   };
 
   const achievements = [
-    { id: 1, icon: <Trophy className="w-5 h-5 text-yellow-500" />, title: 'First Collaboration', description: 'Completed your first project with another artist.' },
-    { id: 2, icon: <ShieldCheck className="w-5 h-5 text-green-500" />, title: 'Verified Artist', description: 'Completed profile verification.' },
-    { id: 3, icon: <Zap className="w-5 h-5 text-blue-500" />, title: 'Power Networker', description: 'Connected with 10 professionals.' },
-  ];
+    { id: 1, icon: <Trophy className="w-5 h-5 text-yellow-500" />, title: 'First Collaboration', description: 'Completed your first project.', unlocked: projectsCount > 0 },
+    { id: 2, icon: <ShieldCheck className="w-5 h-5 text-green-500" />, title: 'Verified Artist', description: 'Completed profile verification.', unlocked: profile?.is_verified ?? false },
+    { id: 3, icon: <Zap className="w-5 h-5 text-blue-500" />, title: 'Power Networker', description: 'Connected with 10 professionals.', unlocked: connectionsCount >= 10 },
+  ].filter(ach => ach.unlocked);
 
   return (
     <Card className="floating-card">

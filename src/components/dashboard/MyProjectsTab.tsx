@@ -1,8 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Upload, Users, Play, Heart } from 'lucide-react';
+import { Upload, Users, Play, Heart, MessageSquare } from 'lucide-react';
 import { Project } from './ProjectCard';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface MyProjectsTabProps {
   projects: Project[];
@@ -10,6 +13,23 @@ interface MyProjectsTabProps {
 }
 
 const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal }) => {
+  const navigate = useNavigate();
+
+  const handleGoToChat = async (projectId: number) => {
+    const { data: conversation, error } = await supabase
+      .from('conversations')
+      .select('*, conversation_participants(*, profiles(*))')
+      .eq('project_id', projectId)
+      .single();
+
+    if (error || !conversation) {
+      toast.error('Could not find the project chat room.');
+      console.error('Error fetching project conversation:', error);
+      return;
+    }
+
+    navigate('/messages', { state: { conversation } });
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
@@ -28,7 +48,7 @@ const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal
                 {project.thumbnail}
               </div>
               <div className="absolute top-2 right-2 flex space-x-1">
-                {project.isCollaborative && (
+                {project.is_collaborative && (
                   <Badge className="bg-primary/80 text-primary-foreground text-xs">
                     <Users className="w-3 h-3 mr-1" />
                     Collab
@@ -42,14 +62,19 @@ const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal
               </h3>
               <p className="text-sm text-muted-foreground">{project.genre}</p>
               <div className="flex items-center justify-between text-xs text-muted-foreground mt-3">
-                <span className="flex items-center">
-                  <Play className="w-3 h-3 mr-1" />
-                  {project.plays}
-                </span>
-                <span className="flex items-center">
-                  <Heart className="w-3 h-3 mr-1" />
-                  {project.likes}
-                </span>
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center">
+                    <Play className="w-3 h-3 mr-1" />
+                    {project.plays}
+                  </span>
+                  <span className="flex items-center">
+                    <Heart className="w-3 h-3 mr-1" />
+                    {project.likes}
+                  </span>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleGoToChat(project.id)}>
+                  <MessageSquare className="w-4 h-4" />
+                </Button>
               </div>
             </CardContent>
           </Card>

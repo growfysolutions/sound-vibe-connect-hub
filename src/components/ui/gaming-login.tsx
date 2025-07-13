@@ -272,16 +272,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
                 </div>
             </div>
 
-            <p className="mt-8 text-center text-sm text-white/60">
+            <div className="mt-8 text-center text-sm text-white/60">
                 {variant === 'login' ? 'Don\'t have an account?' : 'Already have an account?'}{' '}
                 <button type="button" onClick={onVariantChange} className="font-medium text-white hover:text-purple-300 transition-colors bg-transparent border-none">
                     {variant === 'login' ? 'Create Account' : 'Sign In'}
                 </button>
-            </p>
+            </div>
 
-            <p className="mt-8 text-center text-xs text-white/40">
-                © 2025 SoundVibe. All rights reserved.
-            </p>
+            <div className="mt-8 text-center text-xs text-white/40">
+                &copy; 2025 SoundVibe. All rights reserved.
+            </div>
         </div>
     );
 };

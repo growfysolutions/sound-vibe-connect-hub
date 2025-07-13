@@ -6,10 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Music, Mic, Video, Camera, Headphones, Star, Users, ArrowLeft, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [skills, setSkills] = useState<string>('');
+  const [software, setSoftware] = useState<string>('');
+  const [collaborationStyles, setCollaborationStyles] = useState<string>('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -80,16 +84,49 @@ const Auth = () => {
   const handleRoleToggle = (roleId: string) => {
     setSelectedRoles(prev => prev.includes(roleId) ? prev.filter(id => id !== roleId) : [...prev, roleId]);
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Authentication logic would go here
-    console.log('Form submitted:', {
-      ...formData,
-      roles: selectedRoles
-    });
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
 
-    // For demo, navigate to dashboard directly
-    navigate('/dashboard');
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName,
+          },
+        },
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            full_name: formData.fullName,
+            phone: formData.phone,
+            location: formData.location,
+            professional_roles: selectedRoles,
+            skills: skills.split(',').map(s => s.trim()),
+            software_proficiencies: software.split(',').map(s => s.trim()),
+            collaboration_styles: collaborationStyles.split(',').map(s => s.trim()),
+          })
+          .eq('id', authData.user.id);
+
+        if (profileError) throw profileError;
+
+        alert('Signup successful! Please check your email to verify your account.');
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
+      console.error('Error during sign up:', error);
+      alert(`Error: ${error.message}`);
+    }
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -207,6 +244,20 @@ const Auth = () => {
                         <Input id="location" type="text" name="location" placeholder="City, State" value={formData.location} onChange={handleInputChange} className="h-12" />
                       </div>
                     </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="skills" className="block text-foreground text-sm font-medium">Skills (comma-separated)</label>
+                      <Input id="skills" name="skills" placeholder="e.g., Songwriting, Mixing, Vocals" value={skills} onChange={(e) => setSkills(e.target.value)} className="h-12" />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="software" className="block text-foreground text-sm font-medium">Software (comma-separated)</label>
+                      <Input id="software" name="software" placeholder="e.g., Ableton, Pro Tools, FL Studio" value={software} onChange={(e) => setSoftware(e.target.value)} className="h-12" />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="collaborationStyles" className="block text-foreground text-sm font-medium">Collaboration Styles (comma-separated)</label>
+                      <Input id="collaborationStyles" name="collaborationStyles" placeholder="e.g., Remote, In-person, Hybrid" value={collaborationStyles} onChange={(e) => setCollaborationStyles(e.target.value)} className="h-12" />
+                    </div>
+
                   </div>
 
                   {/* Role Selection */}

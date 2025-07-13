@@ -21,6 +21,10 @@ const professionalRoles = [
   { name: 'Choreographer', description: 'Dance choreography', icon: <Clapperboard /> },
 ];
 
+const musicGenres = [
+  'Pop', 'Rock', 'Hip Hop', 'R&B', 'Jazz', 'Classical', 'Electronic', 'Folk', 'Country', 'Metal', 'Indie', 'Bollywood'
+];
+
 const ProfileSetup = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -31,6 +35,7 @@ const ProfileSetup = () => {
     displayName: user?.user_metadata?.full_name || '',
     bio: '',
     location: '',
+    genres: [] as string[],
     specialization: [] as string[],
     portfolio: [] as { name: string; url: string }[],
   });
@@ -54,6 +59,15 @@ const ProfileSetup = () => {
 
   const handleNextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4));
   const handlePrevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
+  const handleGenreSelect = (genre: string) => {
+    setProfileData(prev => {
+      const newGenres = prev.genres.includes(genre)
+        ? prev.genres.filter(g => g !== genre)
+        : [...prev.genres, genre];
+      return { ...prev, genres: newGenres };
+    });
+  };
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
@@ -142,7 +156,8 @@ const ProfileSetup = () => {
           avatar_url: profileData.avatarUrl,
           bio: profileData.bio,
           location: profileData.location,
-          specialization: profileData.specialization,
+          genres: profileData.genres,
+          professional_roles: profileData.specialization,
           portfolio: profileData.portfolio,
         })
         .eq('id', user.id);
@@ -162,7 +177,8 @@ const ProfileSetup = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1: return <Step1 onAvatarUpload={handleAvatarUpload} avatarUrl={profileData.avatarUrl} isUploading={isUploading} />;
-      case 2: return <Step2 data={profileData} setData={setProfileData} onRoleSelect={handleRoleSelect} />;
+      case 2:
+        return <Step2 data={profileData} setData={setProfileData} onRoleSelect={handleRoleSelect} onGenreSelect={handleGenreSelect} />;
       case 3: return <Step3 data={profileData} setData={setProfileData} onPortfolioUpload={handlePortfolioUpload} isUploading={isUploadingPortfolio} />;
       case 4: return <Step4 />;
       default: return null;
@@ -214,7 +230,7 @@ const Step1 = ({ onAvatarUpload, avatarUrl, isUploading }: any) => (
   </div>
 );
 
-const Step2 = ({ data, setData, onRoleSelect }: any) => (
+const Step2 = ({ data, setData, onRoleSelect, onGenreSelect }: any) => (
   <div>
     <h2 className="text-2xl font-semibold mb-6 text-center">Tell Us About Yourself</h2>
     <div className="space-y-4">
@@ -252,6 +268,28 @@ const Step2 = ({ data, setData, onRoleSelect }: any) => (
                 <p className="text-sm text-muted-foreground">{role.description}</p>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="font-medium">Music Genres</label>
+          <span className="text-sm font-bold bg-primary text-primary-foreground px-3 py-1 rounded-full">{data.genres.length} selected</span>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">What genres do you specialize in?</p>
+        <div className="flex flex-wrap gap-2">
+          {musicGenres.map(genre => (
+            <button
+              key={genre}
+              type="button"
+              onClick={() => onGenreSelect(genre)}
+              className={`px-4 py-2 border rounded-full text-sm font-medium transition-colors ${ 
+                data.genres.includes(genre)
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-transparent hover:bg-secondary'
+              }`}>
+              {genre}
+            </button>
           ))}
         </div>
       </div>

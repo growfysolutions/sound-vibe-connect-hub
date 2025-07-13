@@ -1,34 +1,36 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerClose,
-} from '@/components/ui/drawer';
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/popover';
 
 export interface FilterValues {
   roles: string[];
   experience: string;
+  location: string;
+  genres: string[];
 }
 
 interface FilterDrawerProps {
-  children: React.ReactNode;
-  onApplyFilters: (filters: FilterValues) => void;
+  trigger: React.ReactNode;
+  onApplyFilters?: (filters: FilterValues) => void;
 }
 
 const professionalRoles = ['Singer', 'Music Director', 'Video Editor', 'Sound Engineer'];
 const experienceLevels = ['Hobbyist (0-2 years)', 'Intermediate (2-5 years)', 'Professional (5+ years)'];
+const musicGenres = ['Pop', 'Rock', 'Hip Hop', 'R&B', 'Jazz', 'Classical', 'Electronic', 'Folk', 'Country', 'Metal', 'Indie', 'Bollywood'];
 
-const FilterDrawer: React.FC<FilterDrawerProps> = ({ children, onApplyFilters }) => {
+export const FilterDrawer: React.FC<FilterDrawerProps> = ({ trigger, onApplyFilters }) => {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedExperience, setSelectedExperience] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const handleRoleChange = (role: string) => {
     setSelectedRoles(prev => 
@@ -36,23 +38,52 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ children, onApplyFilters })
     );
   };
 
+  const handleGenreChange = (genre: string) => {
+    setSelectedGenres(prev => 
+      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+    );
+  };
+
   const handleApply = () => {
-    onApplyFilters({
-      roles: selectedRoles,
-      experience: selectedExperience,
-    });
+    if (onApplyFilters) {
+      onApplyFilters({
+        roles: selectedRoles,
+        experience: selectedExperience,
+        location: selectedLocation,
+        genres: selectedGenres,
+      });
+    }
+  };
+
+  const handleReset = () => {
+    setSelectedRoles([]);
+    setSelectedExperience('');
+    setSelectedLocation('');
+    setSelectedGenres([]);
+    if (onApplyFilters) {
+      onApplyFilters({
+        roles: [],
+        experience: '',
+        location: '',
+        genres: [],
+      });
+    }
   };
 
   return (
-    <Drawer>
-      {children} {/* This will be the trigger button */}
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Filter Collaborators</DrawerTitle>
-            <DrawerDescription>Refine your search to find the perfect match.</DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 pb-0 space-y-6">
+    <Popover>
+      <PopoverTrigger asChild>
+        {trigger}
+      </PopoverTrigger>
+      <PopoverContent className="w-80">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <h4 className="font-medium leading-none">Filter Collaborators</h4>
+            <p className="text-sm text-muted-foreground">
+              Refine your search to find the perfect match.
+            </p>
+          </div>
+          <div className="grid gap-6 p-4">
             <div>
               <h4 className="font-medium mb-2">Role</h4>
               <div className="space-y-2">
@@ -62,6 +93,7 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ children, onApplyFilters })
                       id={role} 
                       onCheckedChange={() => handleRoleChange(role)} 
                       checked={selectedRoles.includes(role)}
+                      className="rounded-md"
                     />
                     <Label htmlFor={role}>{role}</Label>
                   </div>
@@ -79,19 +111,39 @@ const FilterDrawer: React.FC<FilterDrawerProps> = ({ children, onApplyFilters })
                 ))}
               </RadioGroup>
             </div>
-          </div>
-          <DrawerFooter>
-            <DrawerClose asChild>
+            <div>
+              <h4 className="font-medium mb-2">Location</h4>
+              <Input 
+                placeholder="e.g., Mumbai, India"
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+              />
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Genre</h4>
+              <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                {musicGenres.map(genre => (
+                  <div key={genre} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={genre} 
+                      onCheckedChange={() => handleGenreChange(genre)} 
+                      checked={selectedGenres.includes(genre)}
+                      className="rounded-md"
+                    />
+                    <Label htmlFor={genre}>{genre}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-between">
               <Button onClick={handleApply}>Apply Filters</Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
+              <Button variant="ghost" onClick={handleReset}>Reset</Button>
+            </div>
+          </div>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </PopoverContent>
+    </Popover>
   );
 };
 
-export default FilterDrawer;
+

@@ -11,11 +11,18 @@ export function FeedTimeline() {
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from('posts')
       .select(`
         *,
-        profiles (
+        profiles!inner(
           id,
           full_name,
           avatar_url

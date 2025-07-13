@@ -58,7 +58,7 @@ export function Hero() {
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl text-white [text-shadow:0_4px_8px_rgba(0,0,0,0.5)]">
+          <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl bg-gradient-to-r from-fuchsia-500 to-sky-400 text-transparent bg-clip-text">
             Welcome to the future of music creation!
           </h1>
 
