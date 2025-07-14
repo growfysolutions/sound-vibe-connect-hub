@@ -13,6 +13,7 @@ import { addXp, XP_AMOUNTS } from '@/lib/xp';
 import UserProfileCard from '@/components/dashboard/UserProfileCard';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import ProgressPanel from '@/components/dashboard/ProgressPanel';
+import { SuggestedConnections } from '@/components/dashboard/SuggestedConnections';
 import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
 import DashboardNav from '@/components/dashboard/DashboardNav';
 import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
@@ -270,6 +271,7 @@ const Dashboard = () => {
           <div className="lg:col-span-1 space-y-6">
             <UserProfileCard />
             <ActivityFeed />
+            <SuggestedConnections />
           </div>
           <div className="lg:col-span-3">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
