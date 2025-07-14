@@ -20,7 +20,13 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
-      external: []
+      external: [],
+      output: {
+        manualChunks: undefined,
+      }
+    },
+    commonjsOptions: {
+      include: [/node_modules/],
     }
   },
   esbuild: {
@@ -36,6 +42,7 @@ export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     esbuildOptions: {
       target: 'esnext'
-    }
+    },
+    include: ['react', 'react-dom', '@radix-ui/react-slot']
   }
 }))
