@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext'
     },
-    include: ['react', 'react-dom', '@radix-ui/react-slot']
+    include: ['react', 'react-dom', '@radix-ui/react-slot'],
+    force: true
   }
 }))
