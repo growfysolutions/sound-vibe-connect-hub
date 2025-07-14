@@ -20,20 +20,13 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       external: [],
-      output: {
-        manualChunks: undefined,
-      }
     },
     commonjsOptions: {
       include: [/node_modules/],
     }
   },
   esbuild: {
-    target: 'esnext',
-    logOverride: { 
-      'this-is-undefined-in-esm': 'silent',
-      'tsconfig-json': 'silent'
-    }
+    target: 'esnext'
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
@@ -42,7 +35,7 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext'
     },
-    include: ['react', 'react-dom', '@radix-ui/react-slot'],
+    include: ['react', 'react-dom'],
     force: true
   }
 }))
