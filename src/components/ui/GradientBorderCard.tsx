@@ -1,6 +1,6 @@
 
 import React from 'react';
-import './gradient-border-card.css';
+import { cn } from '@/lib/utils';
 
 interface GradientBorderCardProps {
   children: React.ReactNode;
@@ -12,8 +12,8 @@ export const GradientBorderCard: React.FC<GradientBorderCardProps> = ({
   className = '' 
 }) => {
   return (
-    <div className={`gradient-border-card ${className}`}>
-      <div className="gradient-border-card-content">
+    <div className={cn("relative p-0.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 animate-pulse", className)}>
+      <div className="bg-neutral-900 rounded-lg p-6 h-full relative z-10">
         {children}
       </div>
     </div>
