@@ -1,5 +1,4 @@
 
-import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { componentTagger } from "lovable-tagger"
@@ -15,7 +14,7 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": "/src",
     },
   },
   build: {
