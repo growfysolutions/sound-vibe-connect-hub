@@ -32,5 +32,18 @@ export default defineConfig(({ mode }) => ({
     include: /\.(tsx?|jsx?)$/,
     exclude: [],
     loader: 'tsx',
+    tsconfigRaw: {
+      compilerOptions: {
+        jsx: 'react-jsx',
+        target: 'es2015',
+        module: 'esnext',
+        moduleResolution: 'node',
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        skipLibCheck: true,
+        strict: false,
+        noEmit: true,
+      }
+    }
   },
 }))
