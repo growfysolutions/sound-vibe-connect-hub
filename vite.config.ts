@@ -43,7 +43,12 @@ export default defineConfig(({ mode }) => ({
         skipLibCheck: true,
         strict: false,
         noEmit: true,
+        isolatedModules: true,
+        useDefineForClassFields: true,
       }
     }
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(mode),
   },
 }))
