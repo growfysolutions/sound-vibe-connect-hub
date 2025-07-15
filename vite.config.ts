@@ -28,11 +28,10 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom'],
   },
   esbuild: {
-    target: 'es2020',
-    loader: 'tsx',
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'React.Fragment',
     include: /\.[jt]sx?$/,
-    exclude: [],
-    tsconfigRaw: '{}'
+    tsconfigRaw: '{}',
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
