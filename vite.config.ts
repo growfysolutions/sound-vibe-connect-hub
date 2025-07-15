@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from "path"
@@ -29,24 +28,10 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom'],
   },
   esbuild: {
+    loader: 'tsx',
     include: /\.(tsx?|jsx?)$/,
     exclude: [],
-    loader: 'tsx',
-    tsconfigRaw: {
-      compilerOptions: {
-        jsx: 'react-jsx',
-        target: 'es2015',
-        module: 'esnext',
-        moduleResolution: 'node',
-        allowSyntheticDefaultImports: true,
-        esModuleInterop: true,
-        skipLibCheck: true,
-        strict: false,
-        noEmit: true,
-        isolatedModules: true,
-        useDefineForClassFields: true,
-      }
-    }
+    tsconfigRaw: '{}',
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
