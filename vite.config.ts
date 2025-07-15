@@ -28,10 +28,9 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom'],
   },
   esbuild: {
-    loader: 'tsx',
-    include: /\.(tsx?|jsx?)$/,
-    exclude: [],
-    tsconfigRaw: '{}',
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'React.Fragment',
+    include: /\.[jt]sx?$/,
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
