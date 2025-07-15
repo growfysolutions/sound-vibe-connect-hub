@@ -31,7 +31,26 @@ export default defineConfig(({ mode }) => ({
     jsxFactory: 'React.createElement',
     jsxFragment: 'React.Fragment',
     include: /\.[jt]sx?$/,
-    tsconfigRaw: '{}',
+    tsconfigRaw: {
+      compilerOptions: {
+        jsx: 'react-jsx',
+        target: 'es2020',
+        useDefineForClassFields: true,
+        lib: ['es2020', 'dom'],
+        module: 'esnext',
+        skipLibCheck: true,
+        moduleResolution: 'bundler',
+        allowImportingTsExtensions: true,
+        resolveJsonModule: true,
+        isolatedModules: true,
+        noEmit: true,
+        strict: false,
+        baseUrl: '.',
+        paths: {
+          '@/*': ['./src/*']
+        }
+      }
+    },
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
