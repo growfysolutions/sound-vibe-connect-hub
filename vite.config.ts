@@ -9,20 +9,17 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: [],
+      },
+    }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  },
-  build: {
-    rollupOptions: {
-      external: [],
-    },
-    minify: 'terser',
-    target: 'es2015',
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
@@ -45,11 +42,23 @@ export default defineConfig(({ mode }) => ({
         isolatedModules: true,
         noEmit: true,
         strict: false,
+        noUnusedLocals: false,
+        noUnusedParameters: false,
         baseUrl: '.',
         paths: {
           '@/*': ['./src/*']
         }
       }
+    },
+  },
+  build: {
+    rollupOptions: {
+      external: [],
+    },
+    minify: 'terser',
+    target: 'es2015',
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
   },
   define: {
