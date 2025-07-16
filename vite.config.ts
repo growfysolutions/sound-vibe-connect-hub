@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     jsx: 'automatic',
     jsxImportSource: 'react',
+    tsconfigRaw: '{}',
   },
   build: {
     target: 'es2015',
