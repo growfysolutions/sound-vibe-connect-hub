@@ -48,77 +48,112 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
   };
 
   return (
-    <nav className="nav-premium sticky top-0 z-50">
-      <div className="container mx-auto px-6 py-4">
+    <nav className="nav-premium sticky top-0 z-50 border-b border-border/20 bg-background/80 backdrop-blur-xl">
+      <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-3">
-              <div className="icon-premium">
+          {/* Brand and Search Section */}
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-3 hover-scale">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center transition-all duration-300 hover:from-primary/30 hover:to-primary/20">
                 <Music className="w-6 h-6 text-primary" />
               </div>
-              <span className="text-xl font-bold text-gradient-primary">SoundConnect</span>
+              <span className="text-xl font-bold text-gradient-primary">SoundVibe Connect</span>
             </div>
             
-            <div className="hidden md:flex relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <div className="hidden lg:flex relative group">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-200" />
               <Input
                 type="text"
                 placeholder="Search professionals, projects, or genres..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-80 input-premium"
+                className="pl-12 w-96 h-11 input-premium text-sm font-medium placeholder:text-muted-foreground/60 focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
               />
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Button className="btn-premium hidden sm:flex" onClick={() => navigate('/marketplace')}>
+          {/* Action Buttons Section */}
+          <div className="flex items-center space-x-3">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="btn-glass hidden sm:flex h-10 px-4 font-semibold hover:bg-primary/10 hover:border-primary/20" 
+              onClick={() => navigate('/marketplace')}
+            >
               <ShoppingBag className="w-4 h-4 mr-2" />
               Marketplace
             </Button>
-            <Button className="btn-premium" onClick={handleOpenModal}>
+            
+            <Button 
+              className="btn-premium h-10 px-6 font-semibold text-sm shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300" 
+              onClick={handleOpenModal}
+            >
               <Upload className="w-4 h-4 mr-2" />
               Upload
             </Button>
 
-            <ThemeToggle />
+            <div className="flex items-center space-x-2">
+              <ThemeToggle />
+              <NotificationBell />
+            </div>
 
-            <NotificationBell />
-
+            {/* Profile Dropdown */}
             {loading ? (
-              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-11 w-11 rounded-2xl" />
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="w-10 h-10 cursor-pointer border-2 border-primary">
-                    {profile?.avatar_url && <img src={profile.avatar_url} alt={profile.full_name || ''} className="w-full h-full object-cover rounded-full" />}
-                    <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                  <Avatar className="w-11 h-11 cursor-pointer border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-105 rounded-2xl shadow-lg hover:shadow-xl">
+                    {profile?.avatar_url && (
+                      <img 
+                        src={profile.avatar_url} 
+                        alt={profile.full_name || ''} 
+                        className="w-full h-full object-cover rounded-2xl" 
+                      />
+                    )}
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold text-sm rounded-2xl">
                       {profile?.full_name?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{profile?.full_name ?? user?.email ?? 'User'}</p>
+                <DropdownMenuContent className="w-64 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-2 shadow-2xl" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal p-3">
+                    <div className="flex flex-col space-y-2">
+                      <p className="text-sm font-semibold leading-none">{profile?.full_name ?? user?.email ?? 'User'}</p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        Welcome!
+                        {profile?.role || 'Music Professional'}
                       </p>
+                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                        <span>Level {profile?.level || 1}</span>
+                        <span>•</span>
+                        <span>2 Projects</span>
+                        <span>•</span>
+                        <span>12 Connections</span>
+                      </div>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(`/profile/${user?.id}`)}>
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuSeparator className="my-2" />
+                  <DropdownMenuItem 
+                    className="rounded-xl p-3 hover:bg-primary/10 transition-colors duration-200 cursor-pointer"
+                    onClick={() => navigate(`/profile/${user?.id}`)}
+                  >
+                    <UserIcon className="mr-3 h-4 w-4 text-primary" />
+                    <span className="font-medium">View Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem 
+                    className="rounded-xl p-3 hover:bg-primary/10 transition-colors duration-200 cursor-pointer"
+                    onClick={() => navigate('/settings')}
+                  >
+                    <Settings className="mr-3 h-4 w-4 text-primary" />
+                    <span className="font-medium">Settings</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                  <DropdownMenuSeparator className="my-2" />
+                  <DropdownMenuItem 
+                    className="rounded-xl p-3 hover:bg-destructive/10 text-destructive transition-colors duration-200 cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-3 h-4 w-4" />
+                    <span className="font-medium">Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

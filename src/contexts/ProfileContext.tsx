@@ -23,7 +23,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     if (user) {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, username, avatar_url, bio, location, website, skills, software, collaboration_styles, portfolio')
+        .select('id, full_name, username, avatar_url, bio, location, website, skills, software_proficiencies, collaboration_styles, portfolio')
         .eq('id', user.id)
         .single();
 
