@@ -21,35 +21,16 @@ export default defineConfig(({ mode }) => ({
     include: ['react', 'react-dom'],
   },
   esbuild: {
-    tsconfigRaw: {
-      compilerOptions: {
-        jsx: 'react-jsx',
-        target: 'es2020',
-        useDefineForClassFields: true,
-        lib: ['es2020', 'dom'],
-        module: 'esnext',
-        skipLibCheck: true,
-        moduleResolution: 'bundler',
-        allowImportingTsExtensions: true,
-        resolveJsonModule: true,
-        isolatedModules: true,
-        noEmit: true,
-        strict: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-        baseUrl: '.',
-        paths: {
-          '@/*': ['./src/*']
-        }
-      }
-    },
+    target: 'es2020',
+    jsx: 'automatic',
+    jsxImportSource: 'react',
   },
   build: {
+    target: 'es2015',
+    minify: 'esbuild',
     rollupOptions: {
       external: [],
     },
-    minify: 'terser',
-    target: 'es2015',
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
