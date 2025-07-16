@@ -1,17 +1,10 @@
 {
+  "extends": "../tsconfig.node.json",
   "compilerOptions": {
     "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noEmit": false,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./dist"
+    "noEmit": false
   },
   "include": [
-    "vite.config.ts"
+    "../vite.config.ts"
   ]
 }

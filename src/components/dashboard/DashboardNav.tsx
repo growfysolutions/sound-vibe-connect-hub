@@ -17,7 +17,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import NotificationBell from './NotificationBell';
+import EnhancedNotificationBell from './EnhancedNotificationBell';
 
 
 
@@ -68,7 +68,18 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 w-96 h-11 input-premium text-sm font-medium placeholder:text-muted-foreground/60 focus:border-primary/50 focus:ring-4 focus:ring-primary/10"
+                list="search-suggestions"
               />
+              <datalist id="search-suggestions">
+                <option value="Producer" />
+                <option value="Audio Engineer" />
+                <option value="Songwriter" />
+                <option value="Vocalist" />
+                <option value="Hip-Hop" />
+                <option value="Electronic" />
+                <option value="Pop" />
+                <option value="Rock" />
+              </datalist>
             </div>
           </div>
 
@@ -94,7 +105,7 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
 
             <div className="flex items-center space-x-2">
               <ThemeToggle />
-              <NotificationBell />
+              <EnhancedNotificationBell />
             </div>
 
             {/* Profile Dropdown */}
