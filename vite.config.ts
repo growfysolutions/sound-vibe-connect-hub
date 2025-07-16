@@ -9,7 +9,11 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: [],
+      },
+    }),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
@@ -20,15 +24,10 @@ export default defineConfig(({ mode }) => ({
   optimizeDeps: {
     include: ['react', 'react-dom'],
   },
-  esbuild: {
-    target: 'es2020',
-    jsx: 'automatic',
-    jsxImportSource: 'react',
-    tsconfigRaw: '{}',
-  },
+  esbuild: false,
   build: {
     target: 'es2015',
-    minify: 'esbuild',
+    minify: 'terser',
     rollupOptions: {
       external: [],
     },
