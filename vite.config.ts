@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     jsx: 'automatic',
     jsxImportSource: 'react',
+    // Override TypeScript config to avoid project reference issues
+    tsconfig: mode === 'development' ? './tsconfig.development.json' : undefined,
   },
   build: {
     target: 'es2015',

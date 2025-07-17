@@ -1,20 +1,19 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noEmit": false,
     "target": "ES2020",
     "lib": ["ES2020"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "composite": true,
-    "noEmit": false,
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "outDir": "./dist"
+    "declaration": false,
+    "emitDeclarationOnly": false
   },
-  "include": ["../vite.config.ts", "../tailwind.config.ts"],
-  "exclude": ["../node_modules", "../dist"]
+  "include": ["../vite.config.ts"]
 }
