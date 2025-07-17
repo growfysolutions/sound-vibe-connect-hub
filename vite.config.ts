@@ -28,17 +28,26 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     jsx: 'automatic',
     jsxImportSource: 'react',
-    // Disable TypeScript checking in esbuild to avoid project reference issues
-    tsconfigRaw: {
-      compilerOptions: {
-        target: 'es2020',
-        jsx: 'react-jsx',
-        jsxImportSource: 'react',
-        moduleResolution: 'bundler',
-        allowImportingTsExtensions: true,
-        noEmit: true
+    // Provide inline TypeScript config to avoid project reference issues
+    tsconfigRaw: `{
+      "compilerOptions": {
+        "target": "ES2020",
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "strict": true,
+        "baseUrl": ".",
+        "paths": {
+          "@/*": ["./src/*"]
+        }
       }
-    }
+    }`
   },
   build: {
     target: 'es2015',
