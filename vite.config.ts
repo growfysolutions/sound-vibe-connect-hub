@@ -1,4 +1,3 @@
-
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -29,20 +28,23 @@ export default defineConfig(({ mode }) => ({
       'this-is-undefined-in-esm': 'silent',
       'tsconfig-json': 'silent'
     },
-    // Override TypeScript config completely to avoid project reference errors
     tsconfigRaw: {
       compilerOptions: {
         target: "esnext",
-        module: "esnext",
+        module: "esnext", 
         skipLibCheck: true,
         allowSyntheticDefaultImports: true,
         esModuleInterop: true,
         jsx: "react-jsx",
+        noEmit: true,
+        isolatedModules: true,
         baseUrl: ".",
         paths: {
           "@/*": ["./src/*"]
         }
-      }
+      },
+      include: ["src/**/*"],
+      exclude: ["node_modules", "dist"]
     }
   },
   define: {
@@ -52,5 +54,8 @@ export default defineConfig(({ mode }) => ({
     esbuildOptions: {
       target: 'esnext'
     }
-  }
+  },
+  // Completely bypass TypeScript project checking
+  clearScreen: false,
+  logLevel: 'warn'
 }))
