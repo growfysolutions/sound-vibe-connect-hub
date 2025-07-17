@@ -8,7 +8,7 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import ProfessionalCard from './ProfessionalCard';
 import ProfessionalCardSkeleton from './ProfessionalCardSkeleton';
 import { Profile } from './UserProfileCard';
-import { FilterDrawer } from './FilterDrawer';
+import { AdvancedFilterDrawer, AdvancedFilterValues } from './AdvancedFilterDrawer';
 
 interface DiscoverTabProps {
   professionals: Profile[];
@@ -83,15 +83,18 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnect
           />
         </div>
         <div className="flex items-center gap-2">
-          <FilterDrawer 
+          <AdvancedFilterDrawer 
             trigger={
               <Button variant="outline">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Filters
+                Advanced Filters
               </Button>
             }
+            onApplyFilters={(filters: AdvancedFilterValues) => {
+              // Apply advanced filtering logic here
+              console.log('Advanced filters applied:', filters);
+            }}
           />
-          
         </div>
       </div>
 

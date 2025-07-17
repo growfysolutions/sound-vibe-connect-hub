@@ -1,10 +1,11 @@
+
 import { Music, Mic, Video, Star, Users, Briefcase, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { InteractiveHoverButton } from '@/components/ui/InteractiveHoverButton';
 import { Hero } from '@/components/landing/Hero';
 import ExpandableCardDemo from '@/components/ui/expandable-card-demo-standard';
-import { CardSpotlight } from '@/components/ui/card-spotlight';
+import { GradientBorderCard } from '@/components/ui/GradientBorderCard';
 
 const features = [
   { icon: Music, title: 'Music Production', description: 'Collaborate on tracks in real-time.' },
@@ -37,15 +38,15 @@ const HowItWorks = () => {
   return (
     <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
       {howItWorksFeatures.map((feature, index) => (
-        <CardSpotlight key={index} className="group p-6">
+        <GradientBorderCard key={index} className="group">
           <div className="relative z-20">
-            <div className="flex justify-center mb-4 text-neutral-400 group-hover/spotlight:text-white transition-colors">
+            <div className="flex justify-center mb-4 text-neutral-400 group-hover:text-white transition-colors">
               {feature.icon}
             </div>
             <h4 className="text-2xl font-bold mb-2 text-center text-white">{feature.title}</h4>
-            <p className="text-neutral-400 text-center group-hover/spotlight:text-neutral-200 transition-colors">{feature.description}</p>
+            <p className="text-neutral-400 text-center group-hover:text-neutral-200 transition-colors">{feature.description}</p>
           </div>
-        </CardSpotlight>
+        </GradientBorderCard>
       ))}
     </div>
   );
@@ -94,7 +95,7 @@ const Index = () => {
           className="mt-32"
         >
           <h2 className="text-center text-4xl font-bold tracking-tighter">How It Works</h2>
-          <p className="mt-2 text-center text-neutral-400 max-w-2xl mx-auto">From finding collaborators to launching your next hit, here’s how our platform empowers your musical journey.</p>
+          <p className="mt-2 text-center text-neutral-400 max-w-2xl mx-auto">From finding collaborators to launching your next hit, here's how our platform empowers your musical journey.</p>
           <div className="mt-12 flex justify-center">
             <HowItWorks />
           </div>

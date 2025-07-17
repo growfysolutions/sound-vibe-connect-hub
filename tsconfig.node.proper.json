@@ -1,0 +1,7 @@
+{
+  "extends": "./dev-server/tsconfig.node.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": false
+  }
+}

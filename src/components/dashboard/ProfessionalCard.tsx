@@ -22,9 +22,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional, actio
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className={`absolute top-0 right-0 h-3 w-3 rounded-full ${professional.is_online === true ? 'bg-green-500' : 'bg-gray-400'} border-2 border-background`}></div>
-              <Avatar className="w-12 h-12 border-2 border-primary">
-                <AvatarFallback className="bg-primary text-primary-foreground">
+              <div className={`absolute -top-1 -right-1 h-4 w-4 rounded-full ${professional.is_online === true ? 'bg-green-500 animate-pulse' : 'bg-gray-400'} border-2 border-background shadow-lg`}></div>
+              <Avatar className="w-12 h-12 border-2 border-primary group-hover:border-primary/60 transition-all duration-300">
+                {professional.avatar_url && (
+                  <img src={professional.avatar_url} alt={professional.full_name || ''} className="w-full h-full object-cover" />
+                )}
+                <AvatarFallback className="bg-primary text-primary-foreground group-hover:bg-primary/90 transition-colors duration-300">
                   {professional.full_name?.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>

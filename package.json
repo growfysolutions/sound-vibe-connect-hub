@@ -41,6 +41,7 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@react-three/fiber": "^8.18.0",
+    "@rollup/rollup-linux-arm64-musl": "^4.45.0",
     "@supabase/supabase-js": "^2.50.3",
     "@tanstack/react-query": "^5.56.2",
     "@vitejs/plugin-react": "^4.6.0",
@@ -81,9 +82,9 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "lovable-tagger": "^1.1.8",
     "postcss": "^8.4.40",
+    "supabase": "^1.183.1",
     "tailwindcss": "^3.4.7",
     "typescript": "^5.5.4",
-    "vite": "^5.4.10",
-    "supabase": "^1.183.1"
+    "vite": "^5.4.10"
   }
 }

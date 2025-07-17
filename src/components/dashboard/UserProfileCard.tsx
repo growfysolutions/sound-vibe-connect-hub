@@ -106,22 +106,22 @@ const UserProfileCard = () => {
         <p className="text-muted-foreground mb-2">{profile?.role || 'Role not set'}</p>
         <div className="flex items-center justify-center text-muted-foreground text-sm mb-4">
           <MapPin className="w-4 h-4 mr-1" />
-          {'Location not set'}
+          {profile?.location || 'Location not set'}
         </div>
         <div className="flex justify-center space-x-4 mb-4">
           <div className="text-center">
-            <p className="font-bold text-lg">{'N/A'}</p>
+            <p className="font-bold text-lg">{profile?.rating ? profile.rating.toFixed(1) : 'N/A'}</p>
             <p className="text-xs text-muted-foreground">Rating</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-lg">{0}</p>
+            <p className="font-bold text-lg">{profile?.reviews || 0}</p>
             <p className="text-xs text-muted-foreground">Reviews</p>
           </div>
         </div>
         <div className="w-full bg-muted rounded-full h-2.5 mb-2">
-          <div className="bg-primary h-2.5 rounded-full" style={{ width: `10%` }}></div>
+          <div className="bg-primary h-2.5 rounded-full transition-all duration-500" style={{ width: `${Math.min(((profile?.level || 1) * 10), 100)}%` }}></div>
         </div>
-        <p className="text-center text-xs text-muted-foreground">Level 1</p>
+        <p className="text-center text-xs text-muted-foreground">Level {profile?.level || 1}</p>
       </CardHeader>
       <CardContent>
         <div className="flex justify-around text-center p-4 bg-muted/50 rounded-lg">

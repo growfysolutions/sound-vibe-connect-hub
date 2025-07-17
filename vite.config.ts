@@ -1,8 +1,6 @@
-
-import path from 'path'
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { componentTagger } from "lovable-tagger"
+import react from '@vitejs/plugin-react'
+import path from "path"
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -10,32 +8,28 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
-    mode === 'development' && componentTagger(),
-  ].filter(Boolean),
+    react({
+      babel: {
+        plugins: [],
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    rollupOptions: {
-      external: []
-    }
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
-  esbuild: {
-    target: 'esnext',
-    logOverride: { 
-      'this-is-undefined-in-esm': 'silent',
-      'tsconfig-json': 'silent'
-    }
+  build: {
+    target: 'es2015',
+    minify: 'terser',
+    rollupOptions: {
+      external: [],
+    },
   },
   define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    'process.env.NODE_ENV': JSON.stringify(mode),
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      target: 'esnext'
-    }
-  }
 }))

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../integrations/supabase/client';
 import { PostWithProfile } from '@/types';
-import { CreatePostForm } from './CreatePostForm';
+import { EnhancedCreatePostForm } from './EnhancedCreatePostForm';
+import { ProfileCompletionCard } from '../dashboard/ProfileCompletionCard';
 import { PostCard } from './PostCard';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -44,7 +45,8 @@ export function FeedTimeline() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <CreatePostForm onPostCreated={fetchPosts} />
+      <ProfileCompletionCard />
+      <EnhancedCreatePostForm onPostCreated={fetchPosts} />
       
       {loading ? (
         <div className="space-y-4">
