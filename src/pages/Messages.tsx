@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import FileAttachment from '@/components/chat/FileAttachment';
+import { VoiceMessageButton } from '@/components/chat/VoiceMessageButton';
 import { supabase } from '@/integrations/supabase/client';
 import { Conversation, Message } from '@/types';
 import { toast } from 'sonner';
@@ -298,6 +299,41 @@ const Messages = () => {
                 <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
                   <Paperclip className="w-4 h-4" />
                 </Button>
+                <VoiceMessageButton 
+                  onSendVoiceMessage={async (audioBlob) => {
+                    // Handle voice message upload
+                    const fileId = Date.now().toString();
+                    const filePath = `${currentUser.id}/${selectedConversation.id}/voice-${fileId}.webm`;
+                    
+                    const { error: uploadError } = await supabase.storage
+                      .from('chat_attachments')
+                      .upload(filePath, audioBlob);
+
+                    if (uploadError) {
+                      toast.error('Failed to upload voice message');
+                      return;
+                    }
+
+                    const { error: messageError } = await supabase.from('messages').insert({
+                      conversation_id: selectedConversation.id,
+                      sender_id: currentUser.id,
+                      file_path: filePath,
+                      file_metadata: { 
+                        name: `Voice message ${new Date().toLocaleTimeString()}`,
+                        type: 'audio/webm',
+                        size: audioBlob.size,
+                        isVoiceMessage: true
+                      },
+                    });
+
+                    if (messageError) {
+                      toast.error('Failed to send voice message');
+                    } else {
+                      toast.success('Voice message sent!');
+                    }
+                  }}
+                  disabled={!selectedConversation}
+                />
                 <input
                   type="file"
                   ref={fileInputRef}

@@ -21,13 +21,15 @@ import MyContracts from '@/pages/MyContracts';
 import { FeedTimeline } from '@/components/feed/FeedTimeline';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
+import { RecommendationEngine } from '@/components/dashboard/RecommendationEngine';
+import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 
 
 // Import types
 import { Profile, Connection, Project } from '@/integrations/supabase/types';
 
 const Dashboard = () => {
-  const { refetchProfile } = useProfile();
+  const { refetchProfile, profile: userProfile } = useProfile();
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
@@ -271,6 +273,7 @@ const Dashboard = () => {
           <div className="lg:col-span-1 space-y-6">
             <UserProfileCard />
             <ActivityFeed />
+            <RecommendationEngine userId={user?.id || ''} userProfile={userProfile} />
             <SuggestedConnections />
           </div>
           <div className="lg:col-span-3">
@@ -303,6 +306,10 @@ const Dashboard = () => {
                 <TabsTrigger value="messages" onClick={() => navigate('/messages')} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Messages
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Analytics
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="feed"><FeedTimeline /></TabsContent>
@@ -342,6 +349,9 @@ const Dashboard = () => {
                 <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
               </TabsContent>
               <TabsContent value="contracts"><MyContracts /></TabsContent>
+              <TabsContent value="analytics">
+                <AnalyticsDashboard userId={user?.id || ''} userProfile={userProfile} />
+              </TabsContent>
             </Tabs>
           </div>
         </div>
