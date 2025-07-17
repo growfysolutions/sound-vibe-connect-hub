@@ -28,6 +28,21 @@ export default defineConfig(({ mode }) => ({
     logOverride: { 
       'this-is-undefined-in-esm': 'silent',
       'tsconfig-json': 'silent'
+    },
+    // Override TypeScript config completely to avoid project reference errors
+    tsconfigRaw: {
+      compilerOptions: {
+        target: "esnext",
+        module: "esnext",
+        skipLibCheck: true,
+        allowSyntheticDefaultImports: true,
+        esModuleInterop: true,
+        jsx: "react-jsx",
+        baseUrl: ".",
+        paths: {
+          "@/*": ["./src/*"]
+        }
+      }
     }
   },
   define: {
