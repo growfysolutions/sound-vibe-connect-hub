@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import FileAttachment from '@/components/chat/FileAttachment';
+import { VoiceMessageRecorder } from '@/components/chat/VoiceMessageRecorder';
+import { VoiceMessagePlayer } from '@/components/chat/VoiceMessagePlayer';
 import { supabase } from '@/integrations/supabase/client';
 import { Conversation, Message } from '@/types';
 import { toast } from 'sonner';
@@ -213,6 +215,43 @@ const Messages = () => {
     }
   };
 
+  const handleSendVoiceMessage = async (audioBlob: Blob, duration: number) => {
+    if (!selectedConversation || !currentUser) return;
+
+    const fileId = uuidv4();
+    const filePath = `${currentUser.id}/${selectedConversation.id}/voice_${fileId}.webm`;
+
+    const toastId = toast.loading('Sending voice message...');
+
+    const { error: uploadError } = await supabase.storage
+      .from('chat_attachments')
+      .upload(filePath, audioBlob);
+
+    if (uploadError) {
+      toast.error(`Failed to upload voice message: ${uploadError.message}`, { id: toastId });
+      return;
+    }
+
+    const { error: messageError } = await supabase.from('messages').insert({
+      conversation_id: selectedConversation.id,
+      sender_id: currentUser.id,
+      file_path: filePath,
+      file_metadata: { 
+        name: `voice_message_${Date.now()}.webm`, 
+        type: 'audio/webm', 
+        size: audioBlob.size,
+        duration: duration,
+        isVoiceMessage: true
+      },
+    });
+
+    if (messageError) {
+      toast.error('Failed to send voice message.', { id: toastId });
+    } else {
+      toast.success('Voice message sent!', { id: toastId });
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 h-full">
       <div className="flex border rounded-lg h-full bg-card text-card-foreground shadow-sm" style={{minHeight: '80vh'}}>
@@ -269,7 +308,14 @@ const Messages = () => {
                       <div className={`rounded-lg px-3 py-2 max-w-sm ${msg.sender_id === currentUser.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                         {msg.content && <p>{msg.content}</p>}
                         {msg.file_path && msg.file_metadata && (
-                          <FileAttachment filePath={msg.file_path} fileMetadata={msg.file_metadata as { name: string; size: number; type: string; }} />
+                          (msg.file_metadata as any)?.isVoiceMessage ? (
+                            <VoiceMessagePlayer 
+                              filePath={msg.file_path} 
+                              duration={(msg.file_metadata as any)?.duration}
+                            />
+                          ) : (
+                            <FileAttachment filePath={msg.file_path} fileMetadata={msg.file_metadata as { name: string; size: number; type: string; }} />
+                          )
                         )}
                         <p className={`text-xs mt-1 ${msg.sender_id === currentUser.id ? 'text-primary-foreground/80' : 'text-muted-foreground/80'}`}>
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -298,6 +344,10 @@ const Messages = () => {
                 <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
                   <Paperclip className="w-4 h-4" />
                 </Button>
+                <VoiceMessageRecorder 
+                  onSendVoiceMessage={handleSendVoiceMessage}
+                  disabled={!selectedConversation}
+                />
                 <input
                   type="file"
                   ref={fileInputRef}

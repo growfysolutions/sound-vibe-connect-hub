@@ -4,7 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import { Music, Users, Search, Gamepad2, TrendingUp, Briefcase, MessageSquare } from 'lucide-react';
+import { Music, Users, Search, Gamepad2, TrendingUp, Briefcase, MessageSquare, BarChart3, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 import { addXp, XP_AMOUNTS } from '@/lib/xp';
@@ -20,6 +20,8 @@ import MyContracts from '@/pages/MyContracts';
 import { FeedTimeline } from '@/components/feed/FeedTimeline';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
+import { RecommendationEngine } from '@/components/dashboard/RecommendationEngine';
+import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 
 
 // Import types
@@ -298,6 +300,14 @@ const Dashboard = () => {
                   <Briefcase className="w-4 h-4 mr-2" />
                   My Contracts
                 </TabsTrigger>
+                <TabsTrigger value="recommendations" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Recommendations
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Analytics
+                </TabsTrigger>
                 <TabsTrigger value="messages" onClick={() => navigate('/messages')} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Messages
@@ -340,6 +350,8 @@ const Dashboard = () => {
                 <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
               </TabsContent>
               <TabsContent value="contracts"><MyContracts /></TabsContent>
+              <TabsContent value="recommendations"><RecommendationEngine /></TabsContent>
+              <TabsContent value="analytics"><AnalyticsDashboard /></TabsContent>
             </Tabs>
           </div>
         </div>
