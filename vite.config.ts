@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    fs: {
+      strict: false
+    }
   },
   plugins: [
     react(),
@@ -26,6 +29,10 @@ export default defineConfig(({ mode }) => ({
         if (warning.code === 'MODULE_NOT_FOUND') return;
         warn(warning);
       }
+    },
+    // Force use of JS version of Rollup to avoid native dependency issues
+    commonjsOptions: {
+      ignoreTryCatch: false
     }
   },
   esbuild: {
