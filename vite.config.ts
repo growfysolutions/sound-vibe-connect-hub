@@ -41,17 +41,17 @@ export default defineConfig(({ mode }) => ({
       'this-is-undefined-in-esm': 'silent',
       'tsconfig-json': 'silent'
     },
-    // Completely bypass TypeScript project references
+    // Bypass TypeScript project references and use direct config
     tsconfigRaw: {
       compilerOptions: {
-        target: "esnext",
-        module: "esnext",
-        lib: ["dom", "dom.iterable", "esnext"],
+        target: "ES2020",
+        module: "ESNext",
+        lib: ["ES2020", "DOM", "DOM.Iterable"],
         allowJs: true,
         skipLibCheck: true,
         strict: false,
         forceConsistentCasingInFileNames: true,
-        noEmit: true,
+        noEmit: false,
         esModuleInterop: true,
         allowSyntheticDefaultImports: true,
         moduleResolution: "bundler",
@@ -65,7 +65,7 @@ export default defineConfig(({ mode }) => ({
           "@/*": ["./src/*"]
         }
       },
-      include: ["src/**/*"],
+      include: ["src/**/*", "vite.config.ts"],
       exclude: ["node_modules", "dist"]
     }
   },
