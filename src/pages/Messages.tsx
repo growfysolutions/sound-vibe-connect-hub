@@ -65,31 +65,56 @@ const Messages = () => {
         setCurrentUserProfile(profileData);
       }
 
-      // Get conversation IDs directly from conversations table where user is a participant
-      const { data: conversationsData, error: conversationsError } = await supabase
+      // Use a simple approach - get all conversations and then filter by participants
+      const { data: directConversations, error: directError } = await supabase
         .from('conversations')
         .select(`
-          *,
-          conversation_participants!inner (
-            user_id,
-            profiles (
-              id,
-              full_name,
-              avatar_url
-            )
-          )
+          id,
+          name,
+          is_group_chat,
+          last_message_at,
+          created_at,
+          created_by
         `)
-        .eq('conversation_participants.user_id', user.id)
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
-      if (conversationsError) {
+      if (directError) {
         toast.error('Failed to fetch user conversations.');
-        console.error('Error fetching conversations:', conversationsError);
+        console.error('Error fetching conversations:', directError);
         setLoading(false);
         return;
       }
 
-      setConversations(conversationsData as Conversation[]);
+      // For each conversation, get participants separately to avoid recursion
+      const conversationsWithParticipants = [];
+      
+      for (const conv of directConversations || []) {
+        try {
+          const { data: participants } = await supabase
+            .from('conversation_participants')
+            .select(`
+              user_id,
+              profiles (
+                id,
+                full_name,
+                avatar_url
+              )
+            `)
+            .eq('conversation_id', conv.id);
+
+          // Only include conversations where current user is a participant
+          if (participants?.some(p => p.user_id === user.id)) {
+            conversationsWithParticipants.push({
+              ...conv,
+              conversation_participants: participants || []
+            });
+          }
+        } catch (error) {
+          console.error(`Error fetching participants for conversation ${conv.id}:`, error);
+        }
+      }
+
+      setConversations(conversationsWithParticipants as Conversation[]);
       setLoading(false);
     };
 
