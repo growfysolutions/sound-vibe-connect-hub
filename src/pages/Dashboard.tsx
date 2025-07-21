@@ -1,16 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 
-import { Music, Users, Search, Gamepad2, TrendingUp, Briefcase, MessageSquare, BarChart3, Sparkles } from 'lucide-react';
+
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 import { addXp, XP_AMOUNTS } from '@/lib/xp';
 
 // Import components
-import UserProfileCard from '@/components/dashboard/UserProfileCard';
-import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import ProgressPanel from '@/components/dashboard/ProgressPanel';
 import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
 import DashboardNav from '@/components/dashboard/DashboardNav';
