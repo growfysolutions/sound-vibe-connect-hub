@@ -145,21 +145,17 @@ const Dashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch professionals for Discover tab
+      // Fetch professionals for Discover tab - simplified query
       const { data: professionalsData, error: professionalsError } = await supabase
         .from('profiles')
-        .select('*, professional_roles:profiles_professional_roles(roles(name)))')
+        .select('*')
         .neq('id', user.id);
 
       if (professionalsError) {
         console.error('Error fetching professionals:', professionalsError);
       } else if (professionalsData) {
-        const profiles = professionalsData.map(p => ({
-          ...(p as any),
-          professional_roles: (p as any).professional_roles?.map((pr: any) => pr.roles?.name) || []
-        })) as Profile[];
-        setAllProfessionals(profiles);
-        setFilteredProfessionals(profiles);
+        setAllProfessionals(professionalsData as Profile[]);
+        setFilteredProfessionals(professionalsData as Profile[]);
       }
 
       // Fetch accepted connections - simplified

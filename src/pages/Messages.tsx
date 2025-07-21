@@ -65,30 +65,12 @@ const Messages = () => {
         setCurrentUserProfile(profileData);
       }
 
-      const { data: participantData, error: participantError } = await supabase
-        .from('conversation_participants')
-        .select('conversation_id')
-        .eq('user_id', user.id);
-
-      if (participantError) {
-        toast.error('Failed to fetch user conversations.');
-        setLoading(false);
-        return;
-      }
-
-      const conversationIds = participantData.map(p => p.conversation_id);
-
-      if (conversationIds.length === 0) {
-        setConversations([]);
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
+      // Get conversation IDs directly from conversations table where user is a participant
+      const { data: conversationsData, error: conversationsError } = await supabase
         .from('conversations')
         .select(`
           *,
-          conversation_participants (
+          conversation_participants!inner (
             user_id,
             profiles (
               id,
@@ -97,15 +79,17 @@ const Messages = () => {
             )
           )
         `)
-        .in('id', conversationIds)
+        .eq('conversation_participants.user_id', user.id)
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
-      if (error) {
-        toast.error('Failed to fetch conversations.');
-        console.error('Error fetching conversations:', error);
-      } else {
-        setConversations(data as Conversation[]);
+      if (conversationsError) {
+        toast.error('Failed to fetch user conversations.');
+        console.error('Error fetching conversations:', conversationsError);
+        setLoading(false);
+        return;
       }
+
+      setConversations(conversationsData as Conversation[]);
       setLoading(false);
     };
 
