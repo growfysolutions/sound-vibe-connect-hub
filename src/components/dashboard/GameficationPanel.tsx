@@ -1,4 +1,3 @@
-import React from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,9 +14,9 @@ const GameficationPanel: React.FC<GameficationPanelProps> = ({ connectionsCount,
   const userProgress = {
     level: profile?.level ?? 1,
     levelName: 'Rising Star', // This can be made dynamic later based on level
-    progress: profile?.xp ? (profile.xp % 1000) / 10 : 0, // Example: 1000xp per level
-    points: profile?.xp ?? 0,
-    nextLevelPoints: (profile?.level ?? 1) * 1000,
+    progress: profile ? ((profile as any).xp || 0) % 1000 / 10 : 0, // Example: 1000xp per level
+    points: (profile as any)?.xp || 0,
+    nextLevelPoints: (profile?.level || 1) * 1000,
   };
 
   const achievements = [

@@ -11,6 +11,7 @@ export type Milestone = Database['public']['Tables']['milestones']['Row'];
 export type Review = Database['public']['Tables']['reviews']['Row'];
 export type BaseMessage = Database['public']['Tables']['messages']['Row'];
 export type BaseConversation = Database['public']['Tables']['conversations']['Row'];
+export type Connection = Database['public']['Tables']['connections']['Row'];
 
 // Extended types for use in components, combining base types with related data
 
@@ -48,5 +49,10 @@ export type ContractWithDetails = Contract & {
 // A review with the reviewer's profile
 export type ReviewWithReviewer = Review & {
   reviewer: Profile;
+};
+
+// Extended profile type with additional computed properties
+export type ExtendedProfile = Profile & {
+  xp?: number;
 };
 

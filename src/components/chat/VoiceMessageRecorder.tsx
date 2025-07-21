@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Send, Trash2, Play, Pause, Square } from 'lucide-react';
+import { Mic, Send, Trash2, Play, Pause, Square } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface VoiceMessageRecorderProps {

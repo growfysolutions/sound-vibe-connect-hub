@@ -22,7 +22,6 @@ export function RecommendationEngine() {
   const { user } = useAuth();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -38,8 +37,6 @@ export function RecommendationEngine() {
           .single();
 
         if (profile) {
-          setUserProfile(profile);
-          
           // Generate recommendations based on user data
           const generatedRecommendations = await generateRecommendations(profile);
           setRecommendations(generatedRecommendations);

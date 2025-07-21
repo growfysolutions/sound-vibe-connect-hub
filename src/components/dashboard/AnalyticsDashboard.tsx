@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+
 import { Progress } from '@/components/ui/progress';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { 
   TrendingUp, Users, Music, MessageSquare, Eye, Heart, 
-  Calendar, Target, Award, Clock, Activity, Zap 
+  Target, Award, Clock, Activity 
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -37,7 +37,6 @@ export function AnalyticsDashboard() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<'7d' | '30d' | '90d'>('30d');
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -57,7 +56,7 @@ export function AnalyticsDashboard() {
     };
 
     fetchAnalytics();
-  }, [user, timeframe]);
+  }, [user]);
 
   const generateAnalyticsData = async (userId: string): Promise<AnalyticsData> => {
     // Fetch real data where possible
