@@ -25,7 +25,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   {project.title}
                 </h3>
                 <p className="text-sm text-muted-foreground truncate">
-                  {project.description}
+                  {project.genre || 'No genre specified'}
                 </p>
               </div>
               <Button size="icon" className="btn-premium opacity-0 group-hover:opacity-100 transition-opacity">

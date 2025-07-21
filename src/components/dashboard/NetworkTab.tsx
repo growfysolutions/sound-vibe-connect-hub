@@ -47,7 +47,7 @@ const NetworkTab: React.FC<NetworkTabProps> = ({
             {incomingRequests.map((request) => (
               <ProfessionalCard
                 key={request.id}
-                professional={request.profiles}
+                professional={(request as any).profiles || { full_name: 'Unknown User', id: request.requester_id }}
                 actions={(
                   <div className="flex flex-col gap-2">
                     <Button size="sm" variant="outline" className="w-full" onClick={() => handleViewProfile(request.requester_id)}>

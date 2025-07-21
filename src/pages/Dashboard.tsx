@@ -25,7 +25,7 @@ import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 
 
 // Import types
-import { Profile, Connection, Project } from '@/integrations/supabase/types';
+import { Profile, Connection, Project } from '@/types';
 
 const Dashboard = () => {
   const { refetchProfile } = useProfile();
@@ -124,7 +124,11 @@ const Dashboard = () => {
       }
       setIncomingRequests(prev => prev.filter(req => req.id !== connection.id));
       // Refetch connections to update the network tab
-      const { data: updatedConnections } = await supabase.rpc('get_connections', { p_user_id: user.id });
+      const { data: updatedConnections } = await supabase
+        .from('connections')
+        .select('*')
+        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
+        .eq('status', 'accepted');
       if (updatedConnections) setConnections(updatedConnections);
     }
   }, [refetchProfile]);
@@ -162,31 +166,31 @@ const Dashboard = () => {
         setFilteredProfessionals(profiles);
       }
 
-      // Fetch accepted connections
+      // Fetch accepted connections - simplified
       const { data: connectionsData, error: connectionsError } = await supabase
         .from('connections')
-        .select('*, requester:profiles!connections_requester_id_fkey(*), addressee:profiles!connections_addressee_id_fkey(*)')
-        .in('status', ['accepted'])
+        .select('*')
+        .eq('status', 'accepted')
         .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
 
       if (connectionsError) {
         console.error('Error fetching connections:', connectionsError);
       } else if (connectionsData) {
-        setConnections(connectionsData as Connection[]);
-        setFilteredConnections(connectionsData as Connection[]);
+        setConnections(connectionsData);
+        setFilteredConnections(connectionsData);
       }
 
-      // Fetch incoming connection requests
+      // Fetch incoming connection requests - simplified
       const { data: requestsData, error: requestsError } = await supabase
         .from('connections')
-        .select('*, requester:profiles!connections_requester_id_fkey(*)')
+        .select('*')
         .eq('addressee_id', user.id)
         .eq('status', 'pending');
 
       if (requestsError) {
         console.error('Error fetching incoming requests:', requestsError);
       } else if (requestsData) {
-        setIncomingRequests(requestsData as Connection[]);
+        setIncomingRequests(requestsData);
       }
 
       // Fetch pending sent requests

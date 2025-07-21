@@ -40,7 +40,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
           // Bust the cache by adding a timestamp
           data.avatar_url = `${data.avatar_url}?t=${new Date().getTime()}`;
         }
-        setProfile(data);
+        setProfile(data as any);
       } else {
         // Profile does not exist, so create it
         console.log('No profile found for user, attempting to create one.');

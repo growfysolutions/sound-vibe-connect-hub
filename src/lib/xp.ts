@@ -64,7 +64,7 @@ export const addXp = async (userId: string, amount: number) => {
     }
 
     // 2. Calculate new XP and level
-    const newXp = (currentProfile.xp || 0) + amount;
+    const newXp = ((currentProfile as any).xp || 0) + amount;
     const newLevel = getLevelFromXp(newXp);
 
     // 3. Update the profile in the database
