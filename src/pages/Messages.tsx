@@ -86,7 +86,17 @@ const Messages = () => {
 
       const { data, error } = await supabase
         .from('conversations')
-        .select('*, conversation_participants(*, profiles(*))')
+        .select(`
+          *,
+          conversation_participants (
+            user_id,
+            profiles (
+              id,
+              full_name,
+              avatar_url
+            )
+          )
+        `)
         .in('id', conversationIds)
         .order('last_message_at', { ascending: false, nullsFirst: false });
 

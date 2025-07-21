@@ -18,7 +18,17 @@ const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal
   const handleGoToChat = async (projectId: number) => {
     const { data: conversation, error } = await supabase
       .from('conversations')
-      .select('*, conversation_participants(*, profiles(*))')
+      .select(`
+        *,
+        conversation_participants (
+          user_id,
+          profiles (
+            id,
+            full_name,
+            avatar_url
+          )
+        )
+      `)
       .eq('project_id', projectId)
       .single();
 
