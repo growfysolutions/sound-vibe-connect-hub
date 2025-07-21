@@ -56,7 +56,7 @@ const MyContracts = () => {
   }
 
   const getPartner = (contract: Contract) => {
-    return contract.client_id === currentUserId ? contract.professional : contract.client;
+    return contract.client_id === currentUserId ? (contract as any).professional : (contract as any).client;
   };
 
   const toggleMilestones = (contractId: string) => {
@@ -93,7 +93,7 @@ const MyContracts = () => {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <CardHeader className="bg-muted/30">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{contract.gigs?.title || 'Untitled Gig'}</CardTitle>
+                      <CardTitle className="text-lg">{(contract as any).gigs?.title || 'Untitled Gig'}</CardTitle>
                       <Badge variant={contract.status === 'active' ? 'default' : 'secondary'}>
                         {contract.status}
                       </Badge>

@@ -63,7 +63,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, contract, on
         <DialogHeader>
           <DialogTitle>Leave a Review</DialogTitle>
           <DialogDescription>
-            Share your experience for the contract: {contract.gigs?.title}
+            Share your experience for the contract: {(contract as any).gigs?.title || 'N/A'}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">

@@ -28,7 +28,7 @@ export const ProposalList: React.FC<ProposalListProps> = ({ gigId, gigTitle }) =
     if (error) {
       toast.error('Failed to fetch proposals', { description: error.message });
     } else {
-      setProposals(data as Proposal[]);
+      setProposals(data as any as Proposal[]);
     }
     setLoading(false);
   };

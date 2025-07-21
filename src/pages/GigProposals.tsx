@@ -108,7 +108,7 @@ const GigProposals = () => {
           client_id: user.id,
           professional_id: proposal.user_id,
           terms: proposal.message,
-          total_amount: proposal.proposed_rate, // Corrected field
+          total_amount: (proposal as any).rate || 0,
           status: 'pending_signature' // Corrected status
         });
 

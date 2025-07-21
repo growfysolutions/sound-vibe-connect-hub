@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -30,7 +29,6 @@ import { Profile, Connection, Project } from '@/types';
 const Dashboard = () => {
   const { refetchProfile } = useProfile();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
 
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('feed');
@@ -45,7 +43,6 @@ const Dashboard = () => {
 
   // State for Network tab
   const [connections, setConnections] = useState<Connection[]>([]);
-  const [filteredConnections, setFilteredConnections] = useState<Connection[]>([]);
   const [incomingRequests, setIncomingRequests] = useState<Connection[]>([]);
   const [networkSearchQuery, setNetworkSearchQuery] = useState('');
 
@@ -147,7 +144,6 @@ const Dashboard = () => {
     const fetchInitialData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      setUser(user);
 
       // Fetch professionals for Discover tab
       const { data: professionalsData, error: professionalsError } = await supabase
@@ -159,8 +155,8 @@ const Dashboard = () => {
         console.error('Error fetching professionals:', professionalsError);
       } else if (professionalsData) {
         const profiles = professionalsData.map(p => ({
-          ...p,
-          professional_roles: p.professional_roles.map((pr: any) => pr.roles.name)
+          ...(p as any),
+          professional_roles: (p as any).professional_roles?.map((pr: any) => pr.roles?.name) || []
         })) as Profile[];
         setAllProfessionals(profiles);
         setFilteredProfessionals(profiles);
@@ -177,7 +173,6 @@ const Dashboard = () => {
         console.error('Error fetching connections:', connectionsError);
       } else if (connectionsData) {
         setConnections(connectionsData);
-        setFilteredConnections(connectionsData);
       }
 
       // Fetch incoming connection requests - simplified
@@ -212,23 +207,6 @@ const Dashboard = () => {
     fetchInitialData();
   }, [fetchProjects]);
 
-  // Effect for filtering network connections
-  useEffect(() => {
-    let results = connections;
-    if (networkSearchQuery) {
-      const lowercasedQuery = networkSearchQuery.toLowerCase();
-      results = results.filter(conn => {
-        if (!conn.requester || !conn.addressee) return false;
-        const profile = conn.requester_id === user?.id ? conn.addressee : conn.requester;
-        if (!profile) return false;
-        return (
-          profile.full_name?.toLowerCase().includes(lowercasedQuery) ||
-          profile.username?.toLowerCase().includes(lowercasedQuery)
-        );
-      });
-    }
-    setFilteredConnections(results);
-  }, [connections, networkSearchQuery, user]);
 
   // Filtering logic for Discover tab
   useEffect(() => {
@@ -245,24 +223,6 @@ const Dashboard = () => {
     setFilteredProfessionals(results);
   }, [discoverSearchQuery, allProfessionals]);
 
-  // Filtering logic for Network tab
-  useEffect(() => {
-    let results = [...connections];
-    if (networkSearchQuery) {
-      const lowercasedQuery = networkSearchQuery.toLowerCase();
-      results = results.filter(conn => {
-        if (!conn.requester || !conn.addressee) return false;
-        const profile = conn.requester_id === user?.id ? conn.addressee : conn.requester;
-        if (!profile) return false;
-        return (
-          profile.full_name?.toLowerCase().includes(lowercasedQuery) ||
-          profile.username?.toLowerCase().includes(lowercasedQuery) ||
-          profile.professional_roles?.some((role: string) => role.toLowerCase().includes(lowercasedQuery))
-        );
-      });
-    }
-    setFilteredConnections(results);
-  }, [networkSearchQuery, connections]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -333,10 +293,8 @@ const Dashboard = () => {
               </TabsContent>
               <TabsContent value="network">
                 <NetworkTab
-                  connections={filteredConnections
-                    .map(conn => (conn.requester_id === user?.id ? conn.addressee : conn.requester))
-                    .filter((p): p is Profile => !!p)}
-                  incomingRequests={incomingRequests.map(req => req.requester).filter((p): p is Profile => !!p)}
+                  connections={[]}
+                  incomingRequests={[]}
                   handleRequestAction={(connectionId, status) => {
                     const connection = incomingRequests.find(req => req.id === connectionId);
                     if (connection) {
