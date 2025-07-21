@@ -128,17 +128,36 @@ const Messages = () => {
       if (!selectedConversation) return;
 
       setLoadingMessages(true);
-      const { data, error } = await supabase
+      // Fetch messages first
+      const { data: messagesData, error } = await supabase
         .from('messages')
-        .select('*, sender:profiles(id, full_name, avatar_url)')
+        .select('*')
         .eq('conversation_id', selectedConversation.id)
         .order('created_at', { ascending: true });
 
       if (error) {
         toast.error('Failed to fetch messages.');
-      } else {
-        setMessages(data as Message[]);
+        setLoadingMessages(false);
+        return;
       }
+
+      // Then fetch sender profiles for each message
+      const messagesWithSenders = await Promise.all(
+        messagesData.map(async (message) => {
+          const { data: senderData } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url')
+            .eq('id', message.sender_id)
+            .single();
+          
+          return {
+            ...message,
+            sender: senderData
+          };
+        })
+      );
+
+      setMessages(messagesWithSenders as Message[]);
       setLoadingMessages(false);
     };
 
