@@ -14,6 +14,7 @@ import ActivityFeed from '@/components/dashboard/ActivityFeed';
 import ProgressPanel from '@/components/dashboard/ProgressPanel';
 import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
 import DashboardNav from '@/components/dashboard/DashboardNav';
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import MyContracts from '@/pages/MyContracts';
 import { FeedTimeline } from '@/components/feed/FeedTimeline';
@@ -222,57 +223,21 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav 
-        searchQuery={activeSearchQuery} 
-        setSearchQuery={setActiveSearchQuery} 
-        handleOpenModal={handleOpenModal}
+      <DashboardSidebar 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onNavigateToMessages={() => navigate('/messages')}
       />
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1 space-y-6">
-            <UserProfileCard />
-            <ActivityFeed />
-          </div>
-          <div className="lg:col-span-3">
+      <div className="ml-80 min-h-screen">
+        <DashboardNav 
+          searchQuery={activeSearchQuery} 
+          setSearchQuery={setActiveSearchQuery} 
+          handleOpenModal={handleOpenModal}
+        />
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="bg-card/80 backdrop-blur-md mb-8 w-full justify-start border border-border/50">
-                                <TabsTrigger value="feed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  Feed
-                </TabsTrigger>
-                <TabsTrigger value="discover" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Search className="w-4 h-4 mr-2" />
-                  Discover
-                </TabsTrigger>
-                <TabsTrigger value="projects" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Music className="w-4 h-4 mr-2" />
-                  My Projects
-                </TabsTrigger>
-                <TabsTrigger value="network" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Users className="w-4 h-4 mr-2" />
-                  Network
-                </TabsTrigger>
-                <TabsTrigger value="progress" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Gamepad2 className="w-4 h-4 mr-2" />
-                  Progress
-                </TabsTrigger>
-                <TabsTrigger value="contracts" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Briefcase className="w-4 h-4 mr-2" />
-                  My Contracts
-                </TabsTrigger>
-                <TabsTrigger value="recommendations" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Recommendations
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Analytics
-                </TabsTrigger>
-                <TabsTrigger value="messages" onClick={() => navigate('/messages')} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Messages
-                </TabsTrigger>
-              </TabsList>
+              {/* Content without tab headers since sidebar handles navigation */}
               <TabsContent value="feed"><FeedTimeline /></TabsContent>
               <TabsContent value="discover">
                 <DiscoverTab 

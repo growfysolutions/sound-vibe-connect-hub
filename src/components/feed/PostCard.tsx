@@ -4,7 +4,8 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, ThumbsUp, Send, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MessageCircle, ThumbsUp, Send, MoreHorizontal, Trash2, Share2, Bookmark, Users } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -127,22 +128,34 @@ export function PostCard({ post }: { post: PostWithProfile }) {
   };
 
   return (
-    <Card className="bg-card">
-      <CardHeader>
+    <Card className="glass-card hover:border-primary/20 transition-all duration-300 group">
+      <CardHeader className="pb-3">
         <div className="flex items-center space-x-4">
-          <Avatar>
-            <AvatarImage src={post.profiles?.avatar_url || undefined} alt={post.profiles?.full_name || 'User'} />
-            <AvatarFallback>{post.profiles?.full_name?.[0] || 'U'}</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-12 w-12 border-2 border-primary/20">
+              <AvatarImage src={post.profiles?.avatar_url || undefined} alt={post.profiles?.full_name || 'User'} />
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-purple-500/20 text-primary font-semibold">
+                {post.profiles?.full_name?.[0] || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            {/* Activity indicator for online status */}
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
+          </div>
           <div className="flex-grow">
-            <p className="font-semibold text-card-foreground">{post.profiles?.full_name || 'Anonymous'}</p>
+            <div className="flex items-center space-x-2">
+              <p className="font-semibold text-foreground">{post.profiles?.full_name || 'Anonymous'}</p>
+              <Badge variant="secondary" className="text-xs">
+                <Users className="w-3 h-3 mr-1" />
+                Shared a post
+              </Badge>
+            </div>
             <p className="text-sm text-muted-foreground">{timeAgo}</p>
           </div>
           {user && user.id === post.user_id && (
-            <div className="ml-auto">
+            <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -157,18 +170,68 @@ export function PostCard({ post }: { post: PostWithProfile }) {
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <p className="text-card-foreground whitespace-pre-wrap">{post.content}</p>
+      <CardContent className="pb-4">
+        <p className="text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
       </CardContent>
-      <CardFooter className="flex flex-col items-start">
-        <div className="flex justify-between w-full">
-          <Button variant="ghost" size="sm" onClick={toggleLike} className={isLiked ? 'text-primary' : ''}>
-            <ThumbsUp className={`mr-2 h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-            {likesCount} {likesCount === 1 ? 'Like' : 'Likes'}
+      <CardFooter className="flex flex-col items-start pt-4 border-t border-border/30">
+        {/* Engagement Stats */}
+        {(likesCount > 0 || comments.length > 0) && (
+          <div className="flex items-center justify-between w-full text-sm text-muted-foreground mb-3">
+            <div className="flex items-center space-x-4">
+              {likesCount > 0 && (
+                <span className="flex items-center">
+                  <ThumbsUp className="w-4 h-4 mr-1 text-primary" />
+                  {likesCount}
+                </span>
+              )}
+              {comments.length > 0 && (
+                <span className="flex items-center">
+                  <MessageCircle className="w-4 h-4 mr-1" />
+                  {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Action Buttons */}
+        <div className="grid grid-cols-4 gap-1 w-full">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={toggleLike} 
+            className={`hover:bg-primary/10 transition-all duration-200 ${isLiked ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary'}`}
+          >
+            <ThumbsUp className={`mr-2 h-4 w-4 transition-transform duration-200 ${isLiked ? 'fill-current scale-110' : 'hover:scale-110'}`} />
+            Like
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setShowComments(!showComments)}>
-            <MessageCircle className="mr-2 h-4 w-4" />
-            {comments.length} {comments.length === 1 ? 'Comment' : 'Comments'}
+          
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setShowComments(!showComments)}
+            className="text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 transition-all duration-200"
+          >
+            <MessageCircle className="mr-2 h-4 w-4 hover:scale-110 transition-transform duration-200" />
+            Comment
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="text-muted-foreground hover:text-green-500 hover:bg-green-500/10 transition-all duration-200"
+          >
+            <Share2 className="mr-2 h-4 w-4 hover:scale-110 transition-transform duration-200" />
+            Share
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 transition-all duration-200"
+          >
+            <Bookmark className="mr-2 h-4 w-4 hover:scale-110 transition-transform duration-200" />
+            Save
           </Button>
         </div>
         {showComments && (
