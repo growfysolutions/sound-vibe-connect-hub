@@ -18,13 +18,13 @@ export function LevelProgressRing({ collapsed }: { collapsed: boolean }) {
       5: { en: 'Professional', pn: 'ਪੇਸ਼ੇਵਰ' },
       10: { en: 'Expert', pn: 'ਮਾਹਰ' },
       20: { en: 'Master', pn: 'ਉਸਤਾਦ' }
-    };
+    } as const;
     
     const levelKey = Object.keys(levelNames)
       .reverse()
-      .find(key => level >= parseInt(key)) || '1';
+      .find(key => level >= parseInt(key));
     
-    return levelNames[levelKey as keyof typeof levelNames];
+    return levelNames[(levelKey ? parseInt(levelKey) : 1) as keyof typeof levelNames];
   };
 
   const levelName = getLevelName(userLevel);

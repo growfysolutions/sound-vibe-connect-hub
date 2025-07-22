@@ -69,7 +69,10 @@ export function DashboardSidebar({ activeTab, onTabChange, onNavigateToMessages 
               <Info className="w-4 h-4 mr-3 group-hover:text-saffron transition-colors" />
               About SoundVibe
             </button>
-            <button className="w-full flex items-center px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all duration-300 group">
+            <button 
+              onClick={onNavigateToMessages}
+              className="w-full flex items-center px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all duration-300 group"
+            >
               <MessageCircle className="w-4 h-4 mr-3 group-hover:text-saffron transition-colors" />
               <div className="flex flex-col items-start">
                 <span>Feedback</span>
