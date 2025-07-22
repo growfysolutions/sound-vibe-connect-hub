@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +30,7 @@ export function PostCard({ post }: PostCardProps) {
   const handleShare = () => {
     if (navigator.share && isMobile) {
       navigator.share({
-        title: `Post by ${post.profiles.full_name}`,
+        title: `Post by ${post.profiles?.full_name || 'Unknown User'}`,
         text: post.content,
         url: window.location.href,
       });
@@ -40,6 +40,11 @@ export function PostCard({ post }: PostCardProps) {
   const handleComment = () => {
     // Open comment modal or navigate to post detail
   };
+
+  // Handle case where post.profiles might be null
+  const profileName = post.profiles?.full_name || 'Unknown User';
+  const avatarUrl = post.profiles?.avatar_url;
+  const profileInitial = profileName.charAt(0).toUpperCase();
 
   return (
     <Card className={cn(
@@ -51,15 +56,15 @@ export function PostCard({ post }: PostCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
             <Avatar className="w-12 h-12 border-2 border-saffron/30">
-              <AvatarImage src={post.profiles.avatar_url || undefined} />
+              <AvatarImage src={avatarUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white font-semibold">
-                {post.profiles.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                {profileInitial}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
                 <h3 className="font-semibold text-foreground truncate">
-                  {post.profiles.full_name}
+                  {profileName}
                 </h3>
                 <span className="text-xs bg-saffron/20 text-saffron px-2 py-1 rounded-full">
                   ✓ Verified Artist

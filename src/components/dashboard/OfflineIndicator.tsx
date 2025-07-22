@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Wifi, WifiOff, Download } from 'lucide-react';
+import { WifiOff, Download } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 

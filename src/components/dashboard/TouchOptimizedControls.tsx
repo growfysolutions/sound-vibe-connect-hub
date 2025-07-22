@@ -1,6 +1,6 @@
 
-import { useState, useRef, useEffect } from 'react';
-import { Heart, Share2, MessageCircle, Bookmark, Play, Pause } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Heart, Share2, MessageCircle, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -6,6 +7,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 import { addXp, XP_AMOUNTS } from '@/lib/xp';
+import { cn } from '@/lib/utils';
 
 // Import components
 import ProgressPanel from '@/components/dashboard/ProgressPanel';
