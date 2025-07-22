@@ -1,11 +1,9 @@
+
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { 
   Edit3, 
-  Users, 
   Clock, 
-  Calendar,
-  Settings,
   FileText,
   MessageSquare,
   CheckSquare2,
@@ -13,61 +11,59 @@ import {
   GitBranch
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CollaboratorSidebar } from '@/components/collaboration/CollaboratorSidebar';
-import { FilesTab } from '@/components/collaboration/FilesTab';
-import { TimelineTab } from '@/components/collaboration/TimelineTab';
-import { ChatTab } from '@/components/collaboration/ChatTab';
-import { TasksTab } from '@/components/collaboration/TasksTab';
-import { AudioMixerPanel } from '@/components/collaboration/AudioMixerPanel';
-import { VersionControl } from '@/components/collaboration/VersionControl';
+import CollaboratorSidebar from '@/components/collaboration/CollaboratorSidebar';
+import FilesTab from '@/components/collaboration/FilesTab';
+import TimelineTab from '@/components/collaboration/TimelineTab';
+import ChatTab from '@/components/collaboration/ChatTab';
+import TasksTab from '@/components/collaboration/TasksTab';
+import AudioMixerPanel from '@/components/collaboration/AudioMixerPanel';
+import VersionControl from '@/components/collaboration/VersionControl';
 
 interface Collaborator {
   id: string;
   name: string;
   avatarUrl: string;
   role: string;
-}
-
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  status: 'open' | 'in progress' | 'completed';
-  assigneeId: string;
-}
-
-interface Milestone {
-  id: string;
-  title: string;
-  dueDate: string;
-  status: 'upcoming' | 'in progress' | 'completed';
+  status: 'online' | 'away' | 'offline';
+  avatar: string;
+  permission: 'Admin' | 'Contributor' | 'Viewer';
 }
 
 const CollaborationWorkspace = () => {
-  const { projectId } = useParams<{ projectId: string }>();
   const [activeTab, setActiveTab] = useState('files');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [projectTitle, setProjectTitle] = useState('Sufi Romance - Wedding Album');
 
-  const [collaborators, setCollaborators] = useState<Collaborator[]>([
-    { id: '1', name: 'Arijit Singh', avatarUrl: '/avatars/arijit.jpg', role: 'Lead Vocalist' },
-    { id: '2', name: 'Pritam Chakraborty', avatarUrl: '/avatars/pritam.jpg', role: 'Music Composer' },
-    { id: '3', name: 'Sunidhi Chauhan', avatarUrl: '/avatars/sunidhi.jpg', role: 'Playback Singer' },
-  ]);
-
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: '101', title: 'Record Vocals', description: 'Record lead vocals for the track', status: 'in progress', assigneeId: '1' },
-    { id: '102', title: 'Compose Music', description: 'Compose the music for the song', status: 'completed', assigneeId: '2' },
-    { id: '103', title: 'Mix Audio', description: 'Mix the audio tracks', status: 'open', assigneeId: '2' },
-  ]);
-
-  const [milestones, setMilestones] = useState<Milestone[]>([
-    { id: '201', title: 'Concept Approval', dueDate: '2023-12-15', status: 'completed' },
-    { id: '202', title: 'Music Composition', dueDate: '2024-01-15', status: 'completed' },
-    { id: '203', title: 'Vocal Recording', dueDate: '2024-02-28', status: 'in progress' },
+  const [collaborators] = useState<Collaborator[]>([
+    { 
+      id: '1', 
+      name: 'Arijit Singh', 
+      avatarUrl: '/avatars/arijit.jpg', 
+      role: 'Lead Vocalist',
+      status: 'online',
+      avatar: '/avatars/arijit.jpg',
+      permission: 'Admin'
+    },
+    { 
+      id: '2', 
+      name: 'Pritam Chakraborty', 
+      avatarUrl: '/avatars/pritam.jpg', 
+      role: 'Music Composer',
+      status: 'online',
+      avatar: '/avatars/pritam.jpg',
+      permission: 'Contributor'
+    },
+    { 
+      id: '3', 
+      name: 'Sunidhi Chauhan', 
+      avatarUrl: '/avatars/sunidhi.jpg', 
+      role: 'Playback Singer',
+      status: 'away',
+      avatar: '/avatars/sunidhi.jpg',
+      permission: 'Contributor'
+    },
   ]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,19 +143,19 @@ const CollaborationWorkspace = () => {
             
             <div className="flex-1 overflow-hidden">
               <TabsContent value="files" className="h-full">
-                <FilesTab />
+                <FilesTab projectId="sample-project" />
               </TabsContent>
               
               <TabsContent value="timeline" className="h-full">
-                <TimelineTab />
+                <TimelineTab projectData={{ phase: 'Recording', progress: 65, daysRemaining: 45 }} />
               </TabsContent>
               
               <TabsContent value="chat" className="h-full">
-                <ChatTab />
+                <ChatTab projectId="sample-project" collaborators={collaborators} />
               </TabsContent>
               
               <TabsContent value="tasks" className="h-full">
-                <TasksTab />
+                <TasksTab projectId="sample-project" collaborators={collaborators} />
               </TabsContent>
               
               <TabsContent value="mixer" className="h-full">

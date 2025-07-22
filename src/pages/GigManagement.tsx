@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Calendar, Clock, MapPin, Users, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,7 @@ const GigManagement = () => {
 
   const gigDetails = {
     title: "Traditional Wedding Ceremony - Chandigarh",
-    type: "Live Performance",
+    type: "Live Performance", 
     date: "March 15, 2025",
     venue: "Golden Temple Banquet Hall",
     budgetRange: "₹25,000 - ₹40,000",
