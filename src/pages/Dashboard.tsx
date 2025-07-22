@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -24,6 +23,8 @@ import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import { MobileHeader } from '@/components/dashboard/MobileHeader';
 import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
+import { TodaysInspirationWidget } from '@/components/dashboard/TodaysInspirationWidget';
+import { MusicalJourneyWidget } from '@/components/dashboard/MusicalJourneyWidget';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -311,13 +312,13 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-container h-screen overflow-hidden bg-gradient-to-br from-background via-background/95 to-saffron/5">
+    <div className="dashboard-unified-theme">
       <OfflineIndicator />
       
-      {/* Three-Column Layout Structure */}
-      <div className="flex h-full">
-        {/* Sidebar: 280px fixed */}
-        <div className="sidebar w-80 flex-shrink-0">
+      {/* Three-Column Grid Layout */}
+      <div className="dashboard-grid">
+        {/* Left Sidebar: 280px fixed */}
+        <div className="left-sidebar">
           <DashboardSidebar 
             activeTab={activeTab}
             onTabChange={setActiveTab}
@@ -326,9 +327,9 @@ const Dashboard = () => {
         </div>
 
         {/* Main Content: flex-1 */}
-        <div className="main-content flex-1 flex flex-col overflow-hidden">
+        <div className="main-content">
           {/* Header: 64px fixed height */}
-          <div className="header h-16 flex-shrink-0 border-b border-saffron/20 bg-gradient-to-r from-card/98 to-background/95 backdrop-blur-xl">
+          <div className="dashboard-header">
             <DashboardNav 
               searchQuery={activeSearchQuery} 
               setSearchQuery={setActiveSearchQuery} 
@@ -337,73 +338,53 @@ const Dashboard = () => {
           </div>
 
           {/* Content Area: flex-1 with overflow */}
-          <div className="content-area flex-1 flex gap-6 p-6 overflow-hidden">
-            {/* Feed Column: flex-1 */}
-            <div className="feed-column flex-1 overflow-y-auto">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsContent value="feed" className="mt-0"><FeedTimeline /></TabsContent>
-                <TabsContent value="discover" className="mt-0">
-                  <DiscoverTab 
-                    professionals={filteredProfessionals} 
-                    pendingConnections={pendingConnections}
-                    handleConnect={handleConnect}
-                    handleSendMessage={handleSendMessage}
-                    handleSearch={setDiscoverSearchQuery}
-                  />
-                </TabsContent>
-                <TabsContent value="projects" className="mt-0">
-                  <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
-                </TabsContent>
-                <TabsContent value="network" className="mt-0">
-                  <NetworkTab
-                    connections={[]}
-                    incomingRequests={[]}
-                    handleRequestAction={(connectionId, status) => {
-                      const connection = incomingRequests.find(req => req.id === connectionId);
-                      if (connection) {
-                        handleRequestAction(connection, status);
-                      }
-                    }}
-                    searchQuery={networkSearchQuery}
-                    setSearchQuery={setNetworkSearchQuery}
-                    handleFindConnections={handleFindConnections}
-                    handleViewProfile={handleViewProfile}
-                    handleSendMessage={handleSendMessage}
-                  />
-                </TabsContent>
-                <TabsContent value="progress" className="mt-0">
-                  <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
-                </TabsContent>
-                <TabsContent value="contracts" className="mt-0"><MyContracts /></TabsContent>
-                <TabsContent value="recommendations" className="mt-0"><RecommendationEngine /></TabsContent>
-                <TabsContent value="analytics" className="mt-0"><AnalyticsDashboard /></TabsContent>
-              </Tabs>
-            </div>
+          <div className="main-content-area">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
+              <TabsContent value="feed" className="h-full"><FeedTimeline /></TabsContent>
+              <TabsContent value="discover" className="h-full">
+                <DiscoverTab 
+                  professionals={filteredProfessionals} 
+                  pendingConnections={pendingConnections}
+                  handleConnect={handleConnect}
+                  handleSendMessage={handleSendMessage}
+                  handleSearch={setDiscoverSearchQuery}
+                />
+              </TabsContent>
+              <TabsContent value="projects" className="h-full">
+                <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
+              </TabsContent>
+              <TabsContent value="network" className="h-full">
+                <NetworkTab
+                  connections={[]}
+                  incomingRequests={[]}
+                  handleRequestAction={(connectionId, status) => {
+                    const connection = incomingRequests.find(req => req.id === connectionId);
+                    if (connection) {
+                      handleRequestAction(connection, status);
+                    }
+                  }}
+                  searchQuery={networkSearchQuery}
+                  setSearchQuery={setNetworkSearchQuery}
+                  handleFindConnections={handleFindConnections}
+                  handleViewProfile={handleViewProfile}
+                  handleSendMessage={handleSendMessage}
+                />
+              </TabsContent>
+              <TabsContent value="progress" className="h-full">
+                <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
+              </TabsContent>
+              <TabsContent value="contracts" className="h-full"><MyContracts /></TabsContent>
+              <TabsContent value="recommendations" className="h-full"><RecommendationEngine /></TabsContent>
+              <TabsContent value="analytics" className="h-full"><AnalyticsDashboard /></TabsContent>
+            </Tabs>
+          </div>
+        </div>
 
-            {/* Right Panel: 320px fixed (only show on feed tab) */}
-            {activeTab === 'feed' && (
-              <div className="right-panel w-80 flex-shrink-0 overflow-y-auto">
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm rounded-lg border border-saffron/20 p-6">
-                    <h3 className="text-lg font-semibold text-foreground mb-4">My Musical Journey</h3>
-                    <div className="space-y-4">
-                      <div className="bg-gradient-to-r from-saffron/10 to-amber-500/10 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Level 1: Rising Star</span>
-                          <span className="text-xs text-muted-foreground">0 / 1000 XP</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2 mb-2">
-                          <div className="bg-gradient-to-r from-saffron to-amber-500 h-2 rounded-full" style={{ width: '0%' }}></div>
-                        </div>
-                        <p className="text-xs text-muted-foreground" style={{ fontFamily: 'serif' }}>
-                          ਪੱਚ 1: ਨਵਾਂ ਸਿਤਾਰਾ
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+        {/* Right Sidebar: 320px fixed */}
+        <div className="right-sidebar">
+          <div className="right-sidebar-content">
+            <TodaysInspirationWidget />
+            <MusicalJourneyWidget />
           </div>
         </div>
       </div>

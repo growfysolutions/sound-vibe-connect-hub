@@ -11,17 +11,67 @@ export function ProfileHeader({ collapsed }: { collapsed: boolean }) {
     return (
       <div className="flex flex-col items-center p-3">
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full opacity-20 group-hover:opacity-30 blur-sm transition-all duration-300"></div>
-          <Avatar className="relative w-12 h-12 border-2 border-slate-600">
-            <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || 'User avatar'} />
-            <AvatarFallback className="bg-slate-700 text-blue-400 font-bold text-lg">
-              {profile?.full_name?.charAt(0) || profile?.username?.charAt(0) || 'S'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-            <Music className="w-2 h-2 text-white" />
+          <div className="avatar-glow-collapsed">
+            <Avatar className="avatar-collapsed">
+              <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || 'User avatar'} />
+              <AvatarFallback className="avatar-fallback-collapsed">
+                {profile?.full_name?.charAt(0) || profile?.username?.charAt(0) || 'S'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="status-indicator-collapsed">
+              <Music className="w-2 h-2 text-white" />
+            </div>
           </div>
         </div>
+
+        <style jsx>{`
+          .avatar-glow-collapsed {
+            position: relative;
+          }
+
+          .avatar-glow-collapsed::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, var(--accent-orange, #ff9500), var(--accent-orange-dark, #d97706));
+            border-radius: 50%;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+          }
+
+          .avatar-glow-collapsed:hover::before {
+            opacity: 0.3;
+          }
+
+          .avatar-collapsed {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--accent-orange, #ff9500);
+            box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.3);
+          }
+
+          .avatar-fallback-collapsed {
+            background: var(--card-bg, #1e2936);
+            color: var(--accent-orange, #ff9500);
+            font-weight: bold;
+            font-size: 18px;
+          }
+
+          .status-indicator-collapsed {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid var(--secondary-bg, #1a1f2e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        `}</style>
       </div>
     );
   }
@@ -29,36 +79,37 @@ export function ProfileHeader({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="p-4 space-y-4">
       {/* Profile Card */}
-      <div className="relative">
-        <div className="bg-slate-800/60 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50">
+      <div className="profile-card-container">
+        <div className="profile-card">
           {/* Avatar and Info */}
-          <div className="flex items-start space-x-4">
-            <div className="relative group">
-              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full opacity-20 group-hover:opacity-30 blur transition-all duration-300"></div>
-              <Avatar className="relative w-16 h-16 border-2 border-slate-600 ring-2 ring-blue-500/20">
-                <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || 'User avatar'} />
-                <AvatarFallback className="bg-slate-700 text-blue-400 font-bold text-xl">
-                  {profile?.full_name?.charAt(0) || profile?.username?.charAt(0) || 'S'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                <Music className="w-2.5 h-2.5 text-white" />
+          <div className="profile-header-content">
+            <div className="avatar-container">
+              <div className="avatar-glow">
+                <Avatar className="profile-avatar">
+                  <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || 'User avatar'} />
+                  <AvatarFallback className="profile-avatar-fallback">
+                    {profile?.full_name?.charAt(0) || profile?.username?.charAt(0) || 'S'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="status-indicator">
+                  <Music className="w-2.5 h-2.5 text-white" />
+                </div>
               </div>
             </div>
             
-            <div className="flex-1 min-w-0 space-y-2">
+            <div className="profile-info">
               {/* Names */}
-              <div className="space-y-1">
-                <h3 className="font-semibold text-lg text-white truncate">
+              <div className="name-section">
+                <h3 className="profile-name">
                   {profile?.full_name || 'Saksham Agarwal'}
                 </h3>
-                <p className="font-normal text-sm text-slate-300" style={{ fontFamily: 'serif' }}>
+                <p className="profile-name-punjabi" style={{ fontFamily: 'serif' }}>
                   ਸਕਸ਼ਮ ਅਗਰਵਾਲ
                 </p>
               </div>
               
               {/* Role Badge */}
-              <Badge variant="secondary" className="bg-slate-700/50 text-slate-300 border-slate-600/50 hover:bg-slate-700 transition-all duration-300 text-xs">
+              <Badge variant="secondary" className="role-badge">
                 <Mic className="w-3 h-3 mr-1" />
                 {profile?.role || 'Aspiring Artist'}
               </Badge>
@@ -66,12 +117,138 @@ export function ProfileHeader({ collapsed }: { collapsed: boolean }) {
           </div>
           
           {/* Location */}
-          <div className="flex items-center mt-3 text-sm text-slate-400">
+          <div className="location-info">
             <MapPin className="w-3 h-3 mr-1" />
             <span>📍 Punjab, India</span>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .profile-card-container {
+          position: relative;
+        }
+
+        .profile-card {
+          background: var(--card-bg, #1e2936);
+          border: 1px solid var(--border-color, #374151);
+          border-radius: 12px;
+          padding: 16px;
+          transition: all 0.2s ease;
+        }
+
+        .profile-card:hover {
+          border-color: rgba(255, 149, 0, 0.3);
+        }
+
+        .profile-header-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+
+        .avatar-container {
+          position: relative;
+        }
+
+        .avatar-glow {
+          position: relative;
+        }
+
+        .avatar-glow::before {
+          content: '';
+          position: absolute;
+          inset: -8px;
+          background: linear-gradient(45deg, var(--accent-orange, #ff9500), var(--accent-orange-dark, #d97706));
+          border-radius: 50%;
+          opacity: 0.2;
+          transition: opacity 0.3s ease;
+          filter: blur(4px);
+        }
+
+        .avatar-glow:hover::before {
+          opacity: 0.3;
+        }
+
+        .profile-avatar {
+          position: relative;
+          width: 64px;
+          height: 64px;
+          border: 2px solid var(--accent-orange, #ff9500);
+          box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.3);
+        }
+
+        .profile-avatar-fallback {
+          background: var(--card-bg, #1e2936);
+          color: var(--accent-orange, #ff9500);
+          font-weight: bold;
+          font-size: 24px;
+        }
+
+        .status-indicator {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          width: 20px;
+          height: 20px;
+          background: #10b981;
+          border-radius: 50%;
+          border: 2px solid var(--secondary-bg, #1a1f2e);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .profile-info {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .name-section {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .profile-name {
+          font-weight: 600;
+          font-size: 18px;
+          color: var(--text-primary, #ffffff);
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .profile-name-punjabi {
+          font-size: 14px;
+          color: var(--text-secondary, #9ca3af);
+          margin: 0;
+        }
+
+        .role-badge {
+          background: rgba(255, 149, 0, 0.1);
+          color: var(--accent-orange, #ff9500);
+          border: 1px solid rgba(255, 149, 0, 0.3);
+          font-size: 12px;
+          align-self: flex-start;
+        }
+
+        .role-badge:hover {
+          background: rgba(255, 149, 0, 0.15);
+        }
+
+        .location-info {
+          display: flex;
+          align-items: center;
+          margin-top: 12px;
+          font-size: 14px;
+          color: var(--text-secondary, #9ca3af);
+        }
+      `}</style>
     </div>
   );
 }
