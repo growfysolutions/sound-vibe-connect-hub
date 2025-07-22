@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, MapPin, Clock, Users } from 'lucide-react';
@@ -93,7 +93,7 @@ export function PerformanceAnalytics({ profileId, timeRange }: PerformanceAnalyt
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {geographicData.map((region, index) => (
+          {geographicData.map((region) => (
             <div key={region.region} className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{region.region}</span>
