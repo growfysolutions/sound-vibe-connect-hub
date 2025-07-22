@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -51,6 +52,33 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				// Add saffron and indian-green as proper Tailwind colors
+				saffron: {
+					DEFAULT: 'hsl(var(--saffron))',
+					50: 'hsl(37 100% 95%)',
+					100: 'hsl(37 100% 90%)',
+					200: 'hsl(37 100% 80%)',
+					300: 'hsl(37 100% 70%)',
+					400: 'hsl(37 100% 60%)',
+					500: 'hsl(var(--saffron))', // 37 100% 50%
+					600: 'hsl(37 100% 40%)',
+					700: 'hsl(37 100% 30%)',
+					800: 'hsl(37 100% 20%)',
+					900: 'hsl(37 100% 10%)',
+				},
+				'indian-green': {
+					DEFAULT: 'hsl(var(--indian-green))',
+					50: 'hsl(120 100% 95%)',
+					100: 'hsl(120 100% 90%)',
+					200: 'hsl(120 100% 80%)',
+					300: 'hsl(120 100% 70%)',
+					400: 'hsl(120 100% 60%)',
+					500: 'hsl(120 100% 50%)',
+					600: 'hsl(120 100% 40%)',
+					700: 'hsl(120 100% 30%)',
+					800: 'hsl(var(--indian-green))', // 120 100% 25%
+					900: 'hsl(120 100% 15%)',
 				},
 				// Deep Space Color Palette
 				space: {
