@@ -10,7 +10,7 @@ interface CulturalImpactProps {
   timeRange: string;
 }
 
-export function CulturalImpact({ profileId, timeRange }: CulturalImpactProps) {
+export function CulturalImpact({}: CulturalImpactProps) {
   // Mock data - in real app, this would come from API
   const preservationContributions = [
     { month: 'Jan', traditional: 12, documentation: 8, teaching: 15 },

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -11,7 +10,7 @@ interface SkillTrackingProps {
   timeRange: string;
 }
 
-export function SkillTracking({ profileId, timeRange }: SkillTrackingProps) {
+export function SkillTracking({}: SkillTrackingProps) {
   // Mock data - in real app, this would come from API
   const skillRadarData = [
     { skill: 'Vocals', current: 85, previous: 78, max: 100 },

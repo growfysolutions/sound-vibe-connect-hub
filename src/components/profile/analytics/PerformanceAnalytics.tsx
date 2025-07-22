@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
@@ -11,7 +10,7 @@ interface PerformanceAnalyticsProps {
   timeRange: string;
 }
 
-export function PerformanceAnalytics({ profileId, timeRange }: PerformanceAnalyticsProps) {
+export function PerformanceAnalytics({}: PerformanceAnalyticsProps) {
   // Mock data - in real app, this would come from API
   const playsOverTime = [
     { date: '2024-01', plays: 8500, engagement: 65 },

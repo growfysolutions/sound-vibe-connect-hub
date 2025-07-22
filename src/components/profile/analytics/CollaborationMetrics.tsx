@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -12,7 +11,7 @@ interface CollaborationMetricsProps {
   timeRange: string;
 }
 
-export function CollaborationMetrics({ profileId, timeRange }: CollaborationMetricsProps) {
+export function CollaborationMetrics({}: CollaborationMetricsProps) {
   // Mock data - in real app, this would come from API
   const completionRates = [
     { month: 'Jan', completed: 12, started: 15, rate: 80 },

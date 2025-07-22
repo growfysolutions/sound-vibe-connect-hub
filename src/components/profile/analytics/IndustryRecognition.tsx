@@ -8,7 +8,7 @@ interface IndustryRecognitionProps {
   timeRange: string;
 }
 
-export function IndustryRecognition({ profileId, timeRange }: IndustryRecognitionProps) {
+export function IndustryRecognition({}: IndustryRecognitionProps) {
   // Mock data - in real app, this would come from API
   const awards = [
     {
