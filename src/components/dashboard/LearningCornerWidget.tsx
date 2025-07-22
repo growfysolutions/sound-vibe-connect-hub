@@ -78,15 +78,6 @@ export function LearningCornerWidget() {
 
   const filteredModules = learningModules.filter(module => module.type === activeCategory);
 
-  const getCategoryIcon = (category: typeof activeCategory) => {
-    switch (category) {
-      case 'tutorial': return <Play className="w-4 h-4" />;
-      case 'theory': return <BookOpen className="w-4 h-4" />;
-      case 'language': return <Languages className="w-4 h-4" />;
-      case 'business': return <DollarSign className="w-4 h-4" />;
-    }
-  };
-
   const getDifficultyColor = (difficulty: LearningModule['difficulty']) => {
     switch (difficulty) {
       case 'Beginner': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300';
