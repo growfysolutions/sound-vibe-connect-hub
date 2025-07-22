@@ -19,6 +19,7 @@ import { Database } from '@/integrations/supabase/types';
 import Testimonials from '@/components/profile/Testimonials';
 import PortfolioManager from '@/components/profile/PortfolioManager';
 import Reviews from '@/components/profile/Reviews';
+import { AnalyticsDashboard } from '@/components/profile/AnalyticsDashboard';
 
 // Correctly infer types from the Database definition
 type ProfileType = Database['public']['Tables']['profiles']['Row'];
@@ -351,10 +352,11 @@ const ProfilePage = () => {
           <Separator />
 
           <Tabs defaultValue="portfolio" className="w-full p-4 md:p-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
               <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             <TabsContent value="portfolio">
               {/* Portfolio Media Section */}
@@ -372,6 +374,16 @@ const ProfilePage = () => {
               {/* Reviews Section */}
               <div className="mt-4">
                 {id ? <Reviews profileId={id} /> : <p>Could not load reviews.</p>}
+              </div>
+            </TabsContent>
+            <TabsContent value="analytics">
+              {/* Analytics Section */}
+              <div className="mt-4">
+                {id ? (
+                  <AnalyticsDashboard profileId={id} />
+                ) : (
+                  <p>Could not load analytics.</p>
+                )}
               </div>
             </TabsContent>
           </Tabs>
