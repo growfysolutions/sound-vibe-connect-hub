@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -20,6 +19,10 @@ import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
 import { RecommendationEngine } from '@/components/dashboard/RecommendationEngine';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
+import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
+import { MobileHeader } from '@/components/dashboard/MobileHeader';
+import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -27,10 +30,12 @@ import { Profile, Connection, Project } from '@/types';
 const Dashboard = () => {
   const { refetchProfile } = useProfile();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // State for Discover tab
   const [allProfessionals, setAllProfessionals] = useState<Profile[]>([]);
@@ -218,17 +223,62 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-saffron/5">
-      <DashboardSidebar 
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onNavigateToMessages={() => navigate('/messages')}
+      {/* Offline Indicator */}
+      <OfflineIndicator />
+      
+      {/* Mobile Header */}
+      <MobileHeader 
+        searchQuery={activeSearchQuery}
+        setSearchQuery={setActiveSearchQuery}
+        onMenuToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
       />
-      <div className="ml-80 min-h-screen">
-        <DashboardNav 
-          searchQuery={activeSearchQuery} 
-          setSearchQuery={setActiveSearchQuery} 
-          handleOpenModal={handleOpenModal}
+
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <DashboardSidebar 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onNavigateToMessages={() => navigate('/messages')}
         />
+      )}
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && isMobileSidebarOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+          <div className="fixed left-0 top-0 h-full w-80 z-50 animate-slide-in-left">
+            <DashboardSidebar 
+              activeTab={activeTab}
+              onTabChange={(tab) => {
+                setActiveTab(tab);
+                setIsMobileSidebarOpen(false);
+              }}
+              onNavigateToMessages={() => {
+                navigate('/messages');
+                setIsMobileSidebarOpen(false);
+              }}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Main Content */}
+      <div className={cn(
+        "min-h-screen transition-all duration-300",
+        isMobile ? "pt-32 pb-20" : "ml-80"
+      )}>
+        {/* Desktop Nav */}
+        {!isMobile && (
+          <DashboardNav 
+            searchQuery={activeSearchQuery} 
+            setSearchQuery={setActiveSearchQuery} 
+            handleOpenModal={handleOpenModal}
+          />
+        )}
+
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -273,6 +323,13 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav 
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
       <CreateProjectModal isOpen={isModalOpen} onClose={handleCloseModal} onProjectCreated={fetchProjects} />
     </div>
   );
