@@ -1,11 +1,10 @@
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, TrendingUp, Search, FolderOpen, Users, BarChart3, FileText, Sparkles, LineChart, MessageSquare, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, TrendingUp, Search, FolderOpen, Users, BarChart3, FileText, Sparkles, LineChart, MessageSquare, Info, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useProfile } from '@/contexts/ProfileContext';
 import { cn } from '@/lib/utils';
 import { ProfileHeader } from './ProfileHeader';
-import { Badge } from '@/components/ui/badge';
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -15,7 +14,6 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ activeTab, onTabChange, onNavigateToMessages }: DashboardSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const { profile } = useProfile();
 
   const navigationItems = [
     {
@@ -71,7 +69,7 @@ export function DashboardSidebar({ activeTab, onTabChange, onNavigateToMessages 
   const statsData = [
     { label: 'Projects', value: 2, icon: FolderOpen },
     { label: 'Connections', value: 12, icon: Users },
-    { label: 'Level', value: 1, icon: BarChart3 }
+    { label: 'Level', value: 1, icon: Star }
   ];
 
   return (
