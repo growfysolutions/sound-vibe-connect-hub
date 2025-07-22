@@ -1,8 +1,6 @@
-
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, TrendingUp, Search, FolderOpen, Users, BarChart3, FileText, Sparkles, LineChart, MessageSquare, Info, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProfile } from '@/contexts/ProfileContext';
 import { cn } from '@/lib/utils';
 import { ProfileHeader } from './ProfileHeader';
 
