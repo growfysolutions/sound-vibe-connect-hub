@@ -1,9 +1,8 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Cloud, Sun, CloudRain, Snow, Music, Calendar, Wind } from 'lucide-react';
+import { Cloud, Sun, CloudRain, Snowflake, Music, Calendar } from 'lucide-react';
 
 interface WeatherData {
   temperature: string;
@@ -32,7 +31,7 @@ interface SeasonalEvent {
 }
 
 export function WeatherMusicWidget() {
-  const [currentWeather, setCurrentWeather] = useState<WeatherData>({
+  const [currentWeather] = useState<WeatherData>({
     temperature: '24°C',
     condition: 'Partly Cloudy',
     description: 'Perfect for outdoor music practice',
@@ -94,7 +93,7 @@ export function WeatherMusicWidget() {
       case 'rainy':
       case 'rain': return <CloudRain className="w-6 h-6 text-blue-500" />;
       case 'snowy':
-      case 'snow': return <Snow className="w-6 h-6 text-blue-200" />;
+      case 'snow': return <Snowflake className="w-6 h-6 text-blue-200" />;
       default: return <Cloud className="w-6 h-6 text-gray-500" />;
     }
   };

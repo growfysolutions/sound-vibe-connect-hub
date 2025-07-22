@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Music, Users, Star, TrendingUp } from 'lucide-react';
+import { Trophy, Music, Star, TrendingUp } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 
 interface Milestone {

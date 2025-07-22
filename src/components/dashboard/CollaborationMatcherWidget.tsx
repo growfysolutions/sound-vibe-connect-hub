@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, MapPin, Music, Star, MessageCircle, Heart } from 'lucide-react';
+import { Users, MapPin, Music, Star, MessageCircle } from 'lucide-react';
 
 interface CollaborationMatch {
   id: string;

@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Users, TrendingUp, Music, ExternalLink } from 'lucide-react';
+import { MapPin, Calendar, Users, TrendingUp } from 'lucide-react';
 
 interface LocalEvent {
   id: string;
