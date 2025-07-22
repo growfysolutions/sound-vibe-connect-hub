@@ -18,6 +18,7 @@ import SubmitProposal from "./pages/SubmitProposal";
 import GigProposals from "./pages/GigProposals";
 import MyContracts from "./pages/MyContracts";
 import Messages from "./pages/Messages";
+import CollaborationWorkspace from "./pages/CollaborationWorkspace";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/gigs/:gigId/proposals" element={<GigProposals />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/contracts" element={<MyContracts />} />
+            <Route path="/collaborate/:projectId" element={<CollaborationWorkspace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
