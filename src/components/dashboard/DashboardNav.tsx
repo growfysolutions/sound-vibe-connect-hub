@@ -30,7 +30,6 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
   const { profile, loading } = useProfile();
   const [user, setUser] = useState<User | null>(null);
   const [searchPlaceholder, setSearchPlaceholder] = useState('');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
 
   const searchPlaceholders = [

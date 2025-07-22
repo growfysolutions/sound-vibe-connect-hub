@@ -1,12 +1,11 @@
 
 import { useState, useEffect } from 'react';
-import { MoreHorizontal, Heart, MessageCircle, Share, Bookmark, ChevronDown, ChevronUp } from 'lucide-react';
+import { MoreHorizontal, Heart, MessageCircle, Share, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { PostWithProfile } from '@/types';
 import { cn } from '@/lib/utils';
@@ -24,8 +23,8 @@ interface Comment {
   created_at: string;
   user_id: string;
   profiles?: {
-    full_name: string;
-    avatar_url?: string;
+    full_name: string | null;
+    avatar_url?: string | null;
   };
 }
 
@@ -63,7 +62,7 @@ export function PostCard({ post }: PostCardProps) {
       setIsLiked(!!likeData);
 
       // Get likes count
-      const { data: likesData, count: likesCount } = await supabase
+      const { count: likesCount } = await supabase
         .from('likes')
         .select('id', { count: 'exact' })
         .eq('post_id', post.id);
@@ -71,7 +70,7 @@ export function PostCard({ post }: PostCardProps) {
       setLikesCount(likesCount || 0);
 
       // Get comments count
-      const { data: commentsData, count: commentsCount } = await supabase
+      const { count: commentsCount } = await supabase
         .from('comments')
         .select('id', { count: 'exact' })
         .eq('post_id', post.id);

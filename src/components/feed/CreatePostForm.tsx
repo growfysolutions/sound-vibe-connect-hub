@@ -107,7 +107,7 @@ export function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
         const fileExt = selectedMedia.name.split('.').pop();
         const fileName = `${user.id}-${Date.now()}.${fileExt}`;
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('portfolio_media')
           .upload(fileName, selectedMedia);
 
