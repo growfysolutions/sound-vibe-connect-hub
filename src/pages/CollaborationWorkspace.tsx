@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { 
   Edit3, 
   Clock, 
@@ -159,11 +158,11 @@ const CollaborationWorkspace = () => {
               </TabsContent>
               
               <TabsContent value="mixer" className="h-full">
-                <AudioMixerPanel />
+                <AudioMixerPanel projectId="sample-project" />
               </TabsContent>
               
               <TabsContent value="versions" className="h-full">
-                <VersionControl />
+                <VersionControl projectId="sample-project" />
               </TabsContent>
             </div>
           </Tabs>
