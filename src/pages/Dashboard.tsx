@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 import { addXp, XP_AMOUNTS } from '@/lib/xp';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import components
 import ProgressPanel from '@/components/dashboard/ProgressPanel';
@@ -24,7 +24,6 @@ import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import { MobileHeader } from '@/components/dashboard/MobileHeader';
 import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -223,114 +222,191 @@ const Dashboard = () => {
     setFilteredProfessionals(results);
   }, [discoverSearchQuery, allProfessionals]);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-saffron/5">
-      {/* Offline Indicator */}
-      <OfflineIndicator />
-      
-      {/* Mobile Header */}
-      <MobileHeader 
-        searchQuery={activeSearchQuery}
-        setSearchQuery={setActiveSearchQuery}
-        onMenuToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-      />
-
-      {/* Desktop Sidebar */}
-      {!isMobile && (
-        <DashboardSidebar 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onNavigateToMessages={() => navigate('/messages')}
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-saffron/5">
+        <OfflineIndicator />
+        
+        <MobileHeader 
+          searchQuery={activeSearchQuery}
+          setSearchQuery={setActiveSearchQuery}
+          onMenuToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         />
-      )}
 
-      {/* Mobile Sidebar Overlay */}
-      {isMobile && isMobileSidebarOpen && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black/50 z-40"
-            onClick={() => setIsMobileSidebarOpen(false)}
-          />
-          <div className="fixed left-0 top-0 h-full w-80 z-50 animate-slide-in-left">
-            <DashboardSidebar 
-              activeTab={activeTab}
-              onTabChange={(tab) => {
-                setActiveTab(tab);
-                setIsMobileSidebarOpen(false);
-              }}
-              onNavigateToMessages={() => {
-                navigate('/messages');
-                setIsMobileSidebarOpen(false);
-              }}
+        {isMobileSidebarOpen && (
+          <>
+            <div 
+              className="fixed inset-0 bg-black/50 z-40"
+              onClick={() => setIsMobileSidebarOpen(false)}
             />
-          </div>
-        </>
-      )}
-
-      {/* Main Content */}
-      <div className={cn(
-        "min-h-screen transition-all duration-300",
-        isMobile ? "pt-32 pb-20" : "ml-80"
-      )}>
-        {/* Desktop Nav */}
-        {!isMobile && (
-          <DashboardNav 
-            searchQuery={activeSearchQuery} 
-            setSearchQuery={setActiveSearchQuery} 
-            handleOpenModal={handleOpenModal}
-          />
+            <div className="fixed left-0 top-0 h-full w-80 z-50 animate-slide-in-left">
+              <DashboardSidebar 
+                activeTab={activeTab}
+                onTabChange={(tab) => {
+                  setActiveTab(tab);
+                  setIsMobileSidebarOpen(false);
+                }}
+                onNavigateToMessages={() => {
+                  navigate('/messages');
+                  setIsMobileSidebarOpen(false);
+                }}
+              />
+            </div>
+          </>
         )}
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-6xl mx-auto">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              {/* Content without tab headers since sidebar handles navigation */}
-              <TabsContent value="feed"><FeedTimeline /></TabsContent>
-              <TabsContent value="discover">
-                <DiscoverTab 
-                  professionals={filteredProfessionals} 
-                  pendingConnections={pendingConnections}
-                  handleConnect={handleConnect}
-                  handleSendMessage={handleSendMessage}
-                  handleSearch={setDiscoverSearchQuery}
-                />
-              </TabsContent>
-              <TabsContent value="projects">
-                <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
-              </TabsContent>
-              <TabsContent value="network">
-                <NetworkTab
-                  connections={[]}
-                  incomingRequests={[]}
-                  handleRequestAction={(connectionId, status) => {
-                    const connection = incomingRequests.find(req => req.id === connectionId);
-                    if (connection) {
-                      handleRequestAction(connection, status);
-                    }
-                  }}
-                  searchQuery={networkSearchQuery}
-                  setSearchQuery={setNetworkSearchQuery}
-                  handleFindConnections={handleFindConnections}
-                  handleViewProfile={handleViewProfile}
-                  handleSendMessage={handleSendMessage}
-                />
-              </TabsContent>
-              <TabsContent value="progress">
-                <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
-              </TabsContent>
-              <TabsContent value="contracts"><MyContracts /></TabsContent>
-              <TabsContent value="recommendations"><RecommendationEngine /></TabsContent>
-              <TabsContent value="analytics"><AnalyticsDashboard /></TabsContent>
-            </Tabs>
+        <div className="pt-32 pb-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsContent value="feed"><FeedTimeline /></TabsContent>
+                <TabsContent value="discover">
+                  <DiscoverTab 
+                    professionals={filteredProfessionals} 
+                    pendingConnections={pendingConnections}
+                    handleConnect={handleConnect}
+                    handleSendMessage={handleSendMessage}
+                    handleSearch={setDiscoverSearchQuery}
+                  />
+                </TabsContent>
+                <TabsContent value="projects">
+                  <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
+                </TabsContent>
+                <TabsContent value="network">
+                  <NetworkTab
+                    connections={[]}
+                    incomingRequests={[]}
+                    handleRequestAction={(connectionId, status) => {
+                      const connection = incomingRequests.find(req => req.id === connectionId);
+                      if (connection) {
+                        handleRequestAction(connection, status);
+                      }
+                    }}
+                    searchQuery={networkSearchQuery}
+                    setSearchQuery={setNetworkSearchQuery}
+                    handleFindConnections={handleFindConnections}
+                    handleViewProfile={handleViewProfile}
+                    handleSendMessage={handleSendMessage}
+                  />
+                </TabsContent>
+                <TabsContent value="progress">
+                  <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
+                </TabsContent>
+                <TabsContent value="contracts"><MyContracts /></TabsContent>
+                <TabsContent value="recommendations"><RecommendationEngine /></TabsContent>
+                <TabsContent value="analytics"><AnalyticsDashboard /></TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </div>
+
+        <MobileBottomNav 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
+        <CreateProjectModal isOpen={isModalOpen} onClose={handleCloseModal} onProjectCreated={fetchProjects} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard-container h-screen overflow-hidden bg-gradient-to-br from-background via-background/95 to-saffron/5">
+      <OfflineIndicator />
+      
+      {/* Three-Column Layout Structure */}
+      <div className="flex h-full">
+        {/* Sidebar: 280px fixed */}
+        <div className="sidebar w-80 flex-shrink-0">
+          <DashboardSidebar 
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            onNavigateToMessages={() => navigate('/messages')}
+          />
+        </div>
+
+        {/* Main Content: flex-1 */}
+        <div className="main-content flex-1 flex flex-col overflow-hidden">
+          {/* Header: 64px fixed height */}
+          <div className="header h-16 flex-shrink-0 border-b border-saffron/20 bg-gradient-to-r from-card/98 to-background/95 backdrop-blur-xl">
+            <DashboardNav 
+              searchQuery={activeSearchQuery} 
+              setSearchQuery={setActiveSearchQuery} 
+              handleOpenModal={handleOpenModal}
+            />
+          </div>
+
+          {/* Content Area: flex-1 with overflow */}
+          <div className="content-area flex-1 flex gap-6 p-6 overflow-hidden">
+            {/* Feed Column: flex-1 */}
+            <div className="feed-column flex-1 overflow-y-auto">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsContent value="feed" className="mt-0"><FeedTimeline /></TabsContent>
+                <TabsContent value="discover" className="mt-0">
+                  <DiscoverTab 
+                    professionals={filteredProfessionals} 
+                    pendingConnections={pendingConnections}
+                    handleConnect={handleConnect}
+                    handleSendMessage={handleSendMessage}
+                    handleSearch={setDiscoverSearchQuery}
+                  />
+                </TabsContent>
+                <TabsContent value="projects" className="mt-0">
+                  <MyProjectsTab projects={projects} handleOpenModal={handleOpenModal} />
+                </TabsContent>
+                <TabsContent value="network" className="mt-0">
+                  <NetworkTab
+                    connections={[]}
+                    incomingRequests={[]}
+                    handleRequestAction={(connectionId, status) => {
+                      const connection = incomingRequests.find(req => req.id === connectionId);
+                      if (connection) {
+                        handleRequestAction(connection, status);
+                      }
+                    }}
+                    searchQuery={networkSearchQuery}
+                    setSearchQuery={setNetworkSearchQuery}
+                    handleFindConnections={handleFindConnections}
+                    handleViewProfile={handleViewProfile}
+                    handleSendMessage={handleSendMessage}
+                  />
+                </TabsContent>
+                <TabsContent value="progress" className="mt-0">
+                  <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
+                </TabsContent>
+                <TabsContent value="contracts" className="mt-0"><MyContracts /></TabsContent>
+                <TabsContent value="recommendations" className="mt-0"><RecommendationEngine /></TabsContent>
+                <TabsContent value="analytics" className="mt-0"><AnalyticsDashboard /></TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Right Panel: 320px fixed (only show on feed tab) */}
+            {activeTab === 'feed' && (
+              <div className="right-panel w-80 flex-shrink-0 overflow-y-auto">
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm rounded-lg border border-saffron/20 p-6">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">My Musical Journey</h3>
+                    <div className="space-y-4">
+                      <div className="bg-gradient-to-r from-saffron/10 to-amber-500/10 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">Level 1: Rising Star</span>
+                          <span className="text-xs text-muted-foreground">0 / 1000 XP</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2 mb-2">
+                          <div className="bg-gradient-to-r from-saffron to-amber-500 h-2 rounded-full" style={{ width: '0%' }}></div>
+                        </div>
+                        <p className="text-xs text-muted-foreground" style={{ fontFamily: 'serif' }}>
+                          ਪੱਚ 1: ਨਵਾਂ ਸਿਤਾਰਾ
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav 
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
 
       <CreateProjectModal isOpen={isModalOpen} onClose={handleCloseModal} onProjectCreated={fetchProjects} />
     </div>
