@@ -45,7 +45,7 @@ interface Message {
   mentions?: string[];
 }
 
-const ChatTab = ({ projectId, collaborators }: ChatTabProps) => {
+const ChatTab = ({ collaborators }: ChatTabProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',

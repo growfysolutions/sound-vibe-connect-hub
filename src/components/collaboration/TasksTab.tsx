@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { 
   Plus, 
   Calendar, 
-  User, 
   Flag, 
   Clock, 
   CheckCircle, 
@@ -46,7 +45,7 @@ interface TasksTabProps {
   collaborators: Collaborator[];
 }
 
-const TasksTab = ({ projectId, collaborators }: TasksTabProps) => {
+const TasksTab = ({ collaborators }: TasksTabProps) => {
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: '1',
@@ -165,8 +164,6 @@ const TasksTab = ({ projectId, collaborators }: TasksTabProps) => {
   };
 
   const TaskCard = ({ task }: { task: Task }) => {
-    const StatusIcon = getStatusIcon(task.status);
-    
     return (
       <Card className="mb-3 cursor-move hover:shadow-lg transition-all">
         <CardContent className="p-4">

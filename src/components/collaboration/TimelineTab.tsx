@@ -130,7 +130,7 @@ const TimelineTab = ({ projectData }: TimelineTabProps) => {
           {/* Timeline Line */}
           <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border" />
           
-          {phases.map((phase, index) => {
+          {phases.map((phase) => {
             const StatusIcon = getStatusIcon(phase.status);
             
             return (

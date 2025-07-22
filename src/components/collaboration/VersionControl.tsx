@@ -13,7 +13,6 @@ import {
   RotateCcw, 
   MessageSquare, 
   Calendar, 
-  User, 
   FileAudio,
   GitCommit,
   GitMerge,
@@ -40,6 +39,8 @@ interface VersionControlProps {
 }
 
 const VersionControl = ({ projectId }: VersionControlProps) => {
+  console.log('VersionControl loaded for project:', projectId);
+  
   const [versions, setVersions] = useState<ProjectVersion[]>([
     {
       id: '1',
@@ -97,7 +98,6 @@ const VersionControl = ({ projectId }: VersionControlProps) => {
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newVersionDescription, setNewVersionDescription] = useState('');
-  const [selectedVersion, setSelectedVersion] = useState<ProjectVersion | null>(null);
   const [compareMode, setCompareMode] = useState(false);
   const [compareVersions, setCompareVersions] = useState<string[]>([]);
 
@@ -350,7 +350,7 @@ const VersionControl = ({ projectId }: VersionControlProps) => {
           {/* Timeline Line */}
           <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border" />
           
-          {versions.map((version, index) => (
+          {versions.map((version) => (
             <div key={version.id} className="relative ml-16 mb-6">
               {/* Timeline Dot */}
               <div className={`absolute -left-8 top-6 w-4 h-4 rounded-full border-2 flex items-center justify-center ${

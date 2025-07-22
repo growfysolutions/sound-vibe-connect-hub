@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -22,6 +22,8 @@ interface FilesTabProps {
 }
 
 const FilesTab = ({ projectId }: FilesTabProps) => {
+  console.log('FilesTab loaded for project:', projectId);
+  
   const [uploadedFiles, setUploadedFiles] = useState([
     {
       id: '1',
@@ -57,8 +59,6 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
       waveform: [0.4, 0.7, 0.5, 0.8, 0.3, 0.9, 0.4, 0.6, 0.7, 0.5]
     }
   ]);
-
-  const [dragActive, setDragActive] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // Handle file upload logic here

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,13 +10,11 @@ import {
   Edit3, 
   Clock, 
   Users, 
-  Plus, 
   Settings,
-  Music,
   MessageSquare,
   CheckSquare,
   FileAudio,
-  Timeline,
+  Calendar,
   Sliders,
   GitBranch
 } from 'lucide-react';
@@ -43,10 +41,10 @@ const CollaborationWorkspace = () => {
     status: '🎵 Recording Phase',
     phase: 'Recording',
     collaborators: [
-      { id: '1', name: 'Jasbir Singh', role: 'Lead Vocalist', status: 'online', avatar: '/placeholder.svg', permission: 'Admin' },
-      { id: '2', name: 'Priya Sharma', role: 'Producer', status: 'online', avatar: '/placeholder.svg', permission: 'Contributor' },
-      { id: '3', name: 'Amit Kumar', role: 'Lyricist', status: 'away', avatar: '/placeholder.svg', permission: 'Contributor' },
-      { id: '4', name: 'Sonia Patel', role: 'Sound Engineer', status: 'offline', avatar: '/placeholder.svg', permission: 'Viewer' },
+      { id: '1', name: 'Jasbir Singh', role: 'Lead Vocalist', status: 'online' as const, avatar: '/placeholder.svg', permission: 'Admin' as const },
+      { id: '2', name: 'Priya Sharma', role: 'Producer', status: 'online' as const, avatar: '/placeholder.svg', permission: 'Contributor' as const },
+      { id: '3', name: 'Amit Kumar', role: 'Lyricist', status: 'away' as const, avatar: '/placeholder.svg', permission: 'Contributor' as const },
+      { id: '4', name: 'Sonia Patel', role: 'Sound Engineer', status: 'offline' as const, avatar: '/placeholder.svg', permission: 'Viewer' as const },
     ]
   };
 
@@ -129,7 +127,7 @@ const CollaborationWorkspace = () => {
                   <span>Files</span>
                 </TabsTrigger>
                 <TabsTrigger value="timeline" className="flex items-center space-x-2">
-                  <Timeline className="w-4 h-4" />
+                  <Calendar className="w-4 h-4" />
                   <span>Timeline</span>
                 </TabsTrigger>
                 <TabsTrigger value="chat" className="flex items-center space-x-2">

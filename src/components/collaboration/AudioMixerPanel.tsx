@@ -14,7 +14,7 @@ import {
   Headphones, 
   Download, 
   Settings,
-  Waveform,
+  Radio,
   Users,
   Eye
 } from 'lucide-react';
@@ -39,9 +39,11 @@ interface Track {
 }
 
 const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
+  console.log('AudioMixerPanel loaded for project:', projectId);
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [masterVolume, setMasterVolume] = useState([75]);
-  const [playhead, setPlayhead] = useState(0);
+  const [playhead] = useState(0);
   
   const [tracks, setTracks] = useState<Track[]>([
     {
@@ -102,7 +104,7 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
     }
   ]);
 
-  const [collaboratorCursors, setCollaboratorCursors] = useState([
+  const [collaboratorCursors] = useState([
     { id: '2', name: 'Priya Sharma', position: 45, color: 'bg-blue-400' },
     { id: '3', name: 'Amit Kumar', position: 32, color: 'bg-green-400' }
   ]);
@@ -148,7 +150,7 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
     );
   };
 
-  const WaveformVisualization = ({ waveform, isPlaying, trackId }: { waveform: number[], isPlaying: boolean, trackId: string }) => (
+  const WaveformVisualization = ({ waveform, isPlaying }: { waveform: number[], isPlaying: boolean }) => (
     <div className="relative flex items-end space-x-1 h-16 bg-muted/30 rounded p-2">
       {waveform.map((height, index) => (
         <div
@@ -168,15 +170,15 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
       
       {/* Collaborative Cursors */}
       {collaboratorCursors
-        .filter(cursor => Math.random() > 0.5) // Simulate some cursors on this track
-        .map((cursor) => (
+        .filter(() => Math.random() > 0.5) // Simulate some cursors on this track
+        .map((collaboratorCursor) => (
           <div
-            key={cursor.id}
-            className={`absolute top-0 bottom-0 w-0.5 ${cursor.color} opacity-70`}
-            style={{ left: `${cursor.position}%` }}
+            key={collaboratorCursor.id}
+            className={`absolute top-0 bottom-0 w-0.5 ${collaboratorCursor.color} opacity-70`}
+            style={{ left: `${collaboratorCursor.position}%` }}
           >
-            <div className={`absolute -top-6 -left-2 px-1 py-0.5 text-xs text-white rounded ${cursor.color} text-nowrap`}>
-              {cursor.name}
+            <div className={`absolute -top-6 -left-2 px-1 py-0.5 text-xs text-white rounded ${collaboratorCursor.color} text-nowrap`}>
+              {collaboratorCursor.name}
             </div>
           </div>
         ))}
@@ -252,10 +254,10 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
               <div className="w-2 h-2 bg-primary rounded-full" />
               <span className="text-sm">You</span>
             </div>
-            {collaboratorCursors.map((cursor) => (
-              <div key={cursor.id} className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${cursor.color}`} />
-                <span className="text-sm">{cursor.name}</span>
+            {collaboratorCursors.map((collaboratorCursor) => (
+              <div key={collaboratorCursor.id} className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${collaboratorCursor.color}`} />
+                <span className="text-sm">{collaboratorCursor.name}</span>
               </div>
             ))}
           </div>
@@ -295,7 +297,6 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
                   <WaveformVisualization
                     waveform={track.waveform}
                     isPlaying={track.isPlaying}
-                    trackId={track.id}
                   />
                 </div>
 
@@ -360,7 +361,7 @@ const AudioMixerPanel = ({ projectId }: AudioMixerPanelProps) => {
         <CardContent>
           <div className="flex items-center space-x-4">
             <Button variant="outline">
-              <Waveform className="w-4 h-4 mr-2" />
+              <Radio className="w-4 h-4 mr-2" />
               Bounce Mix
             </Button>
             <Button variant="outline">
