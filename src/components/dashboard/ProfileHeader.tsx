@@ -24,7 +24,7 @@ export function ProfileHeader({ collapsed }: { collapsed: boolean }) {
           </div>
         </div>
 
-        <style jsx>{`
+        <style>{`
           .avatar-glow-collapsed {
             position: relative;
           }
@@ -124,7 +124,7 @@ export function ProfileHeader({ collapsed }: { collapsed: boolean }) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .profile-card-container {
           position: relative;
         }

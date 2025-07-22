@@ -224,7 +224,7 @@ export function DashboardSidebar({ activeTab, onTabChange, onNavigateToMessages 
       {/* Cultural pattern overlay */}
       <div className="sidebar-overlay"></div>
 
-      <style jsx>{`
+      <style>{`
         .sidebar-unified-theme {
           background: var(--secondary-bg, #1a1f2e);
           border-right: 1px solid var(--border-color, #374151);
