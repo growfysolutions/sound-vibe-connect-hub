@@ -203,7 +203,7 @@ const PublicProfile = () => {
                         
                         {/* Waveform Placeholder */}
                         <div className="h-8 bg-gradient-to-r from-aurora-cyan/20 to-electric-blue/20 rounded-full mb-2 relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-r from-aurora-cyan to-electric-blue opacity-30 rounded-full" style={{ width: '60%' }} />
+                          <div className="absolute inset-0 bg-gradient-to-r from-aurora-cyan to-electric-blue opacity-30 rounded-full w-3/5" />
                         </div>
                         
                         <div className="flex items-center justify-between text-xs text-white/60">
