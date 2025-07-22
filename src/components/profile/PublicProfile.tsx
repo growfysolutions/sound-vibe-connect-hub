@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -381,7 +380,7 @@ const PublicProfile = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-white/60">Response Time</span>
-                  <span className="text-gold-400 font-semibold">< 2 hours</span>
+                  <span className="text-gold-400 font-semibold">&lt; 2 hours</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-white/60">Member Since</span>
