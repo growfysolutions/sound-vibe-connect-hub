@@ -1,8 +1,8 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-
 
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -20,7 +20,6 @@ import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
 import { RecommendationEngine } from '@/components/dashboard/RecommendationEngine';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
-
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -202,7 +201,6 @@ const Dashboard = () => {
     fetchInitialData();
   }, [fetchProjects]);
 
-
   // Filtering logic for Discover tab
   useEffect(() => {
     let results = [...allProfessionals];
@@ -218,9 +216,8 @@ const Dashboard = () => {
     setFilteredProfessionals(results);
   }, [discoverSearchQuery, allProfessionals]);
 
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-saffron/5">
       <DashboardSidebar 
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -244,7 +241,6 @@ const Dashboard = () => {
                   handleConnect={handleConnect}
                   handleSendMessage={handleSendMessage}
                   handleSearch={setDiscoverSearchQuery}
-                  
                 />
               </TabsContent>
               <TabsContent value="projects">

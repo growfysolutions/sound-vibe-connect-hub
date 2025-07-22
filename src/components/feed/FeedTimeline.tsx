@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../integrations/supabase/client';
 import { PostWithProfile } from '@/types';
 import { CreatePostForm } from './CreatePostForm';
 import { PostCard } from './PostCard';
+import { CulturalWidgets } from './CulturalWidgets';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function FeedTimeline() {
@@ -43,24 +45,37 @@ export function FeedTimeline() {
   }, [fetchPosts]);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <CreatePostForm onPostCreated={fetchPosts} />
-      
-      {loading ? (
-        <div className="space-y-4">
+    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Feed */}
+      <div className="lg:col-span-2 space-y-6">
+        <CreatePostForm onPostCreated={fetchPosts} />
+        
+        {loading ? (
+          <div className="space-y-4">
             <Skeleton className="h-32 w-full rounded-lg" />
             <Skeleton className="h-32 w-full rounded-lg" />
             <Skeleton className="h-32 w-full rounded-lg" />
-        </div>
-      ) : posts.length > 0 ? (
-        posts.map(post => (
-          <PostCard key={post.id} post={post} />
-        ))
-      ) : (
-        <div className="text-center text-muted-foreground py-10">
-          <p>No posts yet. Be the first to share something!</p>
-        </div>
-      )}
+          </div>
+        ) : posts.length > 0 ? (
+          posts.map(post => (
+            <PostCard key={post.id} post={post} />
+          ))
+        ) : (
+          <div className="text-center text-muted-foreground py-10 bg-gradient-to-r from-card/50 to-background/30 rounded-lg border border-saffron/20">
+            <div className="space-y-2">
+              <p>No posts yet. Be the first to share something!</p>
+              <p className="text-sm" style={{ fontFamily: 'serif' }}>
+                ਅਜੇ ਕੋਈ ਪੋਸਟ ਨਹੀਂ। ਪਹਿਲੇ ਬਣੋ ਜੋ ਕੁਝ ਸਾਂਝਾ ਕਰਦਾ ਹੈ!
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Cultural Widgets Sidebar */}
+      <div className="lg:col-span-1">
+        <CulturalWidgets />
+      </div>
     </div>
   );
 }

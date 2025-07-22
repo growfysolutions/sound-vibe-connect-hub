@@ -1,195 +1,145 @@
+
 import { useState } from 'react';
-import { supabase } from '../../integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useProfile } from '@/contexts/ProfileContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { 
-  Image, 
-  Music, 
-  Link, 
-  AtSign, 
-  Hash, 
-  Globe, 
-  Users,
-  ChevronDown 
-} from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Music, Camera, Video, Radio, Users, Heart, Smile, Music2 } from 'lucide-react';
 
 interface CreatePostFormProps {
   onPostCreated: () => void;
 }
 
 export function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
-  const [content, setContent] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [privacy, setPrivacy] = useState<'public' | 'connections'>('public');
   const { profile } = useProfile();
+  const [content, setContent] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+
+  const placeholders = [
+    'ਅੱਜ ਤੁਸੀਂ ਕੀ ਨਵਾਂ ਸਿੱਖਿਆ? Share your musical journey...',
+    'Share your latest raag practice, collaborate on a bhangra beat, or celebrate a milestone!',
+    'What traditional song touched your heart today? ਅੱਜ ਕਿਹੜਾ ਗਾਣਾ ਦਿਲ ਨੂੰ ਛੂਹ ਗਿਆ?',
+    'Connect with fellow artists, share your progress, inspire the community...',
+    'From classical to modern Punjabi - what are you working on today?'
+  ];
+
+  const mediaOptions = [
+    { icon: Music, label: 'Audio Track', punjabi: 'ਆਡੀਓ ਟਰੈਕ', color: 'text-saffron' },
+    { icon: Camera, label: 'Performance Pic', punjabi: 'ਪਰਫਾਰਮੈਂਸ ਫੋਟੋ', color: 'text-blue-500' },
+    { icon: Video, label: 'Music Video', punjabi: 'ਮਿਊਜਿਕ ਵੀਡੀਓ', color: 'text-purple-500' },
+    { icon: Radio, label: 'Live Performance', punjabi: 'ਲਾਈਵ ਪ੍ਰੋਗਰਾਮ', color: 'text-red-500' },
+    { icon: Users, label: 'Seeking Collaborator', punjabi: 'ਸਹਿਯੋਗੀ ਚਾਹੀਦਾ', color: 'text-green-500' }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!content.trim()) {
-      toast.error('Please enter some content for your post.');
-      return;
-    }
+    if (!content.trim()) return;
 
-    setIsSubmitting(true);
+    setIsLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast.error('You must be logged in to create a post.');
-      setIsSubmitting(false);
-      return;
-    }
-
-    const { error } = await supabase
-      .from('posts')
-      .insert({
+      const { error } = await supabase.from('posts').insert({
         content: content.trim(),
-        user_id: user.id
+        user_id: user.id,
       });
 
-    if (error) {
-      console.error('Error creating post:', error);
-      toast.error('Failed to create post. Please try again.');
-    } else {
-      toast.success('Post created successfully!');
-      setContent('');
-      onPostCreated();
-    }
+      if (error) throw error;
 
-    setIsSubmitting(false);
+      setContent('');
+      toast.success('Post shared successfully! ਪੋਸਟ ਸਫਲਤਾਪੂਰਵਕ ਸਾਂਝੀ ਕੀਤੀ!');
+      onPostCreated();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create post');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const mediaButtons = [
-    { icon: Image, label: 'Photo', color: 'text-blue-500' },
-    { icon: Music, label: 'Audio', color: 'text-purple-500' },
-    { icon: Link, label: 'Link', color: 'text-green-500' },
-  ];
-
-  const actionButtons = [
-    { icon: AtSign, label: 'Mention', color: 'text-orange-500' },
-    { icon: Hash, label: 'Hashtag', color: 'text-pink-500' },
-  ];
-
   return (
-    <Card className="glass-card hover:border-primary/20 transition-all duration-300">
+    <Card className="border-saffron/20 bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm">
       <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex items-start space-x-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center border-2 border-primary/30 flex-shrink-0">
-              {profile?.avatar_url ? (
-                <img 
-                  src={profile.avatar_url} 
-                  alt={profile.full_name || 'User'} 
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <span className="text-lg font-semibold text-primary">
-                  {profile?.full_name?.charAt(0) || 'U'}
-                </span>
-              )}
-            </div>
-            <div className="flex-1">
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="What's on your mind? Share your latest project, ask for collaboration, or just say hello!"
-                className="min-h-[120px] resize-none border-none bg-transparent text-base placeholder:text-muted-foreground focus-visible:ring-0 p-0 leading-relaxed"
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
+        <div className="flex space-x-4">
+          <Avatar className="w-12 h-12 border-2 border-saffron/30">
+            <AvatarImage src={profile?.avatar_url || undefined} />
+            <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white font-semibold">
+              {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+            </AvatarFallback>
+          </Avatar>
           
-          {/* Media and Action Buttons */}
-          <div className="flex items-center justify-between pt-4 border-t border-border/30">
-            <div className="flex items-center space-x-3">
-              {/* Media Upload Buttons */}
-              <div className="flex items-center space-x-2">
-                {mediaButtons.map((button) => (
-                  <Button
-                    key={button.label}
-                    variant="ghost"
-                    size="sm"
-                    className="h-9 px-3 hover:bg-muted/50 rounded-lg transition-all duration-200 group"
-                    type="button"
-                  >
-                    <button.icon className={`w-4 h-4 ${button.color} group-hover:scale-110 transition-transform duration-200`} />
-                    <span className="ml-2 text-sm text-muted-foreground group-hover:text-foreground">
-                      {button.label}
-                    </span>
-                  </Button>
-                ))}
+          <div className="flex-1 space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder={placeholders[placeholderIndex]}
+                  className="min-h-[120px] border-saffron/30 focus:border-saffron bg-gradient-to-r from-background/50 to-muted/20 resize-none"
+                  onFocus={() => setPlaceholderIndex((prev) => (prev + 1) % placeholders.length)}
+                />
+                <div className="absolute bottom-3 right-3 flex space-x-1">
+                  <Heart className="w-4 h-4 text-red-500/50" />
+                  <Music2 className="w-4 h-4 text-saffron/50" />
+                  <Smile className="w-4 h-4 text-yellow-500/50" />
+                </div>
               </div>
-              
-              {/* Separator */}
-              <div className="w-px h-6 bg-border/50" />
-              
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-2">
-                {actionButtons.map((button) => (
-                  <Button
-                    key={button.label}
-                    variant="ghost"
-                    size="sm"
-                    className="h-9 w-9 hover:bg-muted/50 rounded-lg transition-all duration-200 group"
-                    type="button"
-                  >
-                    <button.icon className={`w-4 h-4 ${button.color} group-hover:scale-110 transition-transform duration-200`} />
-                  </Button>
-                ))}
+
+              <div className="flex flex-wrap gap-2 p-3 bg-gradient-to-r from-muted/30 to-background/20 rounded-lg border border-saffron/10">
+                {mediaOptions.map((option, index) => {
+                  const Icon = option.icon;
+                  return (
+                    <Button
+                      key={index}
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="flex-1 min-w-0 group hover:bg-saffron/10 transition-all duration-300"
+                    >
+                      <Icon className={`w-4 h-4 mr-2 ${option.color} group-hover:scale-110 transition-transform`} />
+                      <div className="flex flex-col items-start min-w-0">
+                        <span className="text-xs font-medium truncate">{option.label}</span>
+                        <span className="text-xs opacity-60 truncate" style={{ fontFamily: 'serif' }}>
+                          {option.punjabi}
+                        </span>
+                      </div>
+                    </Button>
+                  );
+                })}
               </div>
-            </div>
 
-            <div className="flex items-center space-x-3">
-              {/* Privacy Toggle */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-9 px-3 hover:bg-muted/50 rounded-lg">
-                    {privacy === 'public' ? (
-                      <Globe className="w-4 h-4 text-green-500 mr-2" />
-                    ) : (
-                      <Users className="w-4 h-4 text-blue-500 mr-2" />
-                    )}
-                    <span className="text-sm text-muted-foreground">
-                      {privacy === 'public' ? 'Public' : 'Connections'}
-                    </span>
-                    <ChevronDown className="w-3 h-3 ml-1 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setPrivacy('public')}>
-                    <Globe className="w-4 h-4 text-green-500 mr-2" />
-                    Public
-                    <Badge variant="secondary" className="ml-auto text-xs">Anyone</Badge>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setPrivacy('connections')}>
-                    <Users className="w-4 h-4 text-blue-500 mr-2" />
-                    Connections Only
-                    <Badge variant="secondary" className="ml-auto text-xs">Private</Badge>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Post Button */}
-              <Button 
-                type="submit" 
-                disabled={isSubmitting || !content.trim()}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
-              >
-                {isSubmitting ? 'Posting...' : 'Post'}
-              </Button>
-            </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <span>Share with the community</span>
+                  <span style={{ fontFamily: 'serif' }}>• ਭਾਈਚਾਰੇ ਨਾਲ ਸਾਂਝਾ ਕਰੋ</span>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  disabled={!content.trim() || isLoading}
+                  className="btn-premium group"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Sharing...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <Music className="w-4 h-4 group-hover:animate-pulse" />
+                      <span>Share</span>
+                      <span style={{ fontFamily: 'serif' }}>ਸਾਂਝਾ ਕਰੋ</span>
+                    </div>
+                  )}
+                </Button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </CardContent>
     </Card>
   );
