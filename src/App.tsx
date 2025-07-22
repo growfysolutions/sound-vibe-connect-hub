@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import Login from "./pages/Login";
 import DashboardPage from './pages/Dashboard';
 import ProfilePage from "./pages/Profile";
+import PublicProfilePage from "./pages/PublicProfile";
 import Marketplace from "./pages/Marketplace";
 import GigDetails from "./pages/GigDetails";
 import SubmitProposal from "./pages/SubmitProposal";
@@ -33,6 +35,7 @@ const App = () => (
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile-setup" element={<ProfileSetup />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
+            <Route path="/public-profile" element={<PublicProfilePage />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/gigs/:gigId" element={<GigDetails />} />
