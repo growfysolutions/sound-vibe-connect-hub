@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, Star, Music, Users, Bookmark, Share2, Play } from 'lucide-react';
+import { MapPin, Star, Music, Users } from 'lucide-react';
 import { CulturalButton } from '@/components/ui/CulturalButton';
 import { CulturalIconButton } from '@/components/ui/CulturalIconButton';
 import { cn } from '@/lib/utils';
