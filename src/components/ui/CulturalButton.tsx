@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Loader2, Heart, Share2, Play, Pause, Menu, AlertTriangle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CulturalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
