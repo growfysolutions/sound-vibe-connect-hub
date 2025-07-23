@@ -49,7 +49,7 @@ const Dashboard = () => {
   const [filteredProfessionals, setFilteredProfessionals] = useState<Profile[]>([]);
   const [discoverSearchQuery, setDiscoverSearchQuery] = useState('');
   const [pendingConnections, setPendingConnections] = useState<string[]>([]);
-  const [connections, setConnections] = useState<Connection[]>([]);
+  const [connectedProfiles, setConnectedProfiles] = useState<Profile[]>([]);
   const [incomingRequests, setIncomingRequests] = useState<Connection[]>([]);
   const [networkSearchQuery, setNetworkSearchQuery] = useState('');
   const [projects, setProjects] = useState<Project[]>([]);
@@ -147,15 +147,41 @@ const Dashboard = () => {
         refetchProfile();
       }
       setIncomingRequests(prev => prev.filter(req => req.id !== connection.id));
-      // Refetch connections to update the network tab
-      const { data: updatedConnections } = await supabase
-        .from('connections')
-        .select('*')
-        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
-        .eq('status', 'accepted');
-      if (updatedConnections) setConnections(updatedConnections);
+      // Refetch connected profiles to update the network tab
+      fetchConnectedProfiles();
     }
   }, [refetchProfile]);
+
+  const fetchConnectedProfiles = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Fetch accepted connections with profile data
+    const { data: connectionsData, error: connectionsError } = await supabase
+      .from('connections')
+      .select(`
+        *,
+        requester:profiles!connections_requester_id_fkey(*),
+        addressee:profiles!connections_addressee_id_fkey(*)
+      `)
+      .eq('status', 'accepted')
+      .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+
+    if (connectionsError) {
+      console.error('Error fetching connections:', connectionsError);
+    } else if (connectionsData) {
+      // Extract the profiles from connections (excluding current user)
+      const profiles: Profile[] = connectionsData.map(conn => {
+        if (conn.requester_id === user.id) {
+          return conn.addressee;
+        } else {
+          return conn.requester;
+        }
+      }).filter(Boolean);
+      
+      setConnectedProfiles(profiles);
+    }
+  }, []);
 
   const fetchProjects = useCallback(async () => {
     const { data, error } = await supabase.from('projects').select('*');
@@ -185,23 +211,16 @@ const Dashboard = () => {
         setFilteredProfessionals(professionalsData as Profile[]);
       }
 
-      // Fetch accepted connections - simplified
-      const { data: connectionsData, error: connectionsError } = await supabase
-        .from('connections')
-        .select('*')
-        .eq('status', 'accepted')
-        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+      // Fetch connected profiles
+      fetchConnectedProfiles();
 
-      if (connectionsError) {
-        console.error('Error fetching connections:', connectionsError);
-      } else if (connectionsData) {
-        setConnections(connectionsData);
-      }
-
-      // Fetch incoming connection requests - simplified
+      // Fetch incoming connection requests with profile data
       const { data: requestsData, error: requestsError } = await supabase
         .from('connections')
-        .select('*')
+        .select(`
+          *,
+          requester:profiles!connections_requester_id_fkey(*)
+        `)
         .eq('addressee_id', user.id)
         .eq('status', 'pending');
 
@@ -228,7 +247,7 @@ const Dashboard = () => {
     };
 
     fetchInitialData();
-  }, [fetchProjects]);
+  }, [fetchProjects, fetchConnectedProfiles]);
 
   // Filtering logic for Discover tab
   useEffect(() => {
@@ -238,10 +257,9 @@ const Dashboard = () => {
       results = results.filter(prof =>
         prof.full_name?.toLowerCase().includes(lowercasedQuery) ||
         prof.username?.toLowerCase().includes(lowercasedQuery) ||
-        prof.professional_roles?.some((role: string) => role.toLowerCase().includes(lowercasedQuery))
+        prof.skills?.some((skill: string) => skill.toLowerCase().includes(lowercasedQuery))
       );
     }
-    // Apply other filters
     setFilteredProfessionals(results);
   }, [discoverSearchQuery, allProfessionals]);
 
@@ -293,7 +311,7 @@ const Dashboard = () => {
                 </TabsContent>
                 <TabsContent value="network">
                   <NetworkTab
-                    connections={connections}
+                    connections={connectedProfiles}
                     incomingRequests={incomingRequests}
                     handleRequestAction={(connectionId, status) => {
                       const connection = incomingRequests.find(req => req.id === connectionId);
@@ -309,7 +327,7 @@ const Dashboard = () => {
                   />
                 </TabsContent>
                 <TabsContent value="progress">
-                  <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
+                  <ProgressPanel connectionsCount={connectedProfiles.length} projectsCount={projects.length} />
                 </TabsContent>
                 <TabsContent value="contracts"><MyContracts /></TabsContent>
                 <TabsContent value="recommendations"><RecommendationEngine /></TabsContent>
@@ -375,7 +393,7 @@ const Dashboard = () => {
               </TabsContent>
               <TabsContent value="network" className="h-full">
                 <NetworkTab
-                  connections={connections}
+                  connections={connectedProfiles}
                   incomingRequests={incomingRequests}
                   handleRequestAction={(connectionId, status) => {
                     const connection = incomingRequests.find(req => req.id === connectionId);
@@ -391,7 +409,7 @@ const Dashboard = () => {
                 />
               </TabsContent>
               <TabsContent value="progress" className="h-full">
-                <ProgressPanel connectionsCount={connections.length} projectsCount={projects.length} />
+                <ProgressPanel connectionsCount={connectedProfiles.length} projectsCount={projects.length} />
               </TabsContent>
               <TabsContent value="contracts" className="h-full"><MyContracts /></TabsContent>
               <TabsContent value="recommendations" className="h-full"><RecommendationEngine /></TabsContent>
