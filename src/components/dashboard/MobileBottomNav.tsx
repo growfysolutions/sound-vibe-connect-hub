@@ -1,5 +1,6 @@
 
 import { cn } from '@/lib/utils';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileBottomNavProps {
@@ -8,28 +9,35 @@ interface MobileBottomNavProps {
 }
 
 const mobileNavItems = [
-  { id: 'feed', icon: '📜', label: 'Feed', punjabi: 'ਫੀਡ' },
-  { id: 'discover', icon: '🔍', label: 'Discover', punjabi: 'ਖੋਜ' },
-  { id: 'projects', icon: '🎹', label: 'Projects', punjabi: 'ਪ੍ਰੋਜੈਕਟ' },
-  { id: 'network', icon: '🤝', label: 'Network', punjabi: 'ਨੈਟਵਰਕ' },
-  { id: 'progress', icon: '📈', label: 'Progress', punjabi: 'ਤਰੱਕੀ' },
+  { id: 'feed', icon: '📜', label: 'Feed', punjabi: 'ਫੀਡ', route: '/dashboard/feed' },
+  { id: 'discover', icon: '🔍', label: 'Discover', punjabi: 'ਖੋਜ', route: '/dashboard/discover' },
+  { id: 'projects', icon: '🎹', label: 'Projects', punjabi: 'ਪ੍ਰੋਜੈਕਟ', route: '/dashboard/projects' },
+  { id: 'network', icon: '🤝', label: 'Network', punjabi: 'ਨੈਟਵਰਕ', route: '/dashboard/network' },
+  { id: 'progress', icon: '📈', label: 'Progress', punjabi: 'ਤਰੱਕੀ', route: '/dashboard/progress' },
 ];
 
 export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   if (!isMobile) return null;
+
+  const handleTabChange = (item: typeof mobileNavItems[0]) => {
+    onTabChange(item.id);
+    navigate(item.route);
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-card/98 to-background/95 backdrop-blur-xl border-t border-saffron/20">
       <div className="flex items-center justify-around px-4 py-2 safe-area-pb">
         {mobileNavItems.map((item) => {
-          const isActive = activeTab === item.id;
+          const isActive = activeTab === item.id || location.pathname.includes(item.route);
           
           return (
             <button
               key={item.id}
-              onClick={() => onTabChange(item.id)}
+              onClick={() => handleTabChange(item)}
               className={cn(
                 "flex flex-col items-center min-w-0 flex-1 py-2 px-1 rounded-xl transition-all duration-300 transform active:scale-95",
                 isActive 

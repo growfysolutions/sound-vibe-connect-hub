@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -35,6 +36,7 @@ interface NavigationItem {
   badge?: number | string;
   description?: string;
   color: string;
+  route?: string;
   subItems?: NavigationItem[];
 }
 
@@ -45,6 +47,8 @@ export function EnhancedSidebarNav({
   onToggleCollapse 
 }: EnhancedSidebarNavProps) {
   const { profile } = useProfile();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems: NavigationItem[] = [
     { 
@@ -53,7 +57,8 @@ export function EnhancedSidebarNav({
       icon: Home, 
       color: 'text-orange-500',
       description: 'Community updates and new releases',
-      badge: 12
+      badge: 12,
+      route: '/dashboard/feed'
     },
     { 
       id: 'discover', 
@@ -61,7 +66,8 @@ export function EnhancedSidebarNav({
       icon: Search, 
       color: 'text-blue-500',
       description: 'AI-recommended artists and opportunities',
-      badge: 'NEW'
+      badge: 'NEW',
+      route: '/dashboard/discover'
     },
     { 
       id: 'projects', 
@@ -69,7 +75,8 @@ export function EnhancedSidebarNav({
       icon: FileMusic, 
       color: 'text-pink-500',
       description: '3 active, 12 completed',
-      badge: 3
+      badge: 3,
+      route: '/dashboard/projects'
     },
     { 
       id: 'network', 
@@ -77,14 +84,16 @@ export function EnhancedSidebarNav({
       icon: Users, 
       color: 'text-green-500',
       description: '47 connections, 12 pending requests',
-      badge: 12
+      badge: 12,
+      route: '/dashboard/network'
     },
     { 
       id: 'progress', 
       label: 'Progress', 
       icon: TrendingUp, 
       color: 'text-purple-500',
-      description: 'XP: 2,847 • Level 7: "Recognized Artist"'
+      description: 'XP: 2,847 • Level 7: "Recognized Artist"',
+      route: '/dashboard/progress'
     },
     { 
       id: 'contracts', 
@@ -92,7 +101,8 @@ export function EnhancedSidebarNav({
       icon: Briefcase, 
       color: 'text-yellow-500',
       description: '2 pending approval, 5 active agreements',
-      badge: 2
+      badge: 2,
+      route: '/dashboard/contracts'
     },
     { 
       id: 'recommendations', 
@@ -100,16 +110,29 @@ export function EnhancedSidebarNav({
       icon: Lightbulb, 
       color: 'text-cyan-500',
       description: 'Based on your genre and skills',
-      badge: 'NEW'
+      badge: 'NEW',
+      route: '/dashboard/recommendations'
     },
     { 
       id: 'analytics', 
       label: 'Analytics', 
       icon: BarChart3, 
       color: 'text-indigo-500',
-      description: 'Profile views, collaboration success rate'
+      description: 'Profile views, collaboration success rate',
+      route: '/dashboard/analytics'
     }
   ];
+
+  const handleNavigation = (item: NavigationItem) => {
+    setActiveTab(item.id);
+    if (item.route) {
+      navigate(item.route);
+    }
+  };
+
+  const handleMessagesNavigation = () => {
+    navigate('/messages');
+  };
 
   const currentLevel = 7;
   const currentXP = 2847;
@@ -145,7 +168,7 @@ export function EnhancedSidebarNav({
         "p-4 border-b border-saffron/20",
         collapsed && "p-2"
       )}>
-        <div className="flex items-center space-x-3 mb-4">
+        <div className="flex items-center space-x-3 mb-4 cursor-pointer" onClick={() => navigate('/profile')}>
           <div className="relative">
             <Avatar className={cn(
               "border-2 border-orange-500/30",
@@ -186,12 +209,12 @@ export function EnhancedSidebarNav({
       <nav className="flex-1 p-4 space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeTab === item.id;
+          const isActive = activeTab === item.id || location.pathname.includes(item.route || '');
           
           return (
             <div key={item.id} className="relative">
               <button
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => handleNavigation(item)}
                 className={cn(
                   "w-full group relative flex items-center rounded-xl transition-all duration-300 transform hover:scale-[1.02]",
                   collapsed ? "justify-center p-3" : "justify-start px-4 py-3",
@@ -244,10 +267,14 @@ export function EnhancedSidebarNav({
         
         {/* Messages with Special Styling */}
         <div className="relative">
-          <button className={cn(
-            "w-full group relative flex items-center rounded-xl transition-all duration-300 transform hover:scale-[1.02] text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30",
-            collapsed ? "justify-center p-3" : "justify-start px-4 py-3"
-          )}>
+          <button 
+            onClick={handleMessagesNavigation}
+            className={cn(
+              "w-full group relative flex items-center rounded-xl transition-all duration-300 transform hover:scale-[1.02] text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30",
+              collapsed ? "justify-center p-3" : "justify-start px-4 py-3",
+              location.pathname.startsWith('/messages') && "bg-gradient-to-r from-saffron/20 to-amber-500/20 text-saffron border border-saffron/30 shadow-lg shadow-saffron/20"
+            )}
+          >
             <div className={cn(
               "relative flex items-center transition-all duration-300",
               collapsed ? "justify-center" : "justify-start"

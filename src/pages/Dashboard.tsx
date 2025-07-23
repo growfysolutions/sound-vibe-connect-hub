@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
@@ -25,6 +26,7 @@ import { MobileHeader } from '@/components/dashboard/MobileHeader';
 import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
 import { TodaysInspirationWidget } from '@/components/dashboard/TodaysInspirationWidget';
 import { MusicalJourneyWidget } from '@/components/dashboard/MusicalJourneyWidget';
+import CulturalBreadcrumb from '@/components/dashboard/CulturalBreadcrumb';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -32,34 +34,53 @@ import { Profile, Connection, Project } from '@/types';
 const Dashboard = () => {
   const { refetchProfile } = useProfile();
   const navigate = useNavigate();
+  const { tab } = useParams();
+  const location = useLocation();
   const isMobile = useIsMobile();
 
+  // Set active tab from URL parameter or default to 'feed'
+  const [activeTab, setActiveTab] = useState(tab || 'feed');
   const [activeSearchQuery, setActiveSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // State for Discover tab
+  // State for various tabs
   const [allProfessionals, setAllProfessionals] = useState<Profile[]>([]);
   const [filteredProfessionals, setFilteredProfessionals] = useState<Profile[]>([]);
   const [discoverSearchQuery, setDiscoverSearchQuery] = useState('');
-
   const [pendingConnections, setPendingConnections] = useState<string[]>([]);
-
-  // State for Network tab
   const [connections, setConnections] = useState<Connection[]>([]);
   const [incomingRequests, setIncomingRequests] = useState<Connection[]>([]);
   const [networkSearchQuery, setNetworkSearchQuery] = useState('');
-
-  // State for Projects tab
   const [projects, setProjects] = useState<Project[]>([]);
+
+  // Update active tab when URL changes
+  useEffect(() => {
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [tab, activeTab]);
+
+  // Update URL when tab changes
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    if (isMobile) {
+      setIsMobileSidebarOpen(false);
+    }
+    
+    // Update URL to reflect tab change
+    const currentPath = location.pathname;
+    if (currentPath === '/dashboard' || currentPath.startsWith('/dashboard/')) {
+      navigate(`/dashboard/${newTab}`, { replace: true });
+    }
+  };
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleSendMessage = (profileId: string) => {
     toast.info(`Navigating to chat with user ${profileId}...`);
-    navigate('/messages');
+    navigate(`/messages?user=${profileId}`);
   };
 
   const handleViewProfile = (id: string) => {
@@ -68,6 +89,7 @@ const Dashboard = () => {
 
   const handleFindConnections = () => {
     setActiveTab('discover');
+    navigate('/dashboard/discover');
   };
 
   const handleConnect = async (user2Id: string) => {
@@ -234,6 +256,9 @@ const Dashboard = () => {
           onMenuToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         />
 
+        {/* Cultural Breadcrumb for Mobile */}
+        <CulturalBreadcrumb />
+
         {isMobileSidebarOpen && (
           <>
             <div 
@@ -243,19 +268,16 @@ const Dashboard = () => {
             <div className="fixed left-0 top-0 h-full w-80 z-50 animate-slide-in-left">
               <DashboardSidebar 
                 activeTab={activeTab}
-                setActiveTab={(tab) => {
-                  setActiveTab(tab);
-                  setIsMobileSidebarOpen(false);
-                }}
+                setActiveTab={handleTabChange}
               />
             </div>
           </>
         )}
 
-        <div className="pt-32 pb-20">
+        <div className="pt-40 pb-20">
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-6xl mx-auto">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                 <TabsContent value="feed"><FeedTimeline /></TabsContent>
                 <TabsContent value="discover">
                   <DiscoverTab 
@@ -271,8 +293,8 @@ const Dashboard = () => {
                 </TabsContent>
                 <TabsContent value="network">
                   <NetworkTab
-                    connections={[]}
-                    incomingRequests={[]}
+                    connections={connections}
+                    incomingRequests={incomingRequests}
                     handleRequestAction={(connectionId, status) => {
                       const connection = incomingRequests.find(req => req.id === connectionId);
                       if (connection) {
@@ -299,7 +321,7 @@ const Dashboard = () => {
 
         <MobileBottomNav 
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
 
         <CreateProjectModal isOpen={isModalOpen} onClose={handleCloseModal} onProjectCreated={fetchProjects} />
@@ -311,13 +333,16 @@ const Dashboard = () => {
     <div className="dashboard-unified-theme">
       <OfflineIndicator />
       
+      {/* Cultural Breadcrumb for Desktop */}
+      <CulturalBreadcrumb />
+      
       {/* Three-Column Grid Layout */}
       <div className="dashboard-grid">
         {/* Left Sidebar: 280px fixed */}
         <div className="left-sidebar">
           <DashboardSidebar 
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleTabChange}
           />
         </div>
 
@@ -334,7 +359,7 @@ const Dashboard = () => {
 
           {/* Content Area: flex-1 with overflow */}
           <div className="main-content-area">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full h-full">
               <TabsContent value="feed" className="h-full"><FeedTimeline /></TabsContent>
               <TabsContent value="discover" className="h-full">
                 <DiscoverTab 
@@ -350,8 +375,8 @@ const Dashboard = () => {
               </TabsContent>
               <TabsContent value="network" className="h-full">
                 <NetworkTab
-                  connections={[]}
-                  incomingRequests={[]}
+                  connections={connections}
+                  incomingRequests={incomingRequests}
                   handleRequestAction={(connectionId, status) => {
                     const connection = incomingRequests.find(req => req.id === connectionId);
                     if (connection) {
