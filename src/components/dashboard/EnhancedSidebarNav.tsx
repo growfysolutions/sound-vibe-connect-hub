@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -9,13 +8,8 @@ import {
   Users, 
   MessageCircle, 
   Briefcase, 
-  Settings, 
-  Trophy,
-  Calendar,
   TrendingUp,
   Search,
-  Mic,
-  Radio,
   FileMusic,
   Zap,
   BarChart3,
@@ -119,7 +113,6 @@ export function EnhancedSidebarNav({
 
   const currentLevel = 7;
   const currentXP = 2847;
-  const nextLevelXP = 3000;
   const progressPercentage = ((currentXP % 1000) / 1000) * 100;
 
   return (

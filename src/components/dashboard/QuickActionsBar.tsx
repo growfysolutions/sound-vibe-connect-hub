@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, MessageCircle, Calendar, Plus, Mic, Users } from 'lucide-react';
+import { Upload, MessageCircle, Calendar, Plus, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuickActionsBarProps {

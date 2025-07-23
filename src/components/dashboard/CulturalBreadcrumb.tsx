@@ -9,7 +9,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Home, ChevronRight } from 'lucide-react';
 
 interface BreadcrumbSegment {
   title: string;
