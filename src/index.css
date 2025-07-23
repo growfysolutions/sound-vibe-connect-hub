@@ -31,8 +31,34 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --saffron: 37 100% 50%;
-    --indian-green: 120 100% 25%;
+    
+    /* Authentic Punjabi Cultural Colors */
+    --kesri-saffron: 30 100% 55%;
+    --kesri-saffron-light: 30 100% 65%;
+    --kesri-saffron-dark: 30 100% 45%;
+    --basanti-mustard: 48 100% 67%;
+    --basanti-mustard-light: 48 100% 77%;
+    --basanti-mustard-dark: 48 100% 57%;
+    --neela-royal: 218 81% 24%;
+    --neela-royal-light: 218 81% 34%;
+    --neela-royal-dark: 218 81% 18%;
+    --hara-green: 142 71% 29%;
+    --hara-green-light: 142 71% 39%;
+    --hara-green-dark: 142 71% 22%;
+    --surkh-red: 0 84% 48%;
+    --surkh-red-light: 0 84% 58%;
+    --surkh-red-dark: 0 84% 38%;
+    
+    /* Cultural Background Colors */
+    --cultural-cream: 37 27% 96%;
+    --cultural-warm-gray: 32 5% 95%;
+    --cultural-neutral-light: 32 4% 88%;
+    --cultural-neutral: 32 6% 53%;
+    --cultural-neutral-dark: 32 8% 29%;
+    
+    /* Legacy compatibility */
+    --saffron: var(--kesri-saffron);
+    --indian-green: var(--hara-green);
   }
 
   .dark {
@@ -60,8 +86,34 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --saffron: 37 100% 50%;
-    --indian-green: 120 100% 25%;
+    
+    /* Dark mode cultural colors - slightly muted for better contrast */
+    --kesri-saffron: 30 85% 60%;
+    --kesri-saffron-light: 30 85% 70%;
+    --kesri-saffron-dark: 30 85% 50%;
+    --basanti-mustard: 48 85% 72%;
+    --basanti-mustard-light: 48 85% 82%;
+    --basanti-mustard-dark: 48 85% 62%;
+    --neela-royal: 218 75% 35%;
+    --neela-royal-light: 218 75% 45%;
+    --neela-royal-dark: 218 75% 25%;
+    --hara-green: 142 65% 40%;
+    --hara-green-light: 142 65% 50%;
+    --hara-green-dark: 142 65% 30%;
+    --surkh-red: 0 75% 58%;
+    --surkh-red-light: 0 75% 68%;
+    --surkh-red-dark: 0 75% 48%;
+    
+    /* Dark cultural backgrounds */
+    --cultural-cream: 240 8% 8%;
+    --cultural-warm-gray: 240 6% 12%;
+    --cultural-neutral-light: 240 5% 18%;
+    --cultural-neutral: 240 4% 46%;
+    --cultural-neutral-dark: 240 6% 82%;
+    
+    /* Legacy compatibility */
+    --saffron: var(--kesri-saffron);
+    --indian-green: var(--hara-green);
   }
 }
 
@@ -74,6 +126,8 @@
     font-family: "Inter", sans-serif;
   }
 }
+
+/* ... keep existing code (SoundVibe Unified Theme System and all other styles) the same ... */
 
 /* SoundVibe Unified Theme System */
 .dashboard-unified-theme {
@@ -485,7 +539,7 @@
 }
 
 .btn-premium {
-  @apply bg-gradient-to-r from-saffron to-amber-500 hover:from-saffron/90 hover:to-amber-500/90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105;
+  @apply bg-gradient-to-r from-kesri-saffron to-basanti-mustard hover:from-kesri-saffron-dark hover:to-basanti-mustard-dark text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105;
 }
 
 .input-premium {
@@ -494,7 +548,7 @@
 }
 
 .icon-premium {
-  filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.3));
+  filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.3));
 }
 
 /* Animations */

@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -53,34 +52,68 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Add saffron and indian-green as proper Tailwind colors
+				// Authentic Punjabi Cultural Colors
+				'kesri-saffron': {
+					DEFAULT: 'hsl(var(--kesri-saffron))',
+					light: 'hsl(var(--kesri-saffron-light))',
+					dark: 'hsl(var(--kesri-saffron-dark))',
+				},
+				'basanti-mustard': {
+					DEFAULT: 'hsl(var(--basanti-mustard))',
+					light: 'hsl(var(--basanti-mustard-light))',
+					dark: 'hsl(var(--basanti-mustard-dark))',
+				},
+				'neela-royal': {
+					DEFAULT: 'hsl(var(--neela-royal))',
+					light: 'hsl(var(--neela-royal-light))',
+					dark: 'hsl(var(--neela-royal-dark))',
+				},
+				'hara-green': {
+					DEFAULT: 'hsl(var(--hara-green))',
+					light: 'hsl(var(--hara-green-light))',
+					dark: 'hsl(var(--hara-green-dark))',
+				},
+				'surkh-red': {
+					DEFAULT: 'hsl(var(--surkh-red))',
+					light: 'hsl(var(--surkh-red-light))',
+					dark: 'hsl(var(--surkh-red-dark))',
+				},
+				// Cultural Background System
+				'cultural-cream': 'hsl(var(--cultural-cream))',
+				'cultural-warm-gray': 'hsl(var(--cultural-warm-gray))',
+				'cultural-neutral': {
+					light: 'hsl(var(--cultural-neutral-light))',
+					DEFAULT: 'hsl(var(--cultural-neutral))',
+					dark: 'hsl(var(--cultural-neutral-dark))',
+				},
+				// Legacy compatibility - mapped to new colors
 				saffron: {
-					DEFAULT: 'hsl(var(--saffron))',
-					50: 'hsl(37 100% 95%)',
-					100: 'hsl(37 100% 90%)',
-					200: 'hsl(37 100% 80%)',
-					300: 'hsl(37 100% 70%)',
-					400: 'hsl(37 100% 60%)',
-					500: 'hsl(var(--saffron))', // 37 100% 50%
-					600: 'hsl(37 100% 40%)',
-					700: 'hsl(37 100% 30%)',
-					800: 'hsl(37 100% 20%)',
-					900: 'hsl(37 100% 10%)',
+					DEFAULT: 'hsl(var(--kesri-saffron))',
+					50: 'hsl(30 100% 95%)',
+					100: 'hsl(30 100% 90%)',
+					200: 'hsl(30 100% 80%)',
+					300: 'hsl(30 100% 70%)',
+					400: 'hsl(30 100% 60%)',
+					500: 'hsl(var(--kesri-saffron))',
+					600: 'hsl(var(--kesri-saffron-dark))',
+					700: 'hsl(30 100% 35%)',
+					800: 'hsl(30 100% 25%)',
+					900: 'hsl(30 100% 15%)',
 				},
 				'indian-green': {
-					DEFAULT: 'hsl(var(--indian-green))',
-					50: 'hsl(120 100% 95%)',
-					100: 'hsl(120 100% 90%)',
-					200: 'hsl(120 100% 80%)',
-					300: 'hsl(120 100% 70%)',
-					400: 'hsl(120 100% 60%)',
-					500: 'hsl(120 100% 50%)',
-					600: 'hsl(120 100% 40%)',
-					700: 'hsl(120 100% 30%)',
-					800: 'hsl(var(--indian-green))', // 120 100% 25%
-					900: 'hsl(120 100% 15%)',
+					DEFAULT: 'hsl(var(--hara-green))',
+					50: 'hsl(142 71% 95%)',
+					100: 'hsl(142 71% 90%)',
+					200: 'hsl(142 71% 80%)',
+					300: 'hsl(142 71% 70%)',
+					400: 'hsl(142 71% 60%)',
+					500: 'hsl(142 71% 50%)',
+					600: 'hsl(142 71% 40%)',
+					700: 'hsl(142 71% 30%)',
+					800: 'hsl(var(--hara-green))',
+					900: 'hsl(142 71% 15%)',
 				},
-				// Deep Space Color Palette
+				// Keep existing color systems for compatibility
 				space: {
 					black: '#0A0A0F',
 					'deep-blue': '#0F0F23',
@@ -92,7 +125,6 @@ export default {
 					'cosmic-gray': '#6B7280',
 					'stellar-white': '#F8FAFC',
 				},
-				// Keep existing YouTube colors for backward compatibility
 				youtube: {
 					red: '#FF0000',
 					'red-dark': '#CC0000',
@@ -132,13 +164,20 @@ export default {
 				},
 			},
 			backgroundImage: {
-				// Deep Space Gradients
+				// Cultural Punjabi Gradients
+				'kesri-gradient': 'linear-gradient(135deg, hsl(var(--kesri-saffron)) 0%, hsl(var(--kesri-saffron-dark)) 100%)',
+				'basanti-gradient': 'linear-gradient(135deg, hsl(var(--basanti-mustard)) 0%, hsl(var(--basanti-mustard-dark)) 100%)',
+				'cultural-warm': 'linear-gradient(135deg, hsl(var(--kesri-saffron)) 0%, hsl(var(--basanti-mustard)) 50%, hsl(var(--neela-royal)) 100%)',
+				'cultural-celebration': 'linear-gradient(135deg, hsl(var(--surkh-red)) 0%, hsl(var(--kesri-saffron)) 50%, hsl(var(--basanti-mustard)) 100%)',
+				'cultural-trust': 'linear-gradient(135deg, hsl(var(--neela-royal)) 0%, hsl(var(--neela-royal-light)) 100%)',
+				'cultural-prosperity': 'linear-gradient(135deg, hsl(var(--hara-green)) 0%, hsl(var(--basanti-mustard)) 100%)',
+				'cultural-cream-texture': 'radial-gradient(circle at 30% 40%, hsl(var(--cultural-warm-gray)) 0%, transparent 50%), radial-gradient(circle at 80% 10%, hsl(var(--kesri-saffron)) 0%, transparent 90%)',
+				// Keep existing gradients for compatibility
 				'space-dark': 'radial-gradient(ellipse at center, #1A0B2E 0%, #0F0F23 40%, #0A0A0F 100%)',
 				'cosmic-glow': 'radial-gradient(circle at 30% 40%, #2D1B69 0%, transparent 50%), radial-gradient(circle at 80% 10%, #0066CC 0%, transparent 50%), radial-gradient(circle at 40% 80%, #1A0B2E 0%, transparent 50%)',
 				'nebula-gradient': 'linear-gradient(135deg, #0A0A0F 0%, #1A0B2E 25%, #2D1B69 50%, #0F0F23 75%, #0A0A0F 100%)',
 				'aurora-gradient': 'linear-gradient(135deg, #00FFFF 0%, #0080FF 50%, #2D1B69 100%)',
 				'stellar-gradient': 'linear-gradient(135deg, #0066CC 0%, #00FFFF 100%)',
-				// Keep existing gradients
 				'youtube-gradient': 'linear-gradient(135deg, #FF0000 0%, #FF4444 100%)',
 				'cheerful-gradient': 'linear-gradient(135deg, #FFD700 0%, #FF6B47 50%, #FF1493 100%)',
 				'lively-bg': 'linear-gradient(135deg, #FFF5F5 0%, #F0F8FF 50%, #F5FFFA 100%)',
@@ -211,7 +250,6 @@ export default {
 					'0%, 100%': { opacity: '0.3', transform: 'scale(1)' },
 					'50%': { opacity: '1', transform: 'scale(1.2)' }
 				},
-				// Keep existing animations
 				'bounce-in': {
 					'0%': { transform: 'scale(0.3)', opacity: '0' },
 					'50%': { transform: 'scale(1.05)' },
@@ -248,7 +286,6 @@ export default {
 				'slide-in-cosmic': 'slide-in-cosmic 1s ease-out',
 				'fade-in-glow': 'fade-in-glow 0.8s ease-out',
 				'star-twinkle': 'star-twinkle 2s ease-in-out infinite',
-				// Keep existing animations
 				'bounce-in': 'bounce-in 0.6s ease-out',
 				'wiggle': 'wiggle 1s ease-in-out infinite',
 				'pulse-grow': 'pulse-grow 2s ease-in-out infinite',
@@ -267,6 +304,10 @@ export default {
 				'chunky': '0 8px 30px rgba(0, 0, 0, 0.12)',
 				'chunky-hover': '0 15px 40px rgba(0, 0, 0, 0.2)',
 				'youtube': '0 4px 20px rgba(255, 0, 0, 0.3)',
+				// Cultural shadows
+				'cultural-warm': '0 4px 20px hsla(var(--kesri-saffron), 0.3)',
+				'cultural-glow': '0 0 20px hsla(var(--kesri-saffron), 0.3), 0 0 40px hsla(var(--basanti-mustard), 0.2)',
+				'cultural-trust': '0 4px 16px hsla(var(--neela-royal), 0.25)',
 			}
 		}
 	  },
