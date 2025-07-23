@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 
 interface CulturalNotification {
@@ -20,78 +19,44 @@ export const useCulturalNotifications = () => {
   const [notifications, setNotifications] = useState<CulturalNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // Mock implementation until database tables are available
   const fetchNotifications = async () => {
     if (!profile?.id) return;
 
-    try {
-      const { data, error } = await supabase
-        .from('cultural_notifications')
-        .select('*')
-        .eq('user_id', profile.id)
-        .order('created_at', { ascending: false });
+    // Mock data for now
+    const mockNotifications: CulturalNotification[] = [
+      {
+        id: '1',
+        type: 'cultural_content',
+        title: 'New Cultural Content Available',
+        message: 'Traditional patterns have been added to the library',
+        cultural_context: { category: 'traditional' },
+        sound_alert: null,
+        is_read: false,
+        priority: 'normal',
+        created_at: new Date().toISOString(),
+      }
+    ];
 
-      if (error) throw error;
-
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
+    setNotifications(mockNotifications);
+    setUnreadCount(mockNotifications.filter(n => !n.is_read).length);
   };
 
   const markAsRead = async (notificationId: string) => {
-    try {
-      const { error } = await supabase
-        .from('cultural_notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
-
-      if (error) throw error;
-
-      await fetchNotifications();
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
+    setNotifications(prev => 
+      prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
+    );
+    setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
   const markAllAsRead = async () => {
-    if (!profile?.id) return;
-
-    try {
-      const { error } = await supabase
-        .from('cultural_notifications')
-        .update({ is_read: true })
-        .eq('user_id', profile.id)
-        .eq('is_read', false);
-
-      if (error) throw error;
-
-      await fetchNotifications();
-    } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-    }
+    setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+    setUnreadCount(0);
   };
 
   useEffect(() => {
     if (profile?.id) {
       fetchNotifications();
-
-      // Subscribe to real-time notifications
-      const channel = supabase
-        .channel('cultural-notifications')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'cultural_notifications',
-          filter: `user_id=eq.${profile.id}`
-        }, () => {
-          fetchNotifications();
-        })
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
     }
   }, [profile?.id]);
 

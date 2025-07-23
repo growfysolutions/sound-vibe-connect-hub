@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useRealTimeCollaboration } from '@/hooks/useRealTimeCollaboration';
 import { Users, Play, Square, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';

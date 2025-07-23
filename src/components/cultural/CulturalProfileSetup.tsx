@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,9 @@ const CulturalProfileSetup = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(
     culturalProfile?.preferred_language || 'english'
   );
-  const [culturalBackground, setCulturalBackground] = useState('');
+  const [culturalBackground, setCulturalBackground] = useState(
+    culturalProfile?.cultural_background || ''
+  );
 
   const toggleSpecialty = (specialty: string) => {
     setSelectedSpecialties(prev => 

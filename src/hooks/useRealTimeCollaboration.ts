@@ -1,6 +1,5 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
 
 interface RealTimeSession {
@@ -11,6 +10,7 @@ interface RealTimeSession {
   status: string;
   last_activity: string;
   session_data: any;
+  created_at: string;
 }
 
 export const useRealTimeCollaboration = (projectId?: number) => {
@@ -21,88 +21,47 @@ export const useRealTimeCollaboration = (projectId?: number) => {
   const startSession = useCallback(async (sessionType: string, sessionData = {}) => {
     if (!profile?.id || !projectId) return null;
 
-    try {
-      const { data, error } = await supabase
-        .from('real_time_sessions')
-        .insert({
-          project_id: projectId,
-          user_id: profile.id,
-          session_type: sessionType,
-          session_data: sessionData
-        })
-        .select()
-        .single();
+    // Mock implementation for now
+    const mockSession: RealTimeSession = {
+      id: Math.random().toString(36).substr(2, 9),
+      project_id: projectId,
+      user_id: profile.id,
+      session_type: sessionType,
+      status: 'active',
+      last_activity: new Date().toISOString(),
+      session_data: sessionData,
+      created_at: new Date().toISOString(),
+    };
 
-      if (error) throw error;
-
-      setCurrentSession(data);
-      return data;
-    } catch (error) {
-      console.error('Error starting session:', error);
-      return null;
-    }
+    setCurrentSession(mockSession);
+    setActiveSessions(prev => [...prev, mockSession]);
+    return mockSession;
   }, [profile?.id, projectId]);
 
   const updateSessionActivity = useCallback(async (sessionId: string) => {
-    try {
-      await supabase.rpc('update_session_activity', { session_id: sessionId });
-    } catch (error) {
-      console.error('Error updating session activity:', error);
-    }
+    setActiveSessions(prev => 
+      prev.map(session => 
+        session.id === sessionId 
+          ? { ...session, last_activity: new Date().toISOString() }
+          : session
+      )
+    );
   }, []);
 
   const endSession = useCallback(async (sessionId: string) => {
-    try {
-      const { error } = await supabase
-        .from('real_time_sessions')
-        .update({ status: 'ended' })
-        .eq('id', sessionId);
-
-      if (error) throw error;
-
-      if (currentSession?.id === sessionId) {
-        setCurrentSession(null);
-      }
-    } catch (error) {
-      console.error('Error ending session:', error);
+    setActiveSessions(prev => prev.filter(session => session.id !== sessionId));
+    if (currentSession?.id === sessionId) {
+      setCurrentSession(null);
     }
   }, [currentSession]);
 
   useEffect(() => {
-    if (!projectId) return;
+    if (!projectId || !profile?.id) return;
 
-    // Fetch active sessions for the project
-    const fetchActiveSessions = async () => {
-      const { data, error } = await supabase
-        .from('real_time_sessions')
-        .select('*')
-        .eq('project_id', projectId)
-        .eq('status', 'active');
-
-      if (!error && data) {
-        setActiveSessions(data);
-      }
-    };
-
-    fetchActiveSessions();
-
-    // Subscribe to real-time changes
-    const channel = supabase
-      .channel('realtime-sessions')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'real_time_sessions',
-        filter: `project_id=eq.${projectId}`
-      }, () => {
-        fetchActiveSessions();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [projectId]);
+    // Mock initial sessions
+    const mockSessions: RealTimeSession[] = [];
+    setActiveSessions(mockSessions);
+  }, [projectId, profile?.id]);
 
   return {
     activeSessions,
