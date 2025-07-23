@@ -1,3 +1,4 @@
+
 import { cn } from '@/lib/utils';
 import { getCulturalNavigationStyle, culturalStyles } from '@/lib/cultural-design';
 
@@ -42,11 +43,11 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
                 getCulturalNavigationStyle(isActive)
               )}
             >
-              {/* Cultural pattern background */}
+              {/* Modern pattern background */}
               <div className={cn(
                 "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300",
                 isActive 
-                  ? culturalStyles.patterns.phulkari
+                  ? culturalStyles.patterns.modern
                   : "bg-gradient-to-r from-muted/20 to-transparent"
               )} />
               
@@ -79,9 +80,9 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
                 )}
               </div>
               
-              {/* Active indicator with cultural styling */}
+              {/* Active indicator with modern styling */}
               {isActive && (
-                <div className="absolute right-2 w-2 h-2 bg-saffron rounded-full animate-pulse" />
+                <div className="absolute right-2 w-2 h-2 bg-music-purple rounded-full animate-pulse" />
               )}
             </button>
           );

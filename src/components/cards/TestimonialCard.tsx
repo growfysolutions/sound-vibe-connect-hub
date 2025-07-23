@@ -41,10 +41,10 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
       className="w-80 h-auto"
     >
       {/* Traditional quotation marks with cultural styling */}
-      <div className="absolute top-2 left-2 text-6xl text-saffron/20 font-serif leading-none">
+      <div className="absolute top-2 left-2 text-6xl text-music-purple/20 font-serif leading-none">
         "
       </div>
-      <div className="absolute bottom-2 right-2 text-6xl text-saffron/20 font-serif leading-none rotate-180">
+      <div className="absolute bottom-2 right-2 text-6xl text-music-purple/20 font-serif leading-none rotate-180">
         "
       </div>
 
@@ -74,14 +74,14 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
         {/* Author info with cultural frame */}
         <div className="flex items-center space-x-3 pt-2">
           <div className="relative">
-            <Avatar className="w-12 h-12 border-2 border-saffron/30 ring-2 ring-saffron/10">
+            <Avatar className="w-12 h-12 border-2 border-music-purple/30 ring-2 ring-music-purple/10">
               <AvatarImage src={testimonial.author.avatar} alt={testimonial.author.name} />
-              <AvatarFallback className="bg-saffron/20 text-saffron font-semibold">
+              <AvatarFallback className="bg-music-purple/20 text-music-purple font-semibold">
                 {testimonial.author.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
             {/* Cultural frame accent */}
-            <div className="absolute -inset-1 border-2 border-saffron/20 rounded-full -z-10"></div>
+            <div className="absolute -inset-1 border-2 border-music-purple/20 rounded-full -z-10"></div>
           </div>
           <div className="flex-1">
             <h4 className={cn(culturalStyles.typography.label, 'font-semibold')}>
@@ -92,8 +92,8 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
           </div>
         </div>
 
-        {/* Project reference with cultural styling */}
-        <div className={cn(culturalStyles.patterns.phulkari, 'rounded-lg p-3 mt-4')}>
+        {/* Project reference with modern styling */}
+        <div className={cn(culturalStyles.patterns.modern, 'rounded-lg p-3 mt-4 border border-music-purple/20')}>
           <div className="flex items-center justify-between">
             <div>
               <p className={cn(culturalStyles.typography.label, 'text-sm font-medium')}>
@@ -104,7 +104,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
             {testimonial.project.link && (
               <button
                 onClick={handleProjectClick}
-                className={cn(culturalStyles.colors.primary, 'hover:text-saffron/80 transition-colors')}
+                className={cn(culturalStyles.colors.primary, 'hover:text-music-purple/80 transition-colors')}
               >
                 <ExternalLink className="w-4 h-4" />
               </button>
