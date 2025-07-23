@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Filter } from 'lucide-react';
 import { ProjectCollaborationCard } from '@/components/cards/ProjectCollaborationCard';
 import { Project } from './ProjectCard';
@@ -12,10 +13,10 @@ const FeedTab: React.FC<FeedTabProps> = ({ projects }) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Latest from Your Network</h2>
-        <Button variant="outline" className="hover-scale">
+        <CulturalButton variant="secondary" size="sm">
           <Filter className="w-4 h-4 mr-2" />
           Filter
-        </Button>
+        </CulturalButton>
       </div>
 
       {projects.map((project) => (

@@ -1,8 +1,9 @@
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Badge } from '@/components/ui/badge';
 import { Clock, MapPin, DollarSign } from 'lucide-react';
-import { Gig } from '@/types'; // Assuming Gig type will be added to types/index.ts
+import { Gig } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 
 interface GigCardProps {
@@ -35,7 +36,9 @@ export const GigCard: React.FC<GigCardProps> = ({ gig }) => {
             <Badge key={index} variant="secondary">{skill}</Badge>
           ))}
         </div>
-        <Button className="w-full btn-premium">View Details & Apply</Button>
+        <CulturalButton variant="primary" size="sm" className="w-full">
+          View Details & Apply
+        </CulturalButton>
       </CardFooter>
     </Card>
   );

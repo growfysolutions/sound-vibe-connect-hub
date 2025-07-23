@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Input } from '@/components/ui/input';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { ArtistProfileCard } from '@/components/cards/ArtistProfileCard';
@@ -60,7 +60,7 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect,
           newScores[professionalId] = result.value.data;
         } else {
           console.error(`Error calculating score for ${professionalId}:`, result.reason);
-          newScores[professionalId] = null; // Indicate error
+          newScores[professionalId] = null;
         }
       });
 
@@ -85,10 +85,10 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect,
         <div className="flex items-center gap-2">
           <AdvancedFilterDrawer 
             trigger={
-              <Button variant="outline">
+              <CulturalButton variant="secondary" size="sm">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
                 Advanced Filters
-              </Button>
+              </CulturalButton>
             }
             onApplyFilters={(filters) => {
               console.log('Applied filters:', filters);
@@ -117,11 +117,11 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect,
                   avatar: professional.avatar_url || '',
                   role: professional.role || 'Musician',
                   location: professional.location || '',
-                   skills: professional.genres ? 
-                     (Array.isArray(professional.genres) ? 
-                       professional.genres : 
-                       (professional.genres as string).split(',').map((g: string) => g.trim())
-                     ) : [],
+                  skills: professional.genres ? 
+                    (Array.isArray(professional.genres) ? 
+                      professional.genres : 
+                      (professional.genres as string).split(',').map((g: string) => g.trim())
+                    ) : [],
                   rating: scores[professional.id]?.totalScore || 0,
                   reviewCount: 10,
                   experience: '2+ years',

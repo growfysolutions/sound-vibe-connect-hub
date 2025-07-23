@@ -1,5 +1,6 @@
+
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Play, Heart, MessageCircle, Share2, Clock, Music } from 'lucide-react';
 import { Database } from '@/types/supabase';
 
@@ -28,9 +29,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                   {project.genre || 'No genre specified'}
                 </p>
               </div>
-              <Button size="icon" className="btn-premium opacity-0 group-hover:opacity-100 transition-opacity">
+              <CulturalButton size="sm" variant="primary" className="opacity-0 group-hover:opacity-100 transition-opacity">
                 <Play className="w-4 h-4" />
-              </Button>
+              </CulturalButton>
             </div>
 
             <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
@@ -42,18 +43,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
+                <CulturalButton variant="secondary" size="sm">
                   <Heart className="w-4 h-4 mr-2" />
                   0
-                </Button>
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                </CulturalButton>
+                <CulturalButton variant="secondary" size="sm">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Comment
-                </Button>
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                </CulturalButton>
+                <CulturalButton variant="secondary" size="sm">
                   <Share2 className="w-4 h-4 mr-2" />
                   Share
-                </Button>
+                </CulturalButton>
               </div>
             </div>
           </div>

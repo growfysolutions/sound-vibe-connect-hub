@@ -1,6 +1,7 @@
+
 import { Database } from '@/types/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Check, X } from 'lucide-react';
 
@@ -39,14 +40,14 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onAccept, 
         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{proposal.message}</p>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Button size="sm" variant="outline" className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white" onClick={() => onReject(proposal)}>
+        <CulturalButton size="sm" variant="culturalDestructive" onClick={() => onReject(proposal)}>
           <X className="w-4 h-4 mr-2" />
           Reject
-        </Button>
-        <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => onAccept(proposal)}>
+        </CulturalButton>
+        <CulturalButton size="sm" variant="cultural" onClick={() => onAccept(proposal)}>
           <Check className="w-4 h-4 mr-2" />
           Accept
-        </Button>
+        </CulturalButton>
       </CardFooter>
     </Card>
   );

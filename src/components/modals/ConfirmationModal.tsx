@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CulturalModal } from './CulturalModal';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
 
 interface ConfirmationModalProps {
@@ -41,17 +41,17 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     }
   };
 
-  const getButtonStyle = () => {
+  const getConfirmVariant = () => {
     switch (type) {
       case 'danger':
-        return 'bg-red-500 hover:bg-red-600 text-white';
+        return 'culturalDestructive';
       case 'success':
-        return 'bg-green-500 hover:bg-green-600 text-white';
+        return 'cultural';
       case 'info':
-        return 'bg-blue-500 hover:bg-blue-600 text-white';
+        return 'cultural';
       case 'warning':
       default:
-        return 'bg-amber-500 hover:bg-amber-600 text-white';
+        return 'cultural';
     }
   };
 
@@ -74,21 +74,23 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
         {/* Action Buttons */}
         <div className="flex justify-center space-x-3 pt-6">
-          <Button
-            variant="outline"
+          <CulturalButton
+            variant="secondary"
+            size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="border-saffron/20 text-foreground hover:bg-saffron/5"
           >
             {cancelText}
-          </Button>
-          <Button
+          </CulturalButton>
+          <CulturalButton
+            variant={getConfirmVariant()}
+            size="sm"
             onClick={onConfirm}
             disabled={isLoading}
-            className={getButtonStyle()}
+            loading={isLoading}
           >
-            {isLoading ? 'Processing...' : confirmText}
-          </Button>
+            {confirmText}
+          </CulturalButton>
         </div>
       </div>
     </CulturalModal>

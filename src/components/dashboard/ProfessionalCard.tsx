@@ -1,6 +1,7 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { CulturalButton } from '@/components/ui/CulturalButton';
 import { MapPin, UserPlus, MessageCircle, TrendingUp } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Profile } from './UserProfileCard';
@@ -12,7 +13,7 @@ interface ProfessionalCardProps {
   handleSendMessage?: (id: string) => void;
   isPending?: boolean;
   score?: number;
-  scoreBreakdown?: any; // Can be refined later
+  scoreBreakdown?: any;
 }
 
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional, actions, handleConnect, handleSendMessage, isPending, score }) => {
@@ -68,7 +69,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional, actio
         <div className="flex items-center justify-end space-x-2">
           {actions ? actions : (
             <>
-              <Button variant="outline" size="sm" onClick={() => handleConnect?.(professional.id)} disabled={isPending}>
+              <CulturalButton variant="secondary" size="sm" onClick={() => handleConnect?.(professional.id)} disabled={isPending}>
                   {isPending ? (
                     'Pending'
                   ) : (
@@ -77,11 +78,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional, actio
                       Connect
                     </>
                   )}
-              </Button>
-              <Button size="sm" className="btn-premium" onClick={() => handleSendMessage?.(professional.id)}>
+              </CulturalButton>
+              <CulturalButton size="sm" variant="primary" onClick={() => handleSendMessage?.(professional.id)}>
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Message
-              </Button>
+              </CulturalButton>
             </>
           )}
         </div>
