@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { CulturalCard } from '@/components/cards/CulturalCard';
 import { CulturalButton } from '@/components/ui/CulturalButton';
 import { culturalStyles } from '@/lib/cultural-design';
