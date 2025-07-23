@@ -307,6 +307,51 @@ export type Database = {
           },
         ]
       }
+      media_uploads: {
+        Row: {
+          created_at: string
+          duration: number | null
+          file_name: string
+          file_path: string
+          file_size: number
+          id: string
+          metadata: Json | null
+          mime_type: string
+          updated_at: string
+          upload_status: string
+          user_id: string
+          waveform_data: Json | null
+        }
+        Insert: {
+          created_at?: string
+          duration?: number | null
+          file_name: string
+          file_path: string
+          file_size: number
+          id?: string
+          metadata?: Json | null
+          mime_type: string
+          updated_at?: string
+          upload_status?: string
+          user_id: string
+          waveform_data?: Json | null
+        }
+        Update: {
+          created_at?: string
+          duration?: number | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          metadata?: Json | null
+          mime_type?: string
+          updated_at?: string
+          upload_status?: string
+          user_id?: string
+          waveform_data?: Json | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string | null
