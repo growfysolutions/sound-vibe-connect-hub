@@ -1,4 +1,3 @@
-
 export interface ImageOptimizationOptions {
   quality?: number;
   format?: 'webp' | 'jpeg' | 'png';
@@ -15,8 +14,7 @@ export const optimizeImage = async (
     quality = 0.8,
     format = 'webp',
     width,
-    height,
-    progressive = true
+    height
   } = options;
 
   return new Promise((resolve, reject) => {

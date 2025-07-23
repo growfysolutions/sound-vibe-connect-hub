@@ -35,7 +35,7 @@ export const usePerformanceMonitor = () => {
       const paint = performance.getEntriesByType('paint');
       
       const fcp = paint.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0;
-      const loadTime = navigation.loadEventEnd - navigation.navigationStart;
+      const loadTime = navigation.loadEventEnd - navigation.fetchStart;
       
       // Get memory usage if available
       const memoryInfo = (performance as any).memory;

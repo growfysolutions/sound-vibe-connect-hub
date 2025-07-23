@@ -24,7 +24,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   className,
   priority = false,
   sizes = '100vw',
-  quality = 80,
   placeholder = 'blur',
   onLoad,
   onError
