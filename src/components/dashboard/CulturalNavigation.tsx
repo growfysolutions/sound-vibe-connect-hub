@@ -1,5 +1,5 @@
-
 import { cn } from '@/lib/utils';
+import { getCulturalNavigationStyle, culturalStyles } from '@/lib/cultural-design';
 
 interface NavigationItem {
   id: string;
@@ -37,18 +37,16 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={cn(
-                "w-full group relative flex items-center rounded-xl transition-all duration-300 transform hover:scale-105",
+                "w-full group relative flex items-center transition-all duration-300 transform hover:scale-105",
                 collapsed ? "justify-center p-3" : "justify-start px-4 py-3",
-                isActive 
-                  ? "bg-gradient-to-r from-saffron/20 to-amber-500/20 text-saffron border border-saffron/30 shadow-lg shadow-saffron/20" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30"
+                getCulturalNavigationStyle(isActive)
               )}
             >
-              {/* Phulkari pattern background on hover */}
+              {/* Cultural pattern background */}
               <div className={cn(
                 "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300",
                 isActive 
-                  ? "bg-gradient-to-r from-saffron/10 to-amber-500/10" 
+                  ? culturalStyles.patterns.phulkari
                   : "bg-gradient-to-r from-muted/20 to-transparent"
               )} />
               
@@ -66,13 +64,14 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
                 {!collapsed && (
                   <div className="ml-3 flex-1">
                     <span className={cn(
-                      "font-medium transition-all duration-300 group-hover:translate-x-1",
+                      culturalStyles.typography.label,
+                      "transition-all duration-300 group-hover:translate-x-1",
                       isActive && "font-semibold"
                     )}>
                       {item.label}
                     </span>
                     {isActive && (
-                      <div className="text-xs text-muted-foreground mt-0.5 opacity-75">
+                      <div className={cn(culturalStyles.typography.caption, 'mt-0.5 opacity-75')}>
                         {item.description}
                       </div>
                     )}
@@ -80,7 +79,7 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
                 )}
               </div>
               
-              {/* Active indicator */}
+              {/* Active indicator with cultural styling */}
               {isActive && (
                 <div className="absolute right-2 w-2 h-2 bg-saffron rounded-full animate-pulse" />
               )}
@@ -88,11 +87,12 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
           );
         })}
         
-        {/* Messages with special styling */}
+        {/* Messages with special cultural styling */}
         <button
           className={cn(
-            "w-full group relative flex items-center rounded-xl transition-all duration-300 transform hover:scale-105 text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30",
-            collapsed ? "justify-center p-3" : "justify-start px-4 py-3"
+            "w-full group relative flex items-center transition-all duration-300 transform hover:scale-105 text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30",
+            collapsed ? "justify-center p-3" : "justify-start px-4 py-3",
+            getCulturalNavigationStyle(false)
           )}
         >
           <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-muted/20 to-transparent" />
@@ -107,7 +107,7 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
             
             {!collapsed && (
               <div className="ml-3 flex-1">
-                <span className="font-medium transition-all duration-300 group-hover:translate-x-1">
+                <span className={cn(culturalStyles.typography.label, 'transition-all duration-300 group-hover:translate-x-1')}>
                   Messages
                 </span>
                 <div className="text-xs" style={{ fontFamily: 'serif' }}>
@@ -117,8 +117,8 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
             )}
           </div>
           
-          {/* Notification badge */}
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+          {/* Cultural notification badge */}
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center border-2 border-background">
             3
           </div>
         </button>
