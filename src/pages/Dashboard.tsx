@@ -156,30 +156,47 @@ const Dashboard = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Fetch accepted connections with profile data
-    const { data: connectionsData, error: connectionsError } = await supabase
-      .from('connections')
-      .select(`
-        *,
-        requester:profiles!connections_requester_id_fkey(*),
-        addressee:profiles!connections_addressee_id_fkey(*)
-      `)
-      .eq('status', 'accepted')
-      .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+    try {
+      // First, fetch accepted connections
+      const { data: connectionsData, error: connectionsError } = await supabase
+        .from('connections')
+        .select('*')
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
 
-    if (connectionsError) {
-      console.error('Error fetching connections:', connectionsError);
-    } else if (connectionsData) {
-      // Extract the profiles from connections (excluding current user)
-      const profiles: Profile[] = connectionsData.map(conn => {
-        if (conn.requester_id === user.id) {
-          return conn.addressee;
-        } else {
-          return conn.requester;
-        }
-      }).filter(Boolean);
-      
-      setConnectedProfiles(profiles);
+      if (connectionsError) {
+        console.error('Error fetching connections:', connectionsError);
+        return;
+      }
+
+      if (!connectionsData || connectionsData.length === 0) {
+        setConnectedProfiles([]);
+        return;
+      }
+
+      // Extract unique profile IDs (excluding current user)
+      const profileIds = connectionsData
+        .map(conn => conn.requester_id === user.id ? conn.addressee_id : conn.requester_id)
+        .filter(id => id !== user.id);
+
+      if (profileIds.length === 0) {
+        setConnectedProfiles([]);
+        return;
+      }
+
+      // Fetch profile data for connected users
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', profileIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+      } else {
+        setConnectedProfiles(profilesData || []);
+      }
+    } catch (error) {
+      console.error('Error in fetchConnectedProfiles:', error);
     }
   }, []);
 
@@ -214,13 +231,10 @@ const Dashboard = () => {
       // Fetch connected profiles
       fetchConnectedProfiles();
 
-      // Fetch incoming connection requests with profile data
+      // Fetch incoming connection requests
       const { data: requestsData, error: requestsError } = await supabase
         .from('connections')
-        .select(`
-          *,
-          requester:profiles!connections_requester_id_fkey(*)
-        `)
+        .select('*')
         .eq('addressee_id', user.id)
         .eq('status', 'pending');
 
