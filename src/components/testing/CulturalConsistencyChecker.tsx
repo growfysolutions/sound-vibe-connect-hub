@@ -1,10 +1,7 @@
-
 import React, { useState } from 'react';
 import { CulturalCard } from '@/components/cards/CulturalCard';
 import { CulturalButton } from '@/components/ui/CulturalButton';
-import { culturalStyles } from '@/lib/cultural-design';
 import { CheckCircle, AlertTriangle, Eye, Palette, Type } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface ConsistencyCheck {
   id: string;

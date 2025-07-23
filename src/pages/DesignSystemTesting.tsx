@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UserJourneyValidator } from '@/components/testing/UserJourneyValidator';
 import { IntegrationIssuesTracker } from '@/components/testing/IntegrationIssuesTracker';
 import { CulturalConsistencyChecker } from '@/components/testing/CulturalConsistencyChecker';

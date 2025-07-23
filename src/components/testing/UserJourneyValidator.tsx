@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { CulturalCard } from '@/components/cards/CulturalCard';
 import { CulturalButton } from '@/components/ui/CulturalButton';

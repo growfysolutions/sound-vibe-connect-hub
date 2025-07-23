@@ -1,11 +1,8 @@
-
 import React, { useState } from 'react';
 import { CulturalCard } from '@/components/cards/CulturalCard';
 import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Badge } from '@/components/ui/badge';
-import { culturalStyles } from '@/lib/cultural-design';
-import { AlertTriangle, Bug, Zap, Eye, Clock, CheckCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
 
 interface IntegrationIssue {
   id: string;
