@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CulturalModal } from './CulturalModal';
 import { Button } from '@/components/ui/button';
@@ -14,14 +13,12 @@ interface CollaborationRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
   recipientName: string;
-  recipientId: string;
 }
 
 export const CollaborationRequestModal: React.FC<CollaborationRequestModalProps> = ({
   isOpen,
   onClose,
-  recipientName,
-  recipientId
+  recipientName
 }) => {
   const [formData, setFormData] = useState({
     projectName: '',
