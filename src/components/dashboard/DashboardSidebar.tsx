@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Home, 
@@ -9,19 +8,12 @@ import {
   Briefcase, 
   Settings, 
   Trophy,
-  Music,
   Calendar,
   TrendingUp,
-  Star,
-  Globe,
   Search,
-  Bell,
-  ChevronRight,
   Mic,
   Radio,
   FileMusic,
-  Heart,
-  Headphones,
   Zap
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
@@ -33,7 +25,6 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarProps) {
   const { profile } = useProfile();
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const navigationItems = [
     { 

@@ -243,12 +243,8 @@ const Dashboard = () => {
             <div className="fixed left-0 top-0 h-full w-80 z-50 animate-slide-in-left">
               <DashboardSidebar 
                 activeTab={activeTab}
-                onTabChange={(tab) => {
+                setActiveTab={(tab) => {
                   setActiveTab(tab);
-                  setIsMobileSidebarOpen(false);
-                }}
-                onNavigateToMessages={() => {
-                  navigate('/messages');
                   setIsMobileSidebarOpen(false);
                 }}
               />
@@ -321,8 +317,7 @@ const Dashboard = () => {
         <div className="left-sidebar">
           <DashboardSidebar 
             activeTab={activeTab}
-            onTabChange={setActiveTab}
-            onNavigateToMessages={() => navigate('/messages')}
+            setActiveTab={setActiveTab}
           />
         </div>
 

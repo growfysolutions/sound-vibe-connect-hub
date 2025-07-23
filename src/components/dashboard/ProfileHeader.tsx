@@ -1,15 +1,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Star, 
   MapPin, 
-  Calendar, 
   Users, 
   Trophy,
   TrendingUp,
-  Heart,
   Music,
   Zap,
   Shield,
