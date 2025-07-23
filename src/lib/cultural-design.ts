@@ -1,53 +1,62 @@
 
 import { cn } from './utils';
 
-// Cultural design system utilities with authentic Punjabi color palette
+// Modern music platform design system utilities
 export const culturalStyles = {
-  // Authentic Punjabi Color System
+  // Modern Music Platform Color System
   colors: {
-    // Primary Kesri (Saffron) - Courage, sacrifice, spirituality
-    primary: 'text-kesri-saffron',
-    primaryBg: 'bg-kesri-saffron',
-    primaryGradient: 'bg-kesri-gradient',
-    primaryLight: 'text-kesri-saffron-light',
-    primaryDark: 'text-kesri-saffron-dark',
+    // Primary Purple - Creativity, premium feel, music industry standard
+    primary: 'text-music-purple',
+    primaryBg: 'bg-music-purple',
+    primaryGradient: 'bg-music-gradient',
+    primaryLight: 'text-music-purple-light',
+    primaryDark: 'text-music-purple-dark',
     
-    // Secondary Neela (Royal Blue) - Trust, stability, Sikh heritage
-    secondary: 'text-neela-royal',
-    secondaryBg: 'bg-neela-royal',
-    secondaryGradient: 'bg-cultural-trust',
-    secondaryLight: 'text-neela-royal-light',
-    secondaryDark: 'text-neela-royal-dark',
+    // Secondary Blue - Trust, technology, professional networking
+    secondary: 'text-electric-blue',
+    secondaryBg: 'bg-electric-blue',
+    secondaryGradient: 'bg-electric-gradient',
+    secondaryLight: 'text-electric-blue-light',
+    secondaryDark: 'text-electric-blue-dark',
     
-    // Accent Basanti (Mustard) - Agricultural prosperity, harvest celebration
-    accent: 'text-basanti-mustard',
-    accentBg: 'bg-basanti-mustard',
-    accentGradient: 'bg-basanti-gradient',
-    accentLight: 'text-basanti-mustard-light',
-    accentDark: 'text-basanti-mustard-dark',
+    // Accent Green - Success, growth, positive interactions
+    accent: 'text-vibrant-green',
+    accentBg: 'bg-vibrant-green',
+    accentGradient: 'bg-success-gradient',
+    accentLight: 'text-vibrant-green-light',
+    accentDark: 'text-vibrant-green-dark',
     
-    // Success Hara (Green) - Growth, prosperity, natural abundance
-    success: 'text-hara-green',
-    successBg: 'bg-hara-green',
-    successGradient: 'bg-cultural-prosperity',
-    successLight: 'text-hara-green-light',
-    successDark: 'text-hara-green-dark',
+    // Success Green - Growth, completed actions
+    success: 'text-vibrant-green',
+    successBg: 'bg-vibrant-green',
+    successGradient: 'bg-success-gradient',
+    successLight: 'text-vibrant-green-light',
+    successDark: 'text-vibrant-green-dark',
     
-    // Warning/Celebration Surkh (Deep Red) - Celebration, energy, festivities
-    warning: 'text-surkh-red',
-    warningBg: 'bg-surkh-red',
-    warningLight: 'text-surkh-red-light',
-    warningDark: 'text-surkh-red-dark',
+    // Warning Orange - Attention, warnings
+    warning: 'text-modern-orange',
+    warningBg: 'bg-modern-orange',
+    warningGradient: 'bg-warning-gradient',
+    warningLight: 'text-modern-orange-light',
+    warningDark: 'text-modern-orange-dark',
     
-    // Cultural backgrounds
-    culturalBg: 'bg-cultural-cream',
-    culturalWarm: 'bg-cultural-warm-gray',
-    culturalNeutral: 'bg-cultural-neutral',
-    culturalNeutralLight: 'bg-cultural-neutral-light',
-    culturalNeutralDark: 'bg-cultural-neutral-dark',
+    // Error Red - Destructive actions, errors
+    error: 'text-modern-red',
+    errorBg: 'bg-modern-red',
+    errorGradient: 'bg-error-gradient',
+    errorLight: 'text-modern-red-light',
+    errorDark: 'text-modern-red-dark',
+    
+    // Modern backgrounds
+    modernBg: 'bg-modern-bg-primary',
+    modernBgSecondary: 'bg-modern-bg-secondary',
+    modernBgTertiary: 'bg-modern-bg-tertiary',
+    modernNeutral: 'bg-modern-neutral',
+    modernNeutralLight: 'bg-modern-neutral-light',
+    modernNeutralDark: 'bg-modern-neutral-dark',
   },
 
-  // Typography system with cultural sensitivity
+  // Typography system for modern music platform
   typography: {
     header: 'font-bold tracking-wide',
     subheader: 'font-semibold text-lg',
@@ -55,77 +64,82 @@ export const culturalStyles = {
     label: 'font-medium text-sm text-foreground',
     button: 'font-medium tracking-wide',
     caption: 'text-sm text-muted-foreground',
-    cultural: 'font-serif', // For Gurmukhi text elements
+    modern: 'font-sans tracking-tight', // Clean, modern typography
   },
 
-  // Cultural patterns inspired by traditional Punjabi art
+  // Modern patterns for contemporary design
   patterns: {
-    card: 'relative overflow-hidden before:absolute before:inset-0 before:bg-cultural-cream-texture before:opacity-30',
-    phulkari: 'bg-gradient-to-br from-kesri-saffron/10 to-basanti-mustard/10',
-    traditional: 'border-2 border-kesri-saffron/20',
-    culturalFrame: 'border border-kesri-saffron/30 shadow-cultural-warm',
-    wheat: 'bg-gradient-to-br from-basanti-mustard/5 to-hara-green/5',
-    celebration: 'bg-cultural-celebration',
+    card: 'relative overflow-hidden backdrop-blur-sm',
+    modern: 'bg-gradient-to-br from-music-purple/5 to-electric-blue/5',
+    glass: 'backdrop-blur-md bg-white/10 border border-white/20',
+    modernFrame: 'border border-music-purple/30 shadow-modern-purple',
+    tech: 'bg-gradient-to-br from-electric-blue/5 to-vibrant-green/5',
+    premium: 'bg-modern-primary',
   },
 
-  // Component styles with cultural authenticity
+  // Component styles with modern aesthetics
   components: {
     // Form elements
-    input: 'border-2 border-kesri-saffron/20 hover:border-kesri-saffron/40 focus:border-kesri-saffron rounded-lg transition-all duration-200',
-    inputError: 'border-surkh-red focus:border-surkh-red',
-    inputSuccess: 'border-hara-green focus:border-hara-green',
+    input: 'border-2 border-music-purple/20 hover:border-music-purple/40 focus:border-music-purple rounded-lg transition-all duration-200',
+    inputError: 'border-modern-red focus:border-modern-red',
+    inputSuccess: 'border-vibrant-green focus:border-vibrant-green',
     
-    // Buttons with cultural gradients
-    primaryButton: 'bg-kesri-gradient text-white shadow-cultural-warm hover:shadow-cultural-glow hover:scale-[1.02] transition-all duration-300',
-    secondaryButton: 'border-2 border-neela-royal text-neela-royal hover:bg-neela-royal/10 transition-all duration-200',
-    accentButton: 'bg-basanti-gradient text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
-    successButton: 'bg-cultural-prosperity text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    // Buttons with modern gradients
+    primaryButton: 'bg-music-gradient text-white shadow-modern-purple hover:shadow-modern-glow hover:scale-[1.02] transition-all duration-300',
+    secondaryButton: 'border-2 border-electric-blue text-electric-blue hover:bg-electric-blue/10 transition-all duration-200',
+    accentButton: 'bg-success-gradient text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
+    successButton: 'bg-success-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    warningButton: 'bg-warning-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    errorButton: 'bg-error-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
     
-    // Cards with cultural depth
-    card: 'bg-white rounded-xl border border-kesri-saffron/20 shadow-cultural-warm hover:shadow-cultural-glow transition-all duration-300',
-    profileCard: 'bg-white rounded-xl border border-kesri-saffron/20 p-4 relative overflow-hidden',
-    celebrationCard: 'bg-cultural-celebration rounded-xl border border-surkh-red/30 shadow-lg',
+    // Cards with modern depth
+    card: 'bg-white rounded-xl border border-music-purple/20 shadow-modern-purple hover:shadow-modern-glow transition-all duration-300',
+    profileCard: 'bg-white rounded-xl border border-music-purple/20 p-4 relative overflow-hidden',
+    premiumCard: 'bg-modern-primary rounded-xl border border-electric-blue/30 shadow-lg',
+    glassCard: 'backdrop-blur-md bg-white/10 border border-white/20 rounded-xl',
     
-    // Navigation with cultural trust elements
+    // Navigation with modern trust elements
     navItem: 'rounded-xl transition-all duration-300 hover:scale-105',
-    navActive: 'bg-gradient-to-r from-kesri-saffron/20 to-basanti-mustard/20 text-kesri-saffron border border-kesri-saffron/30 shadow-cultural-trust',
+    navActive: 'bg-gradient-to-r from-music-purple/20 to-electric-blue/20 text-music-purple border border-music-purple/30 shadow-modern-trust',
     
-    // Loading states with cultural authenticity
-    loader: 'animate-spin text-kesri-saffron',
-    progress: 'bg-kesri-gradient',
+    // Loading states with modern aesthetics
+    loader: 'animate-spin text-music-purple',
+    progress: 'bg-music-gradient',
     
     // Trust indicators
-    verified: 'bg-neela-royal/10 text-neela-royal border border-neela-royal/30',
-    premium: 'bg-basanti-gradient text-white shadow-cultural-glow',
+    verified: 'bg-electric-blue/10 text-electric-blue border border-electric-blue/30',
+    premium: 'bg-music-gradient text-white shadow-modern-glow',
   },
 
-  // Cultural elements and symbols
+  // Modern elements and symbols
   elements: {
-    separator: '🌾', // Wheat symbol for agricultural heritage
-    blessing: '🙏', // Universal prayer/blessing
-    music: '🎵', // Musical note
-    success: '✨', // Celebration sparkle
-    celebration: '🎉', // Party/festival
-    traditional: '🕉️', // Sacred symbol
-    dhol: '🥁', // Traditional drum
-    saffron: '🌸', // Saffron flower
-    wheat: '🌾', // Wheat for prosperity
-    community: '👥', // Community/sangat
+    separator: '🎵', // Musical note
+    success: '✅', // Success checkmark
+    music: '🎶', // Musical notes
+    star: '⭐', // Star rating
+    premium: '👑', // Premium crown
+    verified: '✓', // Verified checkmark
+    collaboration: '🤝', // Handshake
+    creative: '🎨', // Art palette
+    tech: '⚡', // Lightning bolt
+    community: '👥', // Community
   },
 
-  // Cultural gradients for specific use cases
+  // Modern gradients for specific use cases
   gradients: {
-    warm: 'bg-cultural-warm', // Saffron to mustard to blue
-    celebration: 'bg-cultural-celebration', // Red to saffron to mustard
-    prosperity: 'bg-cultural-prosperity', // Green to mustard
-    trust: 'bg-cultural-trust', // Blue gradient
-    primary: 'bg-kesri-gradient', // Saffron gradient
-    accent: 'bg-basanti-gradient', // Mustard gradient
+    primary: 'bg-music-gradient', // Purple gradient
+    secondary: 'bg-electric-gradient', // Blue gradient
+    success: 'bg-success-gradient', // Green gradient
+    warning: 'bg-warning-gradient', // Orange gradient
+    error: 'bg-error-gradient', // Red gradient
+    modern: 'bg-modern-primary', // Multi-color modern gradient
+    neutral: 'bg-modern-neutral', // Neutral gradient
+    glass: 'backdrop-blur-md bg-white/10', // Glass effect
   },
 };
 
-// Helper functions for consistent cultural styling
-export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' | 'testimonial' | 'celebration' = 'default') => {
+// Helper functions for consistent modern styling
+export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' | 'testimonial' | 'premium' | 'glass' = 'default') => {
   const baseStyles = culturalStyles.patterns.card + ' ' + culturalStyles.components.card;
   
   switch (variant) {
@@ -134,16 +148,18 @@ export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' 
     case 'project':
       return cn(baseStyles, 'hover:-translate-y-1');
     case 'testimonial':
-      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-kesri-saffron/20 before:font-serif');
-    case 'celebration':
-      return cn(baseStyles, culturalStyles.components.celebrationCard);
+      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-music-purple/20 before:font-serif');
+    case 'premium':
+      return cn(baseStyles, culturalStyles.components.premiumCard);
+    case 'glass':
+      return cn(culturalStyles.components.glassCard);
     default:
       return baseStyles;
   }
 };
 
-export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accent' | 'success' | 'destructive' = 'primary') => {
-  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-kesri-saffron/50';
+export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'destructive' = 'primary') => {
+  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-music-purple/50';
   
   switch (variant) {
     case 'primary':
@@ -154,8 +170,10 @@ export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accen
       return cn(baseStyles, culturalStyles.components.accentButton);
     case 'success':
       return cn(baseStyles, culturalStyles.components.successButton);
+    case 'warning':
+      return cn(baseStyles, culturalStyles.components.warningButton);
     case 'destructive':
-      return cn(baseStyles, 'bg-gradient-to-r from-surkh-red to-surkh-red-dark text-white shadow-lg hover:shadow-xl');
+      return cn(baseStyles, culturalStyles.components.errorButton);
     default:
       return cn(baseStyles, culturalStyles.components.primaryButton);
   }
@@ -184,14 +202,14 @@ export const getCulturalNavigationStyle = (isActive: boolean = false) => {
   return cn(baseStyles, 'text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/30');
 };
 
-// Cultural color palette accessibility helper
+// Modern color palette accessibility helper
 export const getCulturalColorContrast = (colorName: string) => {
   const contrastMap = {
-    'kesri-saffron': { light: 'text-white', dark: 'text-gray-900' },
-    'basanti-mustard': { light: 'text-gray-900', dark: 'text-white' },
-    'neela-royal': { light: 'text-white', dark: 'text-gray-100' },
-    'hara-green': { light: 'text-white', dark: 'text-gray-100' },
-    'surkh-red': { light: 'text-white', dark: 'text-gray-100' },
+    'music-purple': { light: 'text-white', dark: 'text-gray-900' },
+    'electric-blue': { light: 'text-white', dark: 'text-gray-100' },
+    'vibrant-green': { light: 'text-white', dark: 'text-gray-100' },
+    'modern-orange': { light: 'text-white', dark: 'text-gray-900' },
+    'modern-red': { light: 'text-white', dark: 'text-gray-100' },
   };
   
   return contrastMap[colorName as keyof typeof contrastMap] || { light: 'text-white', dark: 'text-gray-900' };

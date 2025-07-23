@@ -52,6 +52,43 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Modern Music Platform Colors
+				'music-purple': {
+					DEFAULT: 'hsl(var(--music-purple))',
+					light: 'hsl(var(--music-purple-light))',
+					dark: 'hsl(var(--music-purple-dark))',
+				},
+				'electric-blue': {
+					DEFAULT: 'hsl(var(--electric-blue))',
+					light: 'hsl(var(--electric-blue-light))',
+					dark: 'hsl(var(--electric-blue-dark))',
+				},
+				'vibrant-green': {
+					DEFAULT: 'hsl(var(--vibrant-green))',
+					light: 'hsl(var(--vibrant-green-light))',
+					dark: 'hsl(var(--vibrant-green-dark))',
+				},
+				'modern-orange': {
+					DEFAULT: 'hsl(var(--modern-orange))',
+					light: 'hsl(var(--modern-orange-light))',
+					dark: 'hsl(var(--modern-orange-dark))',
+				},
+				'modern-red': {
+					DEFAULT: 'hsl(var(--modern-red))',
+					light: 'hsl(var(--modern-red-light))',
+					dark: 'hsl(var(--modern-red-dark))',
+				},
+				// Modern Background System
+				'modern-bg': {
+					primary: 'hsl(var(--modern-bg-primary))',
+					secondary: 'hsl(var(--modern-bg-secondary))',
+					tertiary: 'hsl(var(--modern-bg-tertiary))',
+				},
+				'modern-neutral': {
+					light: 'hsl(var(--modern-neutral-light))',
+					DEFAULT: 'hsl(var(--modern-neutral))',
+					dark: 'hsl(var(--modern-neutral-dark))',
+				},
 				// Authentic Punjabi Cultural Colors
 				'kesri-saffron': {
 					DEFAULT: 'hsl(var(--kesri-saffron))',
@@ -164,6 +201,15 @@ export default {
 				},
 			},
 			backgroundImage: {
+				// Modern Music Platform Gradients
+				'music-gradient': 'linear-gradient(135deg, hsl(var(--music-purple)) 0%, hsl(var(--music-purple-dark)) 100%)',
+				'electric-gradient': 'linear-gradient(135deg, hsl(var(--electric-blue)) 0%, hsl(var(--electric-blue-dark)) 100%)',
+				'success-gradient': 'linear-gradient(135deg, hsl(var(--vibrant-green)) 0%, hsl(var(--vibrant-green-dark)) 100%)',
+				'warning-gradient': 'linear-gradient(135deg, hsl(var(--modern-orange)) 0%, hsl(var(--modern-orange-dark)) 100%)',
+				'error-gradient': 'linear-gradient(135deg, hsl(var(--modern-red)) 0%, hsl(var(--modern-red-dark)) 100%)',
+				'modern-primary': 'linear-gradient(135deg, hsl(var(--music-purple)) 0%, hsl(var(--electric-blue)) 50%, hsl(var(--vibrant-green)) 100%)',
+				'modern-secondary': 'linear-gradient(135deg, hsl(var(--electric-blue)) 0%, hsl(var(--music-purple)) 100%)',
+				'modern-neutral': 'linear-gradient(135deg, hsl(var(--modern-bg-secondary)) 0%, hsl(var(--modern-bg-tertiary)) 100%)',
 				// Cultural Punjabi Gradients
 				'kesri-gradient': 'linear-gradient(135deg, hsl(var(--kesri-saffron)) 0%, hsl(var(--kesri-saffron-dark)) 100%)',
 				'basanti-gradient': 'linear-gradient(135deg, hsl(var(--basanti-mustard)) 0%, hsl(var(--basanti-mustard-dark)) 100%)',
@@ -304,6 +350,11 @@ export default {
 				'chunky': '0 8px 30px rgba(0, 0, 0, 0.12)',
 				'chunky-hover': '0 15px 40px rgba(0, 0, 0, 0.2)',
 				'youtube': '0 4px 20px rgba(255, 0, 0, 0.3)',
+				// Modern shadows
+				'modern-purple': '0 4px 20px hsla(var(--music-purple), 0.3)',
+				'modern-glow': '0 0 20px hsla(var(--music-purple), 0.3), 0 0 40px hsla(var(--electric-blue), 0.2)',
+				'modern-trust': '0 4px 16px hsla(var(--electric-blue), 0.25)',
+				'modern-success': '0 4px 16px hsla(var(--vibrant-green), 0.25)',
 				// Cultural shadows
 				'cultural-warm': '0 4px 20px hsla(var(--kesri-saffron), 0.3)',
 				'cultural-glow': '0 0 20px hsla(var(--kesri-saffron), 0.3), 0 0 40px hsla(var(--basanti-mustard), 0.2)',
