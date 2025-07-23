@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle, Palette, Type, Layout } from 'lucide-react';
 import { CulturalCard } from '@/components/cards/CulturalCard';
 import { culturalStyles } from '@/lib/cultural-design';
@@ -27,7 +27,6 @@ export const DesignSystemChecker: React.FC = () => {
       elements.forEach((element) => {
         const computedStyle = window.getComputedStyle(element);
         const backgroundColor = computedStyle.backgroundColor;
-        const color = computedStyle.color;
         
         // Check for hardcoded non-cultural colors
         if (backgroundColor.includes('rgb(') && !backgroundColor.includes('hsla(37') && !backgroundColor.includes('hsla(120')) {
