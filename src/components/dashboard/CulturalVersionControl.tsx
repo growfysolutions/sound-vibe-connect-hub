@@ -1,328 +1,181 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { GitBranch, Tag, Clock, Users, Palette, FileText } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { GitBranch, GitCommit, GitMerge, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
-interface CulturalCommit {
-  id: string;
-  type: 'feat' | 'fix' | 'design' | 'perf' | 'cultural';
-  title: string;
-  description: string;
-  timestamp: string;
-  author: string;
-  culturalImpact: 'high' | 'medium' | 'low';
-  communityFeedback?: number;
+interface VersionControlStats {
+  type: string;
+  icon: string;
+  totalChanges: number;
+  averageMergeTime: number;
+  successRate: number;
+  lastUpdated: string;
 }
 
-interface CulturalMilestone {
-  version: string;
+interface Contributor {
   name: string;
-  releaseDate: string;
-  features: string[];
-  culturalValidation: {
-    authenticityScore: number;
-    communityApproval: number;
-    expertReviews: number;
-  };
+  contributionScore: number;
+  avatar: string;
+  lastActive: string;
 }
 
 export const CulturalVersionControl: React.FC = () => {
-  const [isCreatingCommit, setIsCreatingCommit] = useState(false);
-  const [commitForm, setCommitForm] = useState({
-    type: 'feat' as const,
-    title: '',
-    description: '',
-    culturalImpact: 'medium' as const
-  });
+  const [selectedTimeframe, setSelectedTimeframe] = useState('week');
 
-  const recentCommits: CulturalCommit[] = [
+  const versionControlStats: VersionControlStats[] = [
     {
-      id: '1',
-      type: 'cultural',
-      title: 'Add traditional dhol loading animation to file uploads',
-      description: 'Implemented culturally authentic loading states using traditional dhol drum patterns',
-      timestamp: '2 hours ago',
-      author: 'Cultural Design Team',
-      culturalImpact: 'high',
-      communityFeedback: 94
+      type: 'Cultural Guidelines',
+      icon: '📜',
+      totalChanges: 235,
+      averageMergeTime: 14,
+      successRate: 92,
+      lastUpdated: '2 hours ago'
     },
     {
-      id: '2',
-      type: 'fix',
-      title: 'Improve contrast ratio for cultural color palette accessibility',
-      description: 'Enhanced accessibility while maintaining cultural color authenticity',
-      timestamp: '5 hours ago',
-      author: 'Accessibility Team',
-      culturalImpact: 'medium',
-      communityFeedback: 87
+      type: 'UI/UX Standards',
+      icon: '🎨',
+      totalChanges: 189,
+      averageMergeTime: 11,
+      successRate: 95,
+      lastUpdated: '1 hour ago'
     },
     {
-      id: '3',
-      type: 'design',
-      title: 'Integrate phulkari pattern into profile card borders',
-      description: 'Added traditional Punjabi embroidery patterns to enhance cultural representation',
-      timestamp: '1 day ago',
-      author: 'Cultural Design Team',
-      culturalImpact: 'high',
-      communityFeedback: 96
+      type: 'Accessibility Protocols',
+      icon: '♿',
+      totalChanges: 152,
+      averageMergeTime: 16,
+      successRate: 88,
+      lastUpdated: '3 hours ago'
     },
     {
-      id: '4',
-      type: 'perf',
-      title: 'Optimize cultural background textures for mobile devices',
-      description: 'Improved performance while preserving cultural visual elements',
-      timestamp: '2 days ago',
-      author: 'Performance Team',
-      culturalImpact: 'low',
-      communityFeedback: 82
+      type: 'Content Style Guide',
+      icon: '✍️',
+      totalChanges: 210,
+      averageMergeTime: 13,
+      successRate: 90,
+      lastUpdated: '4 hours ago'
     }
   ];
 
-  const milestones: CulturalMilestone[] = [
+  const topContributors: Contributor[] = [
     {
-      version: 'v2.1.0',
-      name: 'Vaisakhi Cultural Update',
-      releaseDate: 'April 13, 2024',
-      features: [
-        'Traditional festival themes',
-        'Seasonal color palettes',
-        'Cultural event integration',
-        'Community celebration features'
-      ],
-      culturalValidation: {
-        authenticityScore: 95,
-        communityApproval: 92,
-        expertReviews: 8
-      }
+      name: 'Arjun Singh',
+      contributionScore: 95,
+      avatar: 'https://example.com/arjun.jpg',
+      lastActive: '30 minutes ago'
     },
     {
-      version: 'v2.0.0',
-      name: 'Cultural Foundation Release',
-      releaseDate: 'March 1, 2024',
-      features: [
-        'Phulkari pattern system',
-        'Traditional color scheme',
-        'Cultural iconography',
-        'Punjabi typography support'
-      ],
-      culturalValidation: {
-        authenticityScore: 88,
-        communityApproval: 89,
-        expertReviews: 12
-      }
+      name: 'Priya Sharma',
+      contributionScore: 92,
+      avatar: 'https://example.com/priya.jpg',
+      lastActive: '1 hour ago'
+    },
+    {
+      name: 'Raj Patel',
+      contributionScore: 88,
+      avatar: 'https://example.com/raj.jpg',
+      lastActive: '2 hours ago'
+    },
+    {
+      name: 'Neha Verma',
+      contributionScore: 85,
+      avatar: 'https://example.com/neha.jpg',
+      lastActive: '4 hours ago'
     }
   ];
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'cultural': return '🎭';
-      case 'feat': return '✨';
-      case 'fix': return '🔧';
-      case 'design': return '🎨';
-      case 'perf': return '⚡';
-      default: return '📝';
-    }
-  };
-
-  const getImpactColor = (impact: string) => {
-    switch (impact) {
-      case 'high': return 'bg-red-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const handleCreateCommit = () => {
-    // Here you would integrate with your version control system
-    console.log('Creating commit:', commitForm);
-    setIsCreatingCommit(false);
-    setCommitForm({
-      type: 'feat',
-      title: '',
-      description: '',
-      culturalImpact: 'medium'
-    });
-  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-saffron">Cultural Version Control</h2>
-          <p className="text-muted-foreground">Track cultural authenticity and community milestones</p>
+          <p className="text-muted-foreground">Track changes and contributions to cultural guidelines</p>
         </div>
-        <Dialog open={isCreatingCommit} onOpenChange={setIsCreatingCommit}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-saffron to-amber-500">
-              <GitBranch className="w-4 h-4 mr-2" />
-              Create Cultural Commit
+        <div className="flex gap-2">
+          {['week', 'month', 'quarter'].map((timeframe) => (
+            <Button
+              key={timeframe}
+              variant={selectedTimeframe === timeframe ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedTimeframe(timeframe)}
+            >
+              {timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Cultural Commit</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Commit Type</label>
-                <select
-                  value={commitForm.type}
-                  onChange={(e) => setCommitForm(prev => ({ ...prev, type: e.target.value as any }))}
-                  className="w-full mt-1 p-2 border rounded-md"
-                >
-                  <option value="feat">Feature</option>
-                  <option value="fix">Fix</option>
-                  <option value="design">Design</option>
-                  <option value="perf">Performance</option>
-                  <option value="cultural">Cultural</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Title</label>
-                <Input
-                  value={commitForm.title}
-                  onChange={(e) => setCommitForm(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Brief description of changes"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Description</label>
-                <Textarea
-                  value={commitForm.description}
-                  onChange={(e) => setCommitForm(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Detailed description of cultural impact and changes"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Cultural Impact</label>
-                <select
-                  value={commitForm.culturalImpact}
-                  onChange={(e) => setCommitForm(prev => ({ ...prev, culturalImpact: e.target.value as any }))}
-                  className="w-full mt-1 p-2 border rounded-md"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <Button onClick={handleCreateCommit} className="w-full">
-                Create Commit
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+          ))}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Commits */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              Recent Cultural Commits
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentCommits.map((commit) => (
-                <div key={commit.id} className="border rounded-lg p-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <span className="text-lg">{getTypeIcon(commit.type)}</span>
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{commit.title}</div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {commit.description}
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="outline" className="text-xs">
-                            {commit.type}
-                          </Badge>
-                          <div className={`w-2 h-2 rounded-full ${getImpactColor(commit.culturalImpact)}`} />
-                          <span className="text-xs text-muted-foreground">
-                            {commit.culturalImpact} impact
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground">{commit.timestamp}</div>
-                      {commit.communityFeedback && (
-                        <div className="text-xs text-green-600 mt-1">
-                          {commit.communityFeedback}% approval
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="guidelines" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="guidelines">Guideline Analytics</TabsTrigger>
+          <TabsTrigger value="contributions">Top Contributors</TabsTrigger>
+        </TabsList>
 
-        {/* Cultural Milestones */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Tag className="w-5 h-5" />
-              Cultural Milestones
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {milestones.map((milestone, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <div className="font-semibold">{milestone.version}</div>
-                      <div className="text-sm text-muted-foreground">{milestone.name}</div>
-                    </div>
-                    <Badge variant="outline">{milestone.releaseDate}</Badge>
-                  </div>
-                  
+        <TabsContent value="guidelines" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {versionControlStats.map((stat, index) => (
+              <Card key={index}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    <span className="mr-2">{stat.icon}</span>
+                    {stat.type}
+                  </CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    {stat.totalChanges} changes
+                  </Badge>
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-2">
-                    <div className="text-sm">
-                      <div className="font-medium mb-1">Features:</div>
-                      <ul className="list-disc list-inside space-y-1">
-                        {milestone.features.map((feature, i) => (
-                          <li key={i} className="text-muted-foreground text-xs">{feature}</li>
-                        ))}
-                      </ul>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-saffron">
+                        {stat.successRate}%
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        Avg. {stat.averageMergeTime} days
+                      </span>
                     </div>
-                    
-                    <div className="grid grid-cols-3 gap-2 text-xs">
-                      <div className="text-center">
-                        <div className="font-medium text-saffron">
-                          {milestone.culturalValidation.authenticityScore}%
-                        </div>
-                        <div className="text-muted-foreground">Authenticity</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-green-600">
-                          {milestone.culturalValidation.communityApproval}%
-                        </div>
-                        <div className="text-muted-foreground">Community</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-medium text-blue-600">
-                          {milestone.culturalValidation.expertReviews}
-                        </div>
-                        <div className="text-muted-foreground">Expert Reviews</div>
-                      </div>
-                    </div>
+                    <Progress value={stat.successRate} className="h-2" />
+                    <p className="text-xs text-muted-foreground">
+                      Updated {stat.lastUpdated}
+                    </p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="contributions" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {topContributors.map((contributor, index) => (
+              <Card key={index}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <img src={contributor.avatar} alt={contributor.name} className="w-6 h-6 rounded-full mr-2" />
+                      {contributor.name}
+                    </CardTitle>
+                    <Badge variant="outline" className="text-xs">
+                      {contributor.contributionScore} points
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Last active {contributor.lastActive}
+                    </p>
+                    <Progress value={contributor.contributionScore} className="h-2" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
