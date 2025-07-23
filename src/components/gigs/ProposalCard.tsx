@@ -40,11 +40,11 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({ proposal, onAccept, 
         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{proposal.message}</p>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <CulturalButton size="sm" variant="culturalDestructive" onClick={() => onReject(proposal)}>
+        <CulturalButton size="sm" variant="destructive" onClick={() => onReject(proposal)}>
           <X className="w-4 h-4 mr-2" />
           Reject
         </CulturalButton>
-        <CulturalButton size="sm" variant="cultural" onClick={() => onAccept(proposal)}>
+        <CulturalButton size="sm" variant="primary" onClick={() => onAccept(proposal)}>
           <Check className="w-4 h-4 mr-2" />
           Accept
         </CulturalButton>

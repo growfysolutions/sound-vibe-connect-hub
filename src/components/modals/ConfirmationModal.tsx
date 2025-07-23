@@ -44,14 +44,14 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   const getConfirmVariant = () => {
     switch (type) {
       case 'danger':
-        return 'culturalDestructive';
+        return 'destructive';
       case 'success':
-        return 'cultural';
+        return 'primary';
       case 'info':
-        return 'cultural';
+        return 'primary';
       case 'warning':
       default:
-        return 'cultural';
+        return 'primary';
     }
   };
 
