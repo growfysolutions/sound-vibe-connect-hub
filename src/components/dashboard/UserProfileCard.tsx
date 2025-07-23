@@ -7,19 +7,20 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { MapPin, Edit } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, Edit, CheckCircle, Clock } from 'lucide-react';
 
 import { useProfile } from '@/contexts/ProfileContext';
+import { useCulturalProfile } from '@/hooks/useCulturalProfile';
 import { Database } from '@/integrations/supabase/types';
 
 export type Profile = Database['public']['Tables']['profiles']['Row'];
-
-
 
 const UserProfileCard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const { profile, loading: profileLoading, refetchProfile } = useProfile();
+  const { culturalProfile, loading: culturalLoading } = useCulturalProfile();
   const [projectCount, setProjectCount] = useState(0);
   const [connectionsCount, setConnectionsCount] = useState(0);
   const [collaborationsCount, setCollaborationsCount] = useState(0);
@@ -74,7 +75,7 @@ const UserProfileCard = () => {
     fetchUserData();
   }, [navigate, profile, refetchProfile]);
 
-  if (loading || profileLoading) {
+  if (loading || profileLoading || culturalLoading) {
     return (
       <Card className="floating-card">
         <CardHeader>
@@ -87,6 +88,18 @@ const UserProfileCard = () => {
       </Card>
     );
   }
+
+  const getVerificationIcon = () => {
+    const status = culturalProfile?.verification_status || 'pending';
+    switch (status) {
+      case 'verified':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'pending':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Card className="floating-card">
@@ -102,26 +115,58 @@ const UserProfileCard = () => {
             <Edit className="w-4 h-4" />
           </Button>
         </div>
-        <h2 className="text-xl font-bold">{profile?.full_name || profile?.username || user?.email?.split('@')[0] || 'New User'}</h2>
+        
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-bold">
+            {profile?.full_name || profile?.username || user?.email?.split('@')[0] || 'New User'}
+          </h2>
+          {getVerificationIcon()}
+        </div>
+        
         <p className="text-muted-foreground mb-2">{profile?.role || 'Role not set'}</p>
+        
+        {culturalProfile?.preferred_language && (
+          <Badge variant="outline" className="mb-2">
+            {culturalProfile.preferred_language === 'both' ? 'Bilingual' : 
+             culturalProfile.preferred_language.charAt(0).toUpperCase() + culturalProfile.preferred_language.slice(1)}
+          </Badge>
+        )}
+
+        {culturalProfile?.cultural_specialties && culturalProfile.cultural_specialties.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {culturalProfile.cultural_specialties.slice(0, 3).map(specialty => (
+              <Badge key={specialty} variant="secondary" className="text-xs">
+                {specialty}
+              </Badge>
+            ))}
+            {culturalProfile.cultural_specialties.length > 3 && (
+              <Badge variant="outline" className="text-xs">
+                +{culturalProfile.cultural_specialties.length - 3}
+              </Badge>
+            )}
+          </div>
+        )}
+        
         <div className="flex items-center justify-center text-muted-foreground text-sm mb-4">
           <MapPin className="w-4 h-4 mr-1" />
-          {'Location not set'}
+          {profile?.location || 'Location not set'}
         </div>
+        
         <div className="flex justify-center space-x-4 mb-4">
           <div className="text-center">
-            <p className="font-bold text-lg">{'N/A'}</p>
+            <p className="font-bold text-lg">{profile?.rating || 'N/A'}</p>
             <p className="text-xs text-muted-foreground">Rating</p>
           </div>
           <div className="text-center">
-            <p className="font-bold text-lg">{0}</p>
+            <p className="font-bold text-lg">{profile?.reviews || 0}</p>
             <p className="text-xs text-muted-foreground">Reviews</p>
           </div>
         </div>
+        
         <div className="w-full bg-muted rounded-full h-2.5 mb-2">
-          <div className="bg-primary h-2.5 rounded-full" style={{ width: `10%` }}></div>
+          <div className="bg-primary h-2.5 rounded-full" style={{ width: `${(profile?.level || 1) * 10}%` }}></div>
         </div>
-        <p className="text-center text-xs text-muted-foreground">Level 1</p>
+        <p className="text-center text-xs text-muted-foreground">Level {profile?.level || 1}</p>
       </CardHeader>
       <CardContent>
         <div className="flex justify-around text-center p-4 bg-muted/50 rounded-lg">
@@ -144,4 +189,3 @@ const UserProfileCard = () => {
 };
 
 export default UserProfileCard;
-
