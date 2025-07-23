@@ -56,7 +56,6 @@ const NewProjectModal: React.FC = () => {
         isOpen={collaborationModal.isOpen}
         onClose={collaborationModal.closeModal}
         recipientName="Rajveer Singh"
-        recipientId="user123"
       />
 
       <FileUploadModal
