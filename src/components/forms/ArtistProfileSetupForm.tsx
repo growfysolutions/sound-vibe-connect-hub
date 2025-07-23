@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { CulturalFileUpload } from './CulturalFileUpload';
 import { CulturalSelect } from './CulturalSelect';
 import { CulturalMultiSelect } from './CulturalMultiSelect';
-import { CheckCircle, AlertTriangle, User, Music, Upload, Sparkles } from 'lucide-react';
+import { CheckCircle, User, Music, Upload, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
@@ -106,7 +106,7 @@ export const ArtistProfileSetupForm: React.FC = () => {
   const watchedFields = form.watch();
   const completionPercentage = calculateCompletionPercentage(watchedFields);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -203,7 +203,6 @@ export const ArtistProfileSetupForm: React.FC = () => {
             )}
             {currentStep === 3 && (
               <PortfolioSection 
-                form={form} 
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
               />
@@ -428,7 +427,10 @@ const SkillsGenresSection = ({ form, skillOptions, genreOptions, languageOptions
   </Card>
 );
 
-const PortfolioSection = ({ form, uploadedFiles, setUploadedFiles }: any) => (
+const PortfolioSection = ({ uploadedFiles, setUploadedFiles }: {
+  uploadedFiles: File[];
+  setUploadedFiles: (files: File[]) => void;
+}) => (
   <Card>
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
@@ -447,7 +449,7 @@ const PortfolioSection = ({ form, uploadedFiles, setUploadedFiles }: any) => (
       {uploadedFiles.length > 0 && (
         <div className="space-y-2">
           <h4 className="font-medium">Uploaded Files:</h4>
-          {uploadedFiles.map((file, index) => (
+          {uploadedFiles.map((file: File, index: number) => (
             <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded">
               <Music className="w-4 h-4" />
               <span className="text-sm">{file.name}</span>
