@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import ProfessionalCard from './ProfessionalCard';
+import { ArtistProfileCard } from '@/components/cards/ArtistProfileCard';
 import ProfessionalCardSkeleton from './ProfessionalCardSkeleton';
 import { Profile } from './UserProfileCard';
 import { AdvancedFilterDrawer } from './AdvancedFilterDrawer';
@@ -18,7 +18,7 @@ interface DiscoverTabProps {
   handleSearch: (query: string) => void;
 }
 
-const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnections, handleConnect, handleSendMessage, handleSearch }) => {
+const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect, handleSendMessage, handleSearch }) => {
   const { user } = useAuth();
   const [scores, setScores] = useState<{ [key: string]: any }>({});
   const [loadingScores, setLoadingScores] = useState(true);
@@ -109,14 +109,30 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, pendingConnect
         ) : professionals.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-6">
             {professionals.map((professional) => (
-              <ProfessionalCard 
+              <ArtistProfileCard 
                 key={professional.id} 
-                professional={professional} 
-                handleConnect={handleConnect}
-                handleSendMessage={handleSendMessage}
-                isPending={pendingConnections.includes(professional.id)}
-                score={scores[professional.id]?.totalScore}
-                scoreBreakdown={scores[professional.id]?.breakdown}
+                artist={{
+                  id: professional.id,
+                  name: professional.full_name || professional.username || 'Unknown',
+                  avatar: professional.avatar_url || '',
+                  role: professional.role || 'Musician',
+                  location: professional.location || '',
+                   skills: professional.genres ? 
+                     (Array.isArray(professional.genres) ? 
+                       professional.genres : 
+                       (professional.genres as string).split(',').map((g: string) => g.trim())
+                     ) : [],
+                  rating: scores[professional.id]?.totalScore || 0,
+                  reviewCount: 10,
+                  experience: '2+ years',
+                  recentWork: 'Latest project',
+                  isVerified: true,
+                  collaborations: 5
+                }}
+                onConnect={() => handleConnect(professional.id)}
+                onViewProfile={() => handleSendMessage(professional.id)}
+                onSave={(id) => console.log('Saved artist:', id)}
+                onShare={(id) => console.log('Shared artist:', id)}
               />
             ))}
           </div>

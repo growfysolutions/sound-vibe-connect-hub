@@ -21,6 +21,7 @@ import Messages from "./pages/Messages";
 import CollaborationWorkspace from "./pages/CollaborationWorkspace";
 import GigManagement from "./pages/GigManagement";
 import NotFound from "./pages/NotFound";
+import { SoundVibeCardsShowcase } from "./components/cards/SoundVibeCardsShowcase";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/messages" element={<Messages />} />
             <Route path="/contracts" element={<MyContracts />} />
             <Route path="/collaborate/:projectId" element={<CollaborationWorkspace />} />
+            <Route path="/showcase" element={<SoundVibeCardsShowcase />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TestimonialCard } from '@/components/cards/TestimonialCard';
 import { useToast } from '@/components/ui/use-toast';
 import { Database } from '@/integrations/supabase/types';
 
@@ -145,12 +146,27 @@ const Testimonials: React.FC<TestimonialsProps> = ({ profileId }) => {
         </CardHeader>
         <CardContent>
           {testimonials.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial) => (
-                <div key={testimonial.id.toString()} className="p-4 border rounded-lg">
-                  <p className="italic">\"{testimonial.content}\"</p>
-                  <p className="text-sm text-right text-muted-foreground">- {testimonial.author?.full_name || 'Anonymous'}</p>
-                </div>
+                <TestimonialCard
+                  key={testimonial.id.toString()}
+                  testimonial={{
+                    id: testimonial.id.toString(),
+                    quote: testimonial.content,
+                    author: {
+                      name: testimonial.author?.full_name || 'Anonymous',
+                      avatar: testimonial.author?.avatar_url || '',
+                      role: testimonial.author?.role || 'User'
+                    },
+                    project: {
+                      title: 'Collaboration Project',
+                      link: ''
+                    },
+                    rating: 5,
+                    date: new Date(testimonial.created_at).toLocaleDateString()
+                  }}
+                  onProjectClick={(link) => console.log('Project clicked:', link)}
+                />
               ))}
             </div>
           ) : (

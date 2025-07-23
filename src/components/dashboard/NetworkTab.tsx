@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Users, MessageCircle, Search } from 'lucide-react';
-import ProfessionalCard from './ProfessionalCard';
+import { Users, Search } from 'lucide-react';
+import { ArtistProfileCard } from '@/components/cards/ArtistProfileCard';
 import { Profile } from '@/types';
 import { Connection } from '@/types';
 
@@ -44,27 +44,36 @@ const NetworkTab: React.FC<NetworkTabProps> = ({
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-4">Incoming Requests ({incomingRequests.length})</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {incomingRequests.map((request) => (
-              <ProfessionalCard
-                key={request.id}
-                professional={(request as any).profiles || { full_name: 'Unknown User', id: request.requester_id }}
-                actions={(
-                  <div className="flex flex-col gap-2">
-                    <Button size="sm" variant="outline" className="w-full" onClick={() => handleViewProfile(request.requester_id)}>
-                      View Profile
-                    </Button>
-                    <div className="flex gap-2">
-                      <Button size="sm" className="bg-green-500 hover:bg-green-600 flex-1" onClick={() => handleRequestAction(request.id, 'accepted')}>
-                        Accept
-                      </Button>
-                      <Button size="sm" variant="destructive" className="flex-1" onClick={() => handleRequestAction(request.id, 'declined')}>
-                        Decline
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              />
-            ))}
+            {incomingRequests.map((request) => {
+              const profile = (request as any).profiles || { full_name: 'Unknown User', id: request.requester_id };
+              return (
+                <ArtistProfileCard
+                  key={request.id}
+                  artist={{
+                    id: profile.id,
+                    name: profile.full_name || profile.username || 'Unknown',
+                    avatar: profile.avatar_url || '',
+                    role: profile.role || 'Musician',
+                    location: profile.location || '',
+                     skills: profile.genres ? 
+                       (Array.isArray(profile.genres) ? 
+                         profile.genres : 
+                         (profile.genres as string).split(',').map((g: string) => g.trim())
+                       ) : [],
+                    rating: 0,
+                    reviewCount: 5,
+                    experience: '1+ years',
+                    recentWork: 'Recent collaboration',
+                    isVerified: false,
+                    collaborations: 3
+                  }}
+                  onConnect={() => handleRequestAction(request.id, 'accepted')}
+                  onViewProfile={() => handleViewProfile(request.requester_id)}
+                  onSave={() => handleRequestAction(request.id, 'declined')}
+                  onShare={(id) => console.log('Shared artist:', id)}
+                />
+              );
+            })}
           </div>
         </div>
       )}
@@ -91,19 +100,30 @@ const NetworkTab: React.FC<NetworkTabProps> = ({
       {filteredConnections.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredConnections.map((connection) => (
-            <ProfessionalCard
+            <ArtistProfileCard
               key={connection.id}
-              professional={connection}
-              actions={
-                <>
-                  <Button size="sm" variant="outline" className="hover-scale flex-1" onClick={() => handleViewProfile(connection.id)}>
-                    View Profile
-                  </Button>
-                  <Button size="sm" className="btn-premium" onClick={() => handleSendMessage(connection.id)}>
-                    <MessageCircle className="w-4 h-4" />
-                  </Button>
-                </>
-              }
+              artist={{
+                id: connection.id,
+                name: connection.full_name || connection.username || 'Unknown',
+                avatar: connection.avatar_url || '',
+                role: connection.role || 'Musician',
+                location: connection.location || '',
+                 skills: connection.genres ? 
+                   (Array.isArray(connection.genres) ? 
+                     connection.genres : 
+                     (connection.genres as string).split(',').map((g: string) => g.trim())
+                   ) : [],
+                rating: 0,
+                reviewCount: 8,
+                experience: '3+ years',
+                recentWork: 'Recent project',
+                isVerified: true,
+                collaborations: 7
+              }}
+              onConnect={() => handleSendMessage(connection.id)}
+              onViewProfile={() => handleViewProfile(connection.id)}
+              onSave={(id) => console.log('Saved artist:', id)}
+              onShare={(id) => console.log('Shared artist:', id)}
             />
           ))}
         </div>
