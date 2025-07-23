@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GitBranch, GitCommit, GitMerge, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface VersionControlStats {
   type: string;
