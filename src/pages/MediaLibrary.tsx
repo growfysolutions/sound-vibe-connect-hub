@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Upload, 
   Search, 
-  Filter, 
   Grid3X3, 
   List, 
   Music, 
@@ -67,6 +66,10 @@ const MediaLibrary = () => {
     // This is just for the modal integration
     console.log('File uploaded:', file.name, metadata);
     fetchUploads(); // Refresh the list
+  };
+
+  const handleDeleteFile = async (id: string, filePath: string) => {
+    await deleteUpload(id, filePath);
   };
 
   return (
@@ -245,7 +248,11 @@ const MediaLibrary = () => {
                           {upload.mime_type.split('/')[0]}
                         </Badge>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteFile(upload.id, upload.file_path)}
+                      >
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </div>
@@ -313,7 +320,11 @@ const MediaLibrary = () => {
                           <Play className="w-4 h-4" />
                         </Button>
                       )}
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteFile(upload.id, upload.file_path)}
+                      >
                         <MoreVertical className="w-4 h-4" />
                       </Button>
                     </div>

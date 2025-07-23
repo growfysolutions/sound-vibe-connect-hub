@@ -10,8 +10,8 @@ export interface MediaUploadData {
   file_path: string;
   file_size: number;
   mime_type: string;
-  duration?: number;
-  waveform_data?: number[];
+  duration?: number | null;
+  waveform_data?: number[] | null;
   upload_status: string;
   metadata: any;
   created_at: string;
@@ -35,7 +35,15 @@ export const useMediaUpload = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setUploads(data || []);
+      
+      // Transform the data to match our interface
+      const transformedData: MediaUploadData[] = (data || []).map(upload => ({
+        ...upload,
+        duration: upload.duration ?? undefined,
+        waveform_data: upload.waveform_data ?? undefined
+      }));
+      
+      setUploads(transformedData);
     } catch (error) {
       console.error('Error fetching uploads:', error);
       toast.error('Failed to fetch media files');

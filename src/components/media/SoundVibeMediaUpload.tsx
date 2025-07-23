@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Music, Video, Play, Pause, Download, Trash2, AlertCircle, CheckCircle, X } from 'lucide-react';
+import { Upload, Music, Video, Play, Pause, Download, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
@@ -164,6 +164,11 @@ export const SoundVibeMediaUpload: React.FC<SoundVibeMediaUploadProps> = ({
       );
 
       toast.success(`${mediaFile.name} uploaded successfully!`);
+      
+      // Call onUploadComplete if provided
+      if (onUploadComplete) {
+        onUploadComplete(uploadedFiles.filter(f => f.uploadStatus === 'success'));
+      }
     } catch (error) {
       console.error('Upload failed:', error);
       setUploadedFiles(prev => 
@@ -201,7 +206,7 @@ export const SoundVibeMediaUpload: React.FC<SoundVibeMediaUploadProps> = ({
     newFiles.forEach(handleFileUpload);
     
     setTimeout(() => setIsUploading(false), 1000);
-  }, [uploadedFiles.length, maxFiles, generateWaveform]);
+  }, [uploadedFiles.length, maxFiles, generateWaveform, onUploadComplete]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -289,6 +294,12 @@ export const SoundVibeMediaUpload: React.FC<SoundVibeMediaUploadProps> = ({
               <p className="text-muted-foreground mb-4">
                 or click to browse your device
               </p>
+              
+              {isUploading && (
+                <p className="text-sm text-saffron animate-pulse">
+                  Uploading files...
+                </p>
+              )}
             </div>
             
             <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground max-w-md mx-auto">
