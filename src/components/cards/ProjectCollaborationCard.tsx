@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -40,7 +41,6 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
   onViewDetails
 }) => {
   const [isSaved, setIsSaved] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleSave = () => {
     setIsSaved(!isSaved);
@@ -59,8 +59,6 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
         "border border-blue-500/20",
         isUrgent && "border-orange-500/40 shadow-[0_4px_12px_rgba(249,115,22,0.2)]"
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Urgency indicator */}
       {isUrgent && (
