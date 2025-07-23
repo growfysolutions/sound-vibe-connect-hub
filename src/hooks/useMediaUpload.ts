@@ -39,8 +39,8 @@ export const useMediaUpload = () => {
       // Transform the data to match our interface
       const transformedData: MediaUploadData[] = (data || []).map(upload => ({
         ...upload,
-        duration: upload.duration ?? undefined,
-        waveform_data: upload.waveform_data ?? undefined
+        duration: upload.duration ?? null,
+        waveform_data: Array.isArray(upload.waveform_data) ? upload.waveform_data as number[] : null
       }));
       
       setUploads(transformedData);
