@@ -106,7 +106,7 @@ export const ArtistProfileSetupForm: React.FC = () => {
   const watchedFields = form.watch();
   const completionPercentage = calculateCompletionPercentage(watchedFields);
 
-  const onSubmit = async (formData: FormData) => {
+  const onSubmit = async () => {
     setIsSubmitting(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
