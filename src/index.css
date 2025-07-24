@@ -31,7 +31,75 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
     
-    /* Modern Music Platform Colors */
+    /* Modern SoundVibe Color System - Primary Purple */
+    --color-primary-50: 258 100% 98%;    /* #FAF5FF */
+    --color-primary-100: 258 100% 95%;   /* #F3E8FF */
+    --color-primary-200: 258 87% 88%;    /* #E4CCFF */
+    --color-primary-300: 258 82% 78%;    /* #D1AAF5 */
+    --color-primary-400: 258 76% 68%;    /* #B888F1 */
+    --color-primary-500: 258 90% 66%;    /* #7C3AED - Core purple */
+    --color-primary-600: 258 88% 58%;    /* #6D28D9 */
+    --color-primary-700: 258 85% 50%;    /* #5B21B6 */
+    --color-primary-800: 258 78% 42%;    /* #4C1D95 */
+    --color-primary-900: 258 88% 26%;    /* #581C87 */
+    
+    /* Modern SoundVibe Color System - Secondary Blue */
+    --color-secondary-50: 214 100% 97%;  /* #EFF6FF */
+    --color-secondary-100: 214 95% 93%;  /* #DBEAFE */
+    --color-secondary-200: 213 97% 87%;  /* #BFDBFE */
+    --color-secondary-300: 212 96% 78%;  /* #93C5FD */
+    --color-secondary-400: 213 94% 68%;  /* #60A5FA */
+    --color-secondary-500: 217 91% 60%;  /* #3B82F6 - Core blue */
+    --color-secondary-600: 221 83% 53%;  /* #2563EB */
+    --color-secondary-700: 224 76% 48%;  /* #1D4ED8 */
+    --color-secondary-800: 226 71% 40%;  /* #1E40AF */
+    --color-secondary-900: 224 76% 25%;  /* #1E3A8A */
+    
+    /* Modern SoundVibe Color System - Success Green */
+    --color-success-50: 151 81% 95%;     /* #ECFDF5 */
+    --color-success-100: 149 80% 90%;    /* #D1FAE5 */
+    --color-success-200: 152 76% 80%;    /* #A7F3D0 */
+    --color-success-300: 156 72% 67%;    /* #6EE7B7 */
+    --color-success-400: 158 64% 52%;    /* #34D399 */
+    --color-success-500: 158 64% 52%;    /* #10B981 - Core green */
+    --color-success-600: 161 94% 30%;    /* #059669 */
+    --color-success-700: 163 94% 24%;    /* #047857 */
+    --color-success-800: 164 86% 20%;    /* #065F46 */
+    --color-success-900: 166 77% 17%;    /* #064E3B */
+    
+    /* Modern Neutral System */
+    --color-neutral-50: 210 40% 98%;     /* #F8FAFC */
+    --color-neutral-100: 214 32% 91%;    /* #F1F5F9 */
+    --color-neutral-200: 213 27% 84%;    /* #E2E8F0 */
+    --color-neutral-300: 212 20% 73%;    /* #CBD5E1 */
+    --color-neutral-400: 214 17% 57%;    /* #94A3B8 */
+    --color-neutral-500: 215 16% 47%;    /* #64748B */
+    --color-neutral-600: 215 19% 35%;    /* #475569 */
+    --color-neutral-700: 215 25% 27%;    /* #334155 */
+    --color-neutral-800: 217 33% 17%;    /* #1E293B */
+    --color-neutral-900: 222 47% 11%;    /* #0F172A */
+    
+    /* Warning and Error Colors */
+    --color-warning-50: 48 100% 96%;     /* #FFFBEB */
+    --color-warning-100: 48 96% 89%;     /* #FEF3C7 */
+    --color-warning-500: 43 96% 56%;     /* #F59E0B */
+    --color-warning-600: 37 92% 50%;     /* #D97706 */
+    --color-warning-900: 30 100% 20%;    /* #78350F */
+    
+    --color-error-50: 0 86% 97%;         /* #FEF2F2 */
+    --color-error-100: 0 93% 94%;        /* #FEE2E2 */
+    --color-error-500: 0 84% 60%;        /* #EF4444 */
+    --color-error-600: 0 72% 51%;        /* #DC2626 */
+    --color-error-900: 0 63% 31%;        /* #991B1B */
+    
+    /* Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--color-primary-500)) 0%, hsl(var(--color-primary-400)) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--color-secondary-500)) 0%, hsl(var(--color-secondary-400)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--color-success-500)) 0%, hsl(var(--color-success-400)) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(var(--color-warning-500)) 0%, hsl(var(--color-warning-600)) 100%);
+    --gradient-error: linear-gradient(135deg, hsl(var(--color-error-500)) 0%, hsl(var(--color-error-600)) 100%);
+    
+    /* Legacy Modern Music Platform Colors - kept for compatibility */
     --music-purple: 258 90% 66%;
     --music-purple-light: 258 90% 76%;
     --music-purple-dark: 258 90% 56%;
@@ -83,22 +151,27 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     
-    /* Dark mode modern colors */
-    --music-purple: 258 90% 76%;
-    --music-purple-light: 258 90% 86%;
-    --music-purple-dark: 258 90% 66%;
-    --electric-blue: 217 91% 70%;
-    --electric-blue-light: 217 91% 80%;
-    --electric-blue-dark: 217 91% 60%;
-    --vibrant-green: 158 64% 62%;
-    --vibrant-green-light: 158 64% 72%;
-    --vibrant-green-dark: 158 64% 52%;
-    --modern-orange: 32 95% 54%;
-    --modern-orange-light: 32 95% 64%;
-    --modern-orange-dark: 32 95% 44%;
-    --modern-red: 0 84% 70%;
-    --modern-red-light: 0 84% 80%;
-    --modern-red-dark: 0 84% 60%;
+    /* Dark Mode Modern Colors */
+    --color-primary-50: 258 35% 8%;      /* Dark purple background */
+    --color-primary-100: 258 40% 12%;    /* Darker purple */
+    --color-primary-500: 258 90% 76%;    /* Lighter purple for dark mode */
+    --color-primary-900: 258 100% 95%;   /* Very light purple */
+    
+    --color-secondary-50: 217 25% 8%;    /* Dark blue background */
+    --color-secondary-500: 217 91% 70%;  /* Lighter blue for dark mode */
+    --color-secondary-900: 214 100% 97%; /* Very light blue */
+    
+    --color-success-50: 158 30% 8%;      /* Dark green background */
+    --color-success-500: 158 64% 62%;    /* Lighter green for dark mode */
+    --color-success-900: 151 81% 95%;    /* Very light green */
+    
+    --color-neutral-50: 222 47% 11%;     /* Dark background */
+    --color-neutral-100: 217 33% 17%;    /* Dark surface */
+    --color-neutral-500: 215 20% 65%;    /* Light gray text */
+    --color-neutral-900: 210 40% 98%;    /* Very light text */
+    
+    --color-warning-500: 43 96% 66%;     /* Lighter warning for dark mode */
+    --color-error-500: 0 84% 70%;        /* Lighter error for dark mode */
     
     /* Dark backgrounds */
     --modern-bg-primary: 222 47% 11%;
@@ -117,6 +190,93 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Inter", sans-serif;
+  }
+}
+
+/* Modern Component Classes */
+@layer components {
+  .button-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .button-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px hsla(var(--color-primary-500), 0.3);
+  }
+  
+  .button-secondary {
+    background: transparent;
+    color: hsl(var(--color-secondary-500));
+    border: 2px solid hsl(var(--color-secondary-500));
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .button-secondary:hover {
+    background: hsl(var(--color-secondary-50));
+  }
+  
+  .card-modern {
+    background: white;
+    border: 1px solid hsl(var(--color-neutral-200));
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .card-modern:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+  
+  .nav-item {
+    background: hsl(var(--color-neutral-100));
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .nav-item:hover {
+    background: hsl(var(--color-primary-50));
+    color: hsl(var(--color-primary-600));
+  }
+  
+  .nav-item.active {
+    background: var(--gradient-primary);
+    color: white;
+  }
+  
+  .input-modern {
+    background: hsl(var(--color-neutral-50));
+    border: 2px solid hsl(var(--color-neutral-200));
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  
+  .input-modern:focus {
+    outline: none;
+    border-color: hsl(var(--color-primary-500));
+    box-shadow: 0 0 0 3px hsla(var(--color-primary-500), 0.1);
+  }
+  
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 
