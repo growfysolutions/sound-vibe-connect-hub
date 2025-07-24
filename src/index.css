@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,12 +36,39 @@
 
     --radius: 0.5rem;
 
-    /* Custom Colors */
-    --electric-blue: 219 98.5% 52.9%;
-    --music-purple: 268 83% 48%;
-    --music-purple-dark: 268 83% 38%;
-    --vibrant-green: 142 76% 36%;
-    --saffron: 38 96% 58%;
+    /* Modern Color System - HSL values */
+    --color-primary-50: 258 100% 98%;
+    --color-primary-100: 257 100% 95%;
+    --color-primary-500: 250 84% 54%;
+    --color-primary-600: 251 91% 50%;
+    --color-primary-900: 250 100% 34%;
+
+    --color-secondary-50: 219 100% 95%;
+    --color-secondary-500: 217 91% 60%;
+    --color-secondary-900: 220 100% 34%;
+
+    --color-success-50: 151 81% 96%;
+    --color-success-500: 160 84% 39%;
+    --color-success-900: 158 100% 20%;
+
+    --color-neutral-50: 210 40% 98%;
+    --color-neutral-100: 210 40% 96%;
+    --color-neutral-200: 214 32% 91%;
+    --color-neutral-300: 213 27% 84%;
+    --color-neutral-400: 215 20% 65%;
+    --color-neutral-500: 215 16% 47%;
+    --color-neutral-600: 215 19% 35%;
+    --color-neutral-700: 215 25% 27%;
+    --color-neutral-800: 217 33% 17%;
+    --color-neutral-900: 222 47% 11%;
+
+    --color-warning-500: 38 92% 50%;
+    --color-error-500: 0 84% 60%;
+
+    /* Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--color-primary-500)) 0%, hsl(var(--color-primary-600)) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--color-secondary-500)) 0%, hsl(var(--color-secondary-600)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--color-success-500)) 0%, hsl(var(--color-success-600)) 100%);
   }
 
   .dark {
@@ -75,16 +103,9 @@
 
     --radius: 0.5rem;
 
-    /* Custom Dark Colors */
-    --electric-blue: 219 98.5% 62.9%;
-    --music-purple: 268 83% 58%;
-    --music-purple-dark: 268 83% 48%;
-    --vibrant-green: 142 76% 46%;
-    --saffron: 38 96% 68%;
-
-    /* Dark mode specific colors */
-    --color-dark-surface: 220 13% 13%;
-    --color-dark-bg: 220 13% 16%;
+    /* Dark mode colors */
+    --color-dark-bg: 220 13% 5%;
+    --color-dark-surface: 220 13% 11%;
     --color-dark-text: 220 20% 88%;
   }
 }
@@ -102,14 +123,37 @@
   }
 }
 
+/* Modern Header Animations */
+@keyframes search-focus {
+  0% { 
+    box-shadow: none;
+    background: hsl(var(--color-neutral-50));
+  }
+  100% { 
+    box-shadow: 0 0 0 3px hsla(217, 91%, 60%, 0.1);
+    background: white;
+  }
+}
+
+@keyframes notification-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes theme-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); }
+}
+
 /* Modern Header Styles */
 .modern-header {
   position: sticky;
   top: 0;
   z-index: 50;
   background: white;
-  border-bottom: 1px solid hsl(var(--color-neutral-300));
+  border-bottom: 1px solid hsl(var(--color-neutral-200));
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .header-container {
@@ -122,12 +166,17 @@
   margin: 0 auto;
 }
 
-/* Logo Section */
+/* Logo Section with Modern Animations */
 .header-logo {
   display: flex;
   flex-direction: column;
   gap: 2px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.header-logo:hover {
+  transform: scale(1.02);
 }
 
 .logo-text {
@@ -136,20 +185,17 @@
   color: hsl(var(--color-primary-500));
   margin: 0;
   line-height: 1;
-  transition: opacity 0.2s ease;
-}
-
-.logo-text:hover {
-  opacity: 0.8;
+  transition: all 0.2s ease;
 }
 
 .logo-subtitle {
   font-size: 12px;
   color: hsl(var(--color-neutral-500));
   font-weight: 400;
+  transition: color 0.2s ease;
 }
 
-/* Search Section */
+/* Search Section with Modern Animations */
 .header-search {
   flex: 1;
   max-width: 400px;
@@ -175,7 +221,7 @@
 .search-input:focus {
   border-color: hsl(var(--color-secondary-500));
   background: white;
-  box-shadow: 0 0 0 3px hsla(var(--color-secondary-500), 0.1);
+  animation: search-focus 0.3s ease-out;
   outline: none;
 }
 
@@ -191,9 +237,14 @@
   color: hsl(var(--color-neutral-400));
   width: 16px;
   height: 16px;
+  transition: color 0.2s ease;
 }
 
-/* Navigation */
+.search-input:focus + .search-icon {
+  color: hsl(var(--color-secondary-500));
+}
+
+/* Navigation with Modern Hover States */
 .header-navigation {
   display: flex;
   gap: 12px;
@@ -221,6 +272,11 @@
   background: hsl(var(--color-primary-50));
   color: hsl(var(--color-primary-600));
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:active {
+  transform: translateY(0);
 }
 
 .nav-button.has-badge::after {
@@ -246,10 +302,10 @@
   height: 8px;
   background: hsl(var(--color-error-500));
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: notification-pulse 2s infinite;
 }
 
-/* User Actions */
+/* User Actions with Professional Animations */
 .header-actions {
   display: flex;
   align-items: center;
@@ -275,6 +331,20 @@
   background: hsl(var(--color-neutral-200));
   color: hsl(var(--color-neutral-900));
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
+
+/* Theme Toggle with Clean Animation */
+.theme-toggle .theme-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(180deg);
 }
 
 .notification-wrapper {
@@ -287,7 +357,7 @@
   transform: none;
 }
 
-/* User Profile */
+/* Professional User Profile Animations */
 .user-profile {
   position: relative;
   cursor: pointer;
@@ -305,6 +375,7 @@
 .user-avatar:hover {
   border-color: hsl(var(--color-primary-500));
   transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .user-avatar-fallback {
@@ -325,6 +396,7 @@
 .user-avatar-fallback:hover {
   border-color: hsl(var(--color-primary-500));
   transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .user-status-dot {
@@ -336,11 +408,13 @@
   background: hsl(var(--color-success-500));
   border: 2px solid white;
   border-radius: 50%;
+  animation: notification-pulse 3s infinite;
 }
 
 /* User Dropdown */
 .user-dropdown {
   width: 280px;
+  animation: fade-in 0.2s ease-out;
 }
 
 .user-info {
@@ -372,15 +446,20 @@
 
 .progress-bar {
   height: 100%;
-  background: hsl(var(--color-primary-500));
+  background: var(--gradient-primary);
   transition: width 0.3s ease;
 }
 
 .logout-item {
   color: hsl(var(--color-error-500));
+  transition: color 0.2s ease;
 }
 
-/* Mobile Styles */
+.logout-item:hover {
+  color: hsl(var(--color-error-600));
+}
+
+/* Mobile Styles with Modern Animations */
 .mobile-search-overlay {
   position: fixed;
   top: 0;
@@ -390,6 +469,7 @@
   background: white;
   border-bottom: 1px solid hsl(var(--color-neutral-300));
   padding: 16px;
+  animation: slide-down 0.3s ease-out;
 }
 
 .mobile-search-container {
@@ -405,6 +485,11 @@
   color: hsl(var(--color-neutral-600));
   cursor: pointer;
   padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.search-back-btn:hover {
+  color: hsl(var(--color-neutral-900));
 }
 
 .mobile-menu {
@@ -414,6 +499,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  animation: slide-down 0.3s ease-out;
 }
 
 .mobile-menu .nav-button {
@@ -421,6 +507,17 @@
   width: 100%;
   padding: 16px;
   font-size: 16px;
+}
+
+/* Additional Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
 }
 
 /* Responsive Classes */
@@ -467,11 +564,6 @@
   .nav-button {
     padding: 10px;
   }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
 }
 
 /* Dark mode support */
