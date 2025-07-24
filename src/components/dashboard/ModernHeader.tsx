@@ -55,21 +55,28 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
     onClick?: () => void;
   }) => (
     <button 
-      className={`nav-button ${badge ? 'has-badge' : ''}`}
+      className={`nav-button header-element ${badge ? 'has-badge' : ''}`}
       data-badge={badge}
       onClick={onClick}
+      aria-label={badge ? `${label} with ${badge} new items` : label}
     >
-      <Icon className="w-4 h-4" />
+      <Icon className="w-4 h-4" aria-hidden="true" />
       <span className="nav-label">{label}</span>
-      {status === 'live' && <div className="live-indicator" />}
+      {badge && <span className="sr-only">{badge} new items</span>}
+      {status === 'live' && (
+        <>
+          <div className="live-indicator" />
+          <span className="sr-only">Live</span>
+        </>
+      )}
     </button>
   );
 
   return (
-    <header className="modern-header">
+    <header className="modern-header" role="banner">
       <div className="header-container">
         {/* Logo Section */}
-        <div className="header-logo">
+        <div className="header-logo header-element" tabIndex={0} role="button" onClick={() => navigate('/dashboard')}>
           <h1 className="logo-text">SoundVibe</h1>
           <span className="logo-subtitle">Music Collaboration</span>
         </div>
@@ -77,36 +84,39 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
         {/* Search Section - Desktop */}
         <div className="header-search desktop-only">
           <div className="search-container">
-            <Search className="search-icon" />
+            <Search className="search-icon" aria-hidden="true" />
             <input
               type="text"
               placeholder="Search artists, songs, projects..."
-              className="search-input"
+              className="search-input header-element"
               value={searchQuery}
               onChange={handleSearch}
+              aria-label="Search artists, songs, and projects"
             />
           </div>
         </div>
 
         {/* Mobile Search */}
         {isSearchExpanded && (
-          <div className="mobile-search-overlay">
+          <div className="mobile-search-overlay" role="dialog" aria-label="Search">
             <div className="mobile-search-container">
               <button 
-                className="search-back-btn"
+                className="search-back-btn header-element"
                 onClick={() => setIsSearchExpanded(false)}
+                aria-label="Close search"
               >
                 ←
               </button>
               <div className="search-container">
-                <Search className="search-icon" />
+                <Search className="search-icon" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="search-input"
+                  className="search-input header-element"
                   value={searchQuery}
                   onChange={handleSearch}
                   autoFocus
+                  aria-label="Search"
                 />
               </div>
             </div>
@@ -114,7 +124,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
         )}
 
         {/* Navigation - Desktop */}
-        <nav className="header-navigation desktop-only">
+        <nav className="header-navigation desktop-only" aria-label="Main navigation">
           <NavButton 
             icon={ShoppingBag} 
             label="Market" 
@@ -141,18 +151,23 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
         <div className="header-actions">
           {/* Mobile Search Button */}
           <button 
-            className="action-button mobile-only"
+            className="action-button mobile-only header-element"
             onClick={() => setIsSearchExpanded(true)}
+            aria-label="Open search"
           >
-            <Search className="w-5 h-5" />
+            <Search className="w-5 h-5" aria-hidden="true" />
           </button>
 
           {/* Theme Toggle */}
           <button 
-            className="action-button theme-toggle"
+            className="action-button theme-toggle header-element"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {theme === 'dark' ? 
+              <Sun className="w-5 h-5 theme-icon" aria-hidden="true" /> : 
+              <Moon className="w-5 h-5 theme-icon" aria-hidden="true" />
+            }
           </button>
 
           {/* Notifications */}
@@ -162,16 +177,18 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
 
           {/* Mobile Menu */}
           <button 
-            className="action-button mobile-only"
+            className="action-button mobile-only header-element"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Open menu"
+            aria-expanded={isMobileMenuOpen}
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-5 h-5" aria-hidden="true" />
           </button>
 
           {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="user-profile">
+              <button className="user-profile header-element" aria-label="User menu">
                 {profile?.avatar_url ? (
                   <img 
                     src={profile.avatar_url} 
@@ -183,8 +200,8 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
                     {profile?.full_name?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? 'U'}
                   </div>
                 )}
-                <div className="user-status-dot" />
-              </div>
+                <div className="user-status-dot" aria-hidden="true" />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="user-dropdown" align="end">
               <DropdownMenuLabel>
@@ -198,7 +215,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate(`/profile/${user?.id}`)}>
-                <User className="w-4 h-4 mr-2" />
+                <User className="w-4 h-4 mr-2" aria-hidden="true" />
                 My Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -212,7 +229,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="mobile-menu">
+        <nav className="mobile-menu" aria-label="Mobile navigation">
           <NavButton 
             icon={ShoppingBag} 
             label="Marketplace" 
@@ -237,7 +254,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
             icon={Calendar} 
             label="Events"
           />
-        </div>
+        </nav>
       )}
     </header>
   );
