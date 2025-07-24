@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Upload, Radio, Calendar, Bell, Moon, Sun, Menu, User } from 'lucide-react';
+import { Search, ShoppingBag, Upload, Radio, Calendar, Moon, Sun, Menu, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { useTheme } from '@/components/theme-provider';
@@ -23,7 +23,7 @@ interface ModernHeaderProps {
 }
 
 const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery, handleOpenModal }) => {
-  const { profile, loading } = useProfile();
+  const { profile } = useProfile();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
