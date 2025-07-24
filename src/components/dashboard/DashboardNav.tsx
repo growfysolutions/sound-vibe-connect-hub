@@ -30,16 +30,7 @@ interface DashboardNavProps {
 const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery, handleOpenModal }) => {
   const { profile, loading } = useProfile();
   const [user, setUser] = useState<User | null>(null);
-  const [searchPlaceholder, setSearchPlaceholder] = useState('');
   const navigate = useNavigate();
-
-  const searchPlaceholders = [
-    'Search artists, songs, or projects...',
-    'ਗਾਇਕ ਲੱਭੋ... (Find singers)',
-    'Discover dhol masters nearby...',
-    'Find bhangra choreographers...',
-    'Search harmonium teachers...'
-  ];
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,14 +38,6 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
       setUser(user);
     };
     fetchUser();
-
-    // Rotate search placeholders
-    const interval = setInterval(() => {
-      setSearchPlaceholder(searchPlaceholders[Math.floor(Math.random() * searchPlaceholders.length)]);
-    }, 3000);
-
-    setSearchPlaceholder(searchPlaceholders[0]);
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = async () => {
@@ -64,54 +47,44 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    // TODO: Implement real-time search suggestions
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-between px-6 gap-4 bg-gradient-to-r from-background/95 to-muted/50 backdrop-blur-xl border-b border-saffron/20">
-      {/* Logo Section with Cultural Elements */}
+    <div className="w-full h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 shadow-sm">
+      {/* Logo Section */}
       <div className="flex items-center space-x-3 flex-shrink-0">
-        <div className="flex items-center space-x-2 group">
-          <div className="relative">
-            <Music className="w-7 h-7 text-saffron transition-all duration-300 group-hover:rotate-12" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-saffron to-amber-500 rounded-full animate-pulse" />
-          </div>
-          <div className="hidden sm:flex flex-col">
-            <span className="text-xl font-bold bg-gradient-to-r from-saffron via-amber-500 to-orange-600 bg-clip-text text-transparent">
+        <div className="flex items-center space-x-2 group cursor-pointer">
+          <Music className="w-6 h-6 text-music-purple transition-opacity duration-200 group-hover:opacity-80" />
+          <div className="flex flex-col">
+            <span className="text-xl font-semibold text-music-purple">
               SoundVibe
             </span>
-            <span className="text-xs text-muted-foreground leading-none" style={{ fontFamily: 'serif' }}>
-              ਸੰਗੀਤ ਦਾ ਸੰਸਾਰ
-            </span>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Search Bar */}
-      <div className="hidden md:flex flex-1 max-w-lg relative group">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-saffron/70 group-hover:text-saffron transition-colors" />
+      {/* Modern Search Bar */}
+      <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         <Input
           type="text"
-          placeholder={searchPlaceholder}
+          placeholder="Search artists, songs, projects..."
           value={searchQuery}
           onChange={handleSearch}
-          className="pl-12 pr-4 w-full h-12 bg-gradient-to-r from-background/80 to-muted/50 border-saffron/30 focus:border-saffron transition-all duration-300 rounded-xl"
+          className="pl-10 pr-4 w-full h-10 bg-gray-50 border-gray-200 focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20 rounded-lg transition-all duration-200"
         />
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-          Press '/' to search
-        </div>
       </div>
 
-      {/* Desktop Action Buttons with Real-time Indicators */}
-      <div className="hidden lg:flex items-center space-x-2">
+      {/* Navigation Section */}
+      <div className="hidden lg:flex items-center space-x-3">
         <div className="relative">
           <Button 
             variant="outline"
             size="sm"
-            className="group border-saffron/30 hover:bg-saffron/10" 
+            className="h-9 px-4 border-gray-200 hover:bg-gray-50 hover:border-gray-300 text-gray-700 transition-all duration-200" 
             onClick={() => navigate('/marketplace')}
           >
-            <ShoppingBag className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+            <ShoppingBag className="w-4 h-4 mr-2" />
             <span className="text-sm">Market</span>
           </Button>
           <NotificationBadge count={3} variant="success" />
@@ -119,10 +92,10 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
         
         <Button 
           size="sm"
-          className="bg-gradient-to-r from-saffron to-amber-500 hover:from-saffron/90 hover:to-amber-500/90 group" 
+          className="h-9 px-4 bg-music-purple hover:bg-music-purple-dark text-white transition-all duration-200" 
           onClick={handleOpenModal}
         >
-          <Upload className="w-4 h-4 mr-2 group-hover:animate-pulse" />
+          <Upload className="w-4 h-4 mr-2" />
           <span className="text-sm">Share</span>
         </Button>
 
@@ -130,20 +103,20 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
           <Button 
             variant="outline" 
             size="sm"
-            className="group border-red-500/50 hover:bg-red-500/10 text-red-600 hover:text-red-500"
+            className="h-9 px-4 border-red-200 hover:bg-red-50 hover:border-red-300 text-red-600 transition-all duration-200"
           >
-            <Radio className="w-4 h-4 mr-2 group-hover:animate-pulse" />
+            <Radio className="w-4 h-4 mr-2" />
             <span className="text-sm">Live</span>
           </Button>
-          <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
         </div>
 
         <Button 
           variant="outline" 
           size="sm"
-          className="group border-green-500/50 hover:bg-green-500/10 text-green-600 hover:text-green-500"
+          className="h-9 px-4 border-green-200 hover:bg-green-50 hover:border-green-300 text-green-600 transition-all duration-200"
         >
-          <Calendar className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+          <Calendar className="w-4 h-4 mr-2" />
           <span className="text-sm">Events</span>
         </Button>
       </div>
@@ -152,8 +125,8 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
       <div className="lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="relative">
-              <Menu className="w-4 h-4" />
+            <Button variant="ghost" size="sm" className="relative h-9 w-9">
+              <Menu className="w-5 h-5" />
               <NotificationBadge count={5} variant="cultural" />
             </Button>
           </DropdownMenuTrigger>
@@ -178,50 +151,50 @@ const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery
         </DropdownMenu>
       </div>
 
-      {/* Enhanced User Profile Section */}
+      {/* User Section */}
       <div className="flex items-center space-x-3 flex-shrink-0">
         <ThemeToggle />
         <NotificationBell />
 
         {loading ? (
-          <Skeleton className="h-10 w-10 rounded-full" />
+          <Skeleton className="h-9 w-9 rounded-full" />
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="relative cursor-pointer">
-                <Avatar className="w-10 h-10 border-2 border-saffron hover:border-amber-500 transition-all duration-300 hover:scale-105">
+                <Avatar className="w-9 h-9 border-2 border-gray-200 hover:border-music-purple transition-all duration-200">
                   {profile?.avatar_url && <img src={profile.avatar_url} alt={profile.full_name || ''} className="w-full h-full object-cover rounded-full" />}
-                  <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white font-semibold">
+                  <AvatarFallback className="bg-music-purple text-white font-semibold text-sm">
                     {profile?.full_name?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background animate-pulse" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-vibrant-green rounded-full border-2 border-white" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-64 bg-card/95 backdrop-blur-xl border-saffron/20" align="end" forceMount>
+            <DropdownMenuContent className="w-64 bg-white border-gray-200" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{profile?.full_name ?? user?.email ?? 'User'}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
+                  <p className="text-sm font-medium leading-none text-gray-900">{profile?.full_name ?? user?.email ?? 'User'}</p>
+                  <p className="text-xs leading-none text-gray-500">
                     Level 7 • 75% Complete
                   </p>
-                  <div className="w-full bg-muted rounded-full h-1.5 mt-1">
-                    <div className="bg-gradient-to-r from-saffron to-amber-500 h-1.5 rounded-full" style={{ width: '75%' }} />
+                  <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                    <div className="bg-music-purple h-1.5 rounded-full transition-all duration-300" style={{ width: '75%' }} />
                   </div>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-saffron/20" />
-              <DropdownMenuItem onClick={() => navigate(`/profile/${user?.id}`)} className="hover:bg-saffron/10">
+              <DropdownMenuSeparator className="bg-gray-200" />
+              <DropdownMenuItem onClick={() => navigate(`/profile/${user?.id}`)} className="hover:bg-gray-50">
                 <UserIcon className="mr-2 h-4 w-4" />
                 <span>My Profile</span>
-                <span className="ml-auto text-xs text-muted-foreground">85% Complete</span>
+                <span className="ml-auto text-xs text-gray-500">85% Complete</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/settings')} className="hover:bg-saffron/10">
+              <DropdownMenuItem onClick={() => navigate('/settings')} className="hover:bg-gray-50">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Account Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-saffron/20" />
-              <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-500/10 text-red-600">
+              <DropdownMenuSeparator className="bg-gray-200" />
+              <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-50 text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Sign Out</span>
               </DropdownMenuItem>
