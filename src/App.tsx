@@ -39,6 +39,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/auth" element={<Login />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/dashboard/feed" element={<Dashboard />} />
                   <Route path="/dashboard/discover" element={<Dashboard />} />
