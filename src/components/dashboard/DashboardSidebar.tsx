@@ -92,7 +92,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Trophy, 
       punjabi: 'ਪ੍ਰਾਪਤੀਆਂ',
       color: 'text-ocean-blue',
-      type: 'tab'
+      type: 'tab',
+      badge: undefined
     },
     { 
       id: 'analytics', 
@@ -100,7 +101,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: TrendingUp, 
       punjabi: 'ਵਿਸ਼ਲੇਸ਼ਣ',
       color: 'text-teal',
-      type: 'tab'
+      type: 'tab',
+      badge: undefined
     },
     { 
       id: 'calendar', 
@@ -108,7 +110,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Calendar, 
       punjabi: 'ਕੈਲੰਡਰ',
       color: 'text-ocean-blue-light',
-      type: 'tab'
+      type: 'tab',
+      badge: undefined
     },
     { 
       id: 'settings', 
@@ -117,7 +120,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       punjabi: 'ਸੈਟਿੰਗਜ਼',
       color: 'text-muted-foreground',
       type: 'route',
-      route: '/settings'
+      route: '/settings',
+      badge: undefined
     }
   ];
 
