@@ -34,8 +34,8 @@ interface EscrowTransaction {
   amount: number;
   status: 'pending' | 'funded' | 'released' | 'disputed';
   created_at: string;
-  released_at?: string;
-  dispute_reason?: string;
+  released_at?: string | null;
+  dispute_reason?: string | null;
 }
 
 export const AdvancedGigManagement = () => {
@@ -129,7 +129,14 @@ export const AdvancedGigManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setEscrowTransactions(data || []);
+      
+      // Cast the data to match our EscrowTransaction interface
+      const typedData: EscrowTransaction[] = (data || []).map(item => ({
+        ...item,
+        status: item.status as 'pending' | 'funded' | 'released' | 'disputed'
+      }));
+      
+      setEscrowTransactions(typedData);
     } catch (error) {
       console.error('Error fetching escrow transactions:', error);
     }
@@ -307,9 +314,9 @@ export const AdvancedGigManagement = () => {
           </div>
         </div>
 
-        {gig.skills_required && (
+        {gig.required_skills && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {gig.skills_required.map((skill, index) => (
+            {gig.required_skills.map((skill, index) => (
               <Badge key={index} variant="secondary">{skill}</Badge>
             ))}
           </div>
@@ -326,7 +333,7 @@ export const AdvancedGigManagement = () => {
           )}
           {gig.status === 'in_progress' && gig.escrow_status === 'pending' && gig.budget && (
             <Button 
-              onClick={() => initiateEscrow(gig.id, gig.budget)}
+              onClick={() => initiateEscrow(gig.id, gig.budget!)}
               className="flex-1"
             >
               Fund Escrow

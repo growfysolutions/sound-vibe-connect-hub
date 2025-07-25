@@ -3,21 +3,14 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   Calendar, 
   MapPin, 
   Clock, 
   Users, 
   Trophy,
-  Plus,
-  Filter,
-  Star,
-  Tag
+  Plus
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -94,7 +87,7 @@ export const EventsManager = () => {
           price: 25,
           is_free: false,
           organizer_id: 'user1',
-          image_url: '',
+          image_url: undefined,
           tags: ['jazz', 'live music', 'downtown'],
           status: 'upcoming',
           created_at: new Date().toISOString(),
