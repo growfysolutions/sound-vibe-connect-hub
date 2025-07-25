@@ -9,7 +9,7 @@
     --foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 16.3% 35.9%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
@@ -91,7 +91,7 @@
     --foreground: 220 20% 88%;
 
     --muted: 220 13% 11%;
-    --muted-foreground: 215 25% 60%;
+    --muted-foreground: 215 25% 65%;
 
     --popover: 220 13% 11%;
     --popover-foreground: 220 20% 88%;

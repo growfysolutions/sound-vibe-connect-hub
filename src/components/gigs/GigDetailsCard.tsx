@@ -1,3 +1,4 @@
+
 import { Database } from '@/types/supabase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,46 +60,50 @@ export const GigDetailsCard: React.FC<GigDetailsCardProps> = ({ gig }) => {
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-2xl font-bold text-gradient-primary">{gig.title}</CardTitle>
-            <CardDescription className="flex items-center text-muted-foreground mt-2">
+            <CardTitle className="text-2xl font-bold text-foreground">{gig.title}</CardTitle>
+            <CardDescription className="flex items-center text-foreground mt-2">
               <UserIcon className="w-4 h-4 mr-2" /> Posted by {poster?.full_name || '...'}
             </CardDescription>
           </div>
-          <Badge variant="secondary" className="capitalize">
+          <Badge variant="secondary" className="capitalize text-foreground bg-secondary">
             {gig.type?.replace(/_/g, ' ')}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="font-semibold mb-2">Description</h3>
-          <p className="text-muted-foreground whitespace-pre-wrap">{gig.description || 'No description provided.'}</p>
+          <h3 className="font-semibold mb-2 text-foreground">Description</h3>
+          <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+            {gig.description || 'No description provided.'}
+          </p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          <div className="flex items-center">
+          <div className="flex items-center text-foreground">
             <DollarSign className="w-4 h-4 mr-2 text-primary" />
-            <span>{gig.budget ? `$${gig.budget}` : 'Not specified'}</span>
+            <span className="font-medium">{gig.budget ? `$${gig.budget}` : 'Not specified'}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center text-foreground">
             <Clock className="w-4 h-4 mr-2 text-primary" />
-            <span>{gig.deadline ? new Date(gig.deadline).toLocaleDateString() : 'Not specified'}</span>
+            <span className="font-medium">{gig.deadline ? new Date(gig.deadline).toLocaleDateString() : 'Not specified'}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center text-foreground">
             <MapPin className="w-4 h-4 mr-2 text-primary" />
-            <span>{gig.location || 'Remote'}</span>
+            <span className="font-medium">{gig.location || 'Remote'}</span>
           </div>
         </div>
 
         {gig.skills_required && gig.skills_required.length > 0 && (
           <div>
-            <h3 className="font-semibold mb-2 flex items-center">
+            <h3 className="font-semibold mb-2 flex items-center text-foreground">
               <Tag className="w-4 h-4 mr-2" />
               Skills Required
             </h3>
             <div className="flex flex-wrap gap-2">
               {gig.skills_required.map((skill, index) => (
-                <Badge key={index} variant="outline">{skill}</Badge>
+                <Badge key={index} variant="outline" className="text-foreground border-border">
+                  {skill}
+                </Badge>
               ))}
             </div>
           </div>
@@ -110,7 +115,9 @@ export const GigDetailsCard: React.FC<GigDetailsCardProps> = ({ gig }) => {
         ) : (
           <div className="flex justify-end">
             <CreateProposalForm gig={gig} onProposalSubmitted={handleProposalSubmitted}>
-              <Button className="btn-premium">Submit a Proposal</Button>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                Submit a Proposal
+              </Button>
             </CreateProposalForm>
           </div>
         )}
