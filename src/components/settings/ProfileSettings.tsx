@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -63,6 +62,10 @@ const ProfileSettings = () => {
 
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
+    if (!profile?.id) {
+      toast.error('Profile not found. Please try again.');
+      return;
+    }
 
     const file = event.target.files[0];
     const fileExt = file.name.split('.').pop()?.toLowerCase();
@@ -77,7 +80,7 @@ const ProfileSettings = () => {
       return;
     }
 
-    const filePath = `${profile?.id}/${Date.now()}.${fileExt}`;
+    const filePath = `${profile.id}/${Date.now()}.${fileExt}`;
     
     try {
       const { data, error } = await supabase.storage.from('avatars').upload(filePath, file);
@@ -85,7 +88,7 @@ const ProfileSettings = () => {
 
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(data.path);
       
-      await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', profile?.id);
+      await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', profile.id);
       await refetchProfile();
       toast.success('Profile picture updated successfully!');
     } catch (error) {
