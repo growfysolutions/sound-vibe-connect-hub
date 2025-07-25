@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -51,17 +52,17 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
     <Card 
       className={cn(
         "w-80 h-auto p-4 bg-white relative overflow-hidden transition-all duration-300",
-        "shadow-[0_4px_12px_rgba(255,149,0,0.1)] rounded-xl",
-        "hover:shadow-[0_8px_24px_rgba(255,149,0,0.2)] hover:-translate-y-1",
-        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-saffron/5 before:to-gold/5 before:opacity-50",
-        "border border-saffron/20"
+        "shadow-[0_4px_12px_rgba(30,64,175,0.1)] rounded-xl",
+        "hover:shadow-[0_8px_24px_rgba(30,64,175,0.2)] hover:-translate-y-1",
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-ocean-blue/5 before:to-teal/5 before:opacity-50",
+        "border border-ocean-blue/20"
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Cultural pattern watermark */}
       <div className="absolute top-0 right-0 w-20 h-20 opacity-10">
-        <svg viewBox="0 0 100 100" className="w-full h-full fill-saffron">
+        <svg viewBox="0 0 100 100" className="w-full h-full fill-ocean-blue">
           <pattern id="phulkari" patternUnits="userSpaceOnUse" width="20" height="20">
             <path d="M10,5 L15,10 L10,15 L5,10 Z" />
           </pattern>
@@ -73,14 +74,14 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <Avatar className="w-16 h-16 border-2 border-saffron/30 ring-2 ring-saffron/20">
+              <Avatar className="w-16 h-16 border-2 border-ocean-blue/30 ring-2 ring-ocean-blue/20">
                 <AvatarImage src={artist.avatar} alt={artist.name} />
-                <AvatarFallback className="bg-saffron/20 text-saffron font-semibold">
+                <AvatarFallback className="bg-ocean-blue/20 text-ocean-blue font-semibold">
                   {artist.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
               {artist.isVerified && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-teal rounded-full flex items-center justify-center">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -113,11 +114,11 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
         {/* Location and Experience */}
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4 mr-2 text-saffron" />
+            <MapPin className="w-4 h-4 mr-2 text-ocean-blue" />
             {artist.location}
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
-            <Music className="w-4 h-4 mr-2 text-saffron" />
+            <Music className="w-4 h-4 mr-2 text-ocean-blue" />
             {artist.experience}
           </div>
         </div>
@@ -177,7 +178,7 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
 
         {/* Collaboration Count */}
         <div className="flex items-center text-sm text-muted-foreground">
-          <Users className="w-4 h-4 mr-2 text-saffron" />
+          <Users className="w-4 h-4 mr-2 text-ocean-blue" />
           {artist.collaborations} successful collaborations
         </div>
 

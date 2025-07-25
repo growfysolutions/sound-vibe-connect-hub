@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -81,10 +82,10 @@ export function CollaborationMatcherWidget() {
   };
 
   return (
-    <Card className="border-saffron/20 bg-gradient-to-br from-card/95 to-background/80">
+    <Card className="border-ocean-blue/20 bg-gradient-to-br from-card/95 to-background/80">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center space-x-2">
-          <Users className="w-5 h-5 text-saffron" />
+          <Users className="w-5 h-5 text-ocean-blue" />
           <span>Perfect Matches</span>
         </CardTitle>
       </CardHeader>
@@ -100,14 +101,14 @@ export function CollaborationMatcherWidget() {
           {/* Profile Section */}
           <div className="flex items-start space-x-3 mb-3">
             <div className="relative">
-              <Avatar className="w-12 h-12 border-2 border-saffron/30">
+              <Avatar className="w-12 h-12 border-2 border-ocean-blue/30">
                 <AvatarImage src={currentMatch.avatar} />
-                <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white font-semibold">
+                <AvatarFallback className="bg-ocean-gradient text-white font-semibold">
                   {currentMatch.name.split(' ').map(n => n.charAt(0)).join('')}
                 </AvatarFallback>
               </Avatar>
               {currentMatch.isOnline && (
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-background rounded-full" />
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-teal border-2 border-background rounded-full" />
               )}
             </div>
             <div className="flex-1 min-w-0">
@@ -116,7 +117,7 @@ export function CollaborationMatcherWidget() {
                 <MapPin className="w-3 h-3" />
                 {currentMatch.location} • {currentMatch.distance}
               </p>
-              <p className="text-xs text-saffron mt-1">{currentMatch.style}</p>
+              <p className="text-xs text-ocean-blue mt-1">{currentMatch.style}</p>
             </div>
           </div>
 
@@ -147,7 +148,7 @@ export function CollaborationMatcherWidget() {
             <p className="text-xs font-medium">Why you match:</p>
             <div className="flex flex-wrap gap-1">
               {currentMatch.matchReasons.map((reason, index) => (
-                <span key={index} className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
+                <span key={index} className="text-xs bg-teal/10 text-teal px-2 py-1 rounded">
                   {reason}
                 </span>
               ))}
@@ -182,15 +183,15 @@ export function CollaborationMatcherWidget() {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/30">
           <div className="text-center">
-            <p className="text-xs font-medium">15</p>
+            <p className="text-xs font-medium text-ocean-blue">15</p>
             <p className="text-xs text-muted-foreground">New matches</p>
           </div>
           <div className="text-center">
-            <p className="text-xs font-medium">8</p>
+            <p className="text-xs font-medium text-teal">8</p>
             <p className="text-xs text-muted-foreground">Connected</p>
           </div>
           <div className="text-center">
-            <p className="text-xs font-medium">3</p>
+            <p className="text-xs font-medium text-ocean-blue-light">3</p>
             <p className="text-xs text-muted-foreground">Collaborating</p>
           </div>
         </div>

@@ -55,14 +55,14 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
         "w-96 h-auto p-4 bg-white relative overflow-hidden transition-all duration-300",
         "shadow-[0_4px_12px_rgba(30,64,175,0.1)] rounded-xl",
         "hover:shadow-[0_8px_24px_rgba(30,64,175,0.2)] hover:-translate-y-1",
-        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/5 before:to-purple-500/5 before:opacity-50",
-        "border border-blue-500/20",
-        isUrgent && "border-orange-500/40 shadow-[0_4px_12px_rgba(249,115,22,0.2)]"
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-ocean-blue/5 before:to-teal/5 before:opacity-50",
+        "border border-ocean-blue/20",
+        isUrgent && "border-red-500/40 shadow-[0_4px_12px_rgba(239,68,68,0.2)]"
       )}
     >
       {/* Urgency indicator */}
       {isUrgent && (
-        <div className="absolute top-0 right-0 bg-orange-500 text-white px-2 py-1 rounded-bl-lg text-xs font-medium">
+        <div className="absolute top-0 right-0 bg-red-500 text-white px-2 py-1 rounded-bl-lg text-xs font-medium">
           <AlertCircle className="w-3 h-3 inline mr-1" />
           Urgent
         </div>
@@ -85,7 +85,7 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
                 by {project.postedBy.name}
               </span>
               {project.postedBy.isVerified && (
-                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-teal rounded-full flex items-center justify-center">
                   <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
@@ -116,7 +116,7 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
           <p className="text-sm font-medium mb-2 text-foreground">Seeking:</p>
           <div className="flex flex-wrap gap-1">
             {project.seeking.map((role, index) => (
-              <Badge key={index} className="bg-saffron/20 text-saffron hover:bg-saffron/30">
+              <Badge key={index} className="bg-ocean-blue/20 text-ocean-blue hover:bg-ocean-blue/30">
                 {role}
               </Badge>
             ))}
@@ -126,19 +126,19 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
         {/* Project details */}
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="flex items-center text-muted-foreground">
-            <DollarSign className="w-4 h-4 mr-2 text-green-600" />
+            <DollarSign className="w-4 h-4 mr-2 text-teal" />
             <span>{project.budget}</span>
           </div>
           <div className="flex items-center text-muted-foreground">
-            <Clock className="w-4 h-4 mr-2 text-blue-600" />
+            <Clock className="w-4 h-4 mr-2 text-ocean-blue" />
             <span>{project.timeline}</span>
           </div>
           <div className="flex items-center text-muted-foreground">
-            <Users className="w-4 h-4 mr-2 text-purple-600" />
+            <Users className="w-4 h-4 mr-2 text-ocean-blue-light" />
             <span>{project.applications} interested</span>
           </div>
           <div className="flex items-center text-muted-foreground">
-            <Calendar className="w-4 h-4 mr-2 text-orange-600" />
+            <Calendar className="w-4 h-4 mr-2 text-teal-light" />
             <span>{project.postedDate}</span>
           </div>
         </div>
@@ -169,9 +169,9 @@ export const ProjectCollaborationCard: React.FC<ProjectCollaborationCardProps> =
 
         {/* Urgency message */}
         {project.urgency && (
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-            <p className="text-sm font-medium text-orange-800">Urgent:</p>
-            <p className="text-sm text-orange-700">{project.urgency}</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="text-sm font-medium text-red-800">Urgent:</p>
+            <p className="text-sm text-red-700">{project.urgency}</p>
           </div>
         )}
 

@@ -27,7 +27,7 @@ const CollaboratorSidebar = ({ collaborators }: CollaboratorSidebarProps) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'online': return 'bg-green-500';
+      case 'online': return 'bg-teal';
       case 'away': return 'bg-yellow-500';
       case 'offline': return 'bg-gray-500';
       default: return 'bg-gray-500';
@@ -45,8 +45,8 @@ const CollaboratorSidebar = ({ collaborators }: CollaboratorSidebarProps) => {
 
   const getPermissionColor = (permission: string) => {
     switch (permission) {
-      case 'Admin': return 'text-gold-400 bg-gold-400/20';
-      case 'Contributor': return 'text-blue-400 bg-blue-400/20';
+      case 'Admin': return 'text-ocean-blue bg-ocean-blue/20';
+      case 'Contributor': return 'text-teal bg-teal/20';
       case 'Viewer': return 'text-gray-400 bg-gray-400/20';
       default: return 'text-gray-400 bg-gray-400/20';
     }
@@ -59,7 +59,7 @@ const CollaboratorSidebar = ({ collaborators }: CollaboratorSidebarProps) => {
         <h2 className="text-lg font-semibold text-foreground">Collaborators</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="bg-primary hover:bg-primary/90">
+            <Button size="sm" className="bg-ocean-gradient hover:bg-ocean-gradient/90">
               <Plus className="w-4 h-4 mr-1" />
               Add
             </Button>
@@ -130,7 +130,7 @@ const CollaboratorSidebar = ({ collaborators }: CollaboratorSidebarProps) => {
                 <div className="relative">
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={collaborator.avatar} alt={collaborator.name} />
-                    <AvatarFallback className="bg-primary/20 text-primary font-semibold">
+                    <AvatarFallback className="bg-ocean-blue/20 text-ocean-blue font-semibold">
                       {collaborator.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
@@ -170,13 +170,13 @@ const CollaboratorSidebar = ({ collaborators }: CollaboratorSidebarProps) => {
       <div className="mt-4 pt-4 border-t border-border/30">
         <div className="grid grid-cols-2 gap-3 text-center">
           <div className="p-2 rounded-lg bg-muted/30">
-            <div className="text-lg font-semibold text-primary">
+            <div className="text-lg font-semibold text-ocean-blue">
               {collaborators.filter(c => c.status === 'online').length}
             </div>
             <div className="text-xs text-muted-foreground">Online</div>
           </div>
           <div className="p-2 rounded-lg bg-muted/30">
-            <div className="text-lg font-semibold text-primary">
+            <div className="text-lg font-semibold text-teal">
               {collaborators.length}
             </div>
             <div className="text-xs text-muted-foreground">Total</div>

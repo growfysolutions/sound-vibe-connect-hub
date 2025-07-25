@@ -31,7 +31,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Feed', 
       icon: Home, 
       punjabi: 'ਫੀਡ',
-      color: 'text-orange-500',
+      color: 'text-ocean-blue',
       badge: '12'
     },
     { 
@@ -39,7 +39,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Discover', 
       icon: Search, 
       punjabi: 'ਖੋਜ',
-      color: 'text-blue-500',
+      color: 'text-teal',
       badge: 'NEW'
     },
     { 
@@ -47,7 +47,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Network', 
       icon: Users, 
       punjabi: 'ਨੈੱਟਵਰਕ',
-      color: 'text-green-500',
+      color: 'text-ocean-blue-light',
       badge: '3'
     },
     { 
@@ -55,7 +55,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Messages', 
       icon: MessageCircle, 
       punjabi: 'ਸੁਨੇਹੇ',
-      color: 'text-purple-500',
+      color: 'text-teal-light',
       badge: '8'
     },
     { 
@@ -63,14 +63,14 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'My Projects', 
       icon: FileMusic, 
       punjabi: 'ਪ੍ਰੋਜੈਕਟ',
-      color: 'text-pink-500'
+      color: 'text-ocean-blue-dark'
     },
     { 
       id: 'gigs', 
       label: 'Gigs', 
       icon: Briefcase, 
       punjabi: 'ਗਿਗਸ',
-      color: 'text-yellow-500',
+      color: 'text-teal-dark',
       badge: '5'
     }
   ];
@@ -81,28 +81,28 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Achievements', 
       icon: Trophy, 
       punjabi: 'ਪ੍ਰਾਪਤੀਆਂ',
-      color: 'text-amber-500'
+      color: 'text-ocean-blue'
     },
     { 
       id: 'analytics', 
       label: 'Analytics', 
       icon: TrendingUp, 
       punjabi: 'ਵਿਸ਼ਲੇਸ਼ਣ',
-      color: 'text-cyan-500'
+      color: 'text-teal'
     },
     { 
       id: 'calendar', 
       label: 'Calendar', 
       icon: Calendar, 
       punjabi: 'ਕੈਲੰਡਰ',
-      color: 'text-red-500'
+      color: 'text-ocean-blue-light'
     },
     { 
       id: 'settings', 
       label: 'Settings', 
       icon: Settings, 
       punjabi: 'ਸੈਟਿੰਗਜ਼',
-      color: 'text-gray-500'
+      color: 'text-muted-foreground'
     }
   ];
 
@@ -112,21 +112,21 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Go Live', 
       icon: Radio, 
       punjabi: 'ਲਾਈਵ ਜਾਓ',
-      color: 'text-red-500'
+      color: 'text-ocean-blue'
     },
     { 
       id: 'record', 
       label: 'Record', 
       icon: Mic, 
       punjabi: 'ਰਿਕਾਰਡ',
-      color: 'text-green-500'
+      color: 'text-teal'
     },
     { 
       id: 'collab', 
       label: 'Collaborate', 
       icon: Users, 
       punjabi: 'ਸਹਿਯੋਗ',
-      color: 'text-blue-500'
+      color: 'text-ocean-blue-light'
     }
   ];
 
@@ -135,9 +135,9 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       {/* Profile Section */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center space-x-3 mb-4">
-          <Avatar className="w-12 h-12 border-2 border-orange-500/30">
+          <Avatar className="w-12 h-12 border-2 border-ocean-blue/30">
             <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold">
+            <AvatarFallback className="bg-ocean-gradient text-white font-semibold">
               {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
@@ -150,7 +150,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
             </p>
           </div>
           <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-teal rounded-full"></div>
             <span className="text-xs text-muted-foreground">Online</span>
           </div>
         </div>
@@ -159,11 +159,11 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-muted-foreground">Level {profile?.level || 1}</span>
-            <span className="text-xs text-orange-500">75% to next</span>
+            <span className="text-xs text-ocean-blue">75% to next</span>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div 
-              className="bg-gradient-to-r from-orange-500 to-amber-500 h-2 rounded-full transition-all duration-300"
+              className="bg-ocean-gradient h-2 rounded-full transition-all duration-300"
               style={{ width: '75%' }}
             ></div>
           </div>
@@ -185,7 +185,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
                 key={item.id}
                 className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
                   activeTab === item.id
-                    ? 'bg-orange-500/10 text-orange-500 border-r-2 border-orange-500'
+                    ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
                 onClick={() => setActiveTab(item.id)}
@@ -198,8 +198,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
                 {item.badge && (
                   <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
                     item.badge === 'NEW' 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-orange-500 text-white'
+                      ? 'bg-teal text-white' 
+                      : 'bg-ocean-blue text-white'
                   }`}>
                     {item.badge}
                   </span>
@@ -222,7 +222,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
                 key={item.id}
                 className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
                   activeTab === item.id
-                    ? 'bg-orange-500/10 text-orange-500 border-r-2 border-orange-500'
+                    ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
                 onClick={() => setActiveTab(item.id)}
@@ -263,7 +263,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
 
       {/* Footer */}
       <div className="p-6 border-t border-border">
-        <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-4 rounded-lg text-white text-center">
+        <div className="bg-ocean-gradient p-4 rounded-lg text-white text-center">
           <div className="text-sm font-semibold mb-1">Upgrade to Pro</div>
           <div className="text-xs opacity-90 mb-3">
             Unlock premium features and expand your musical journey

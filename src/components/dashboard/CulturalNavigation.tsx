@@ -82,7 +82,7 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
               
               {/* Active indicator with modern styling */}
               {isActive && (
-                <div className="absolute right-2 w-2 h-2 bg-music-purple rounded-full animate-pulse" />
+                <div className="absolute right-2 w-2 h-2 bg-ocean-blue rounded-full animate-pulse" />
               )}
             </button>
           );
@@ -119,7 +119,7 @@ export function CulturalNavigation({ activeTab, onTabChange, collapsed }: Cultur
           </div>
           
           {/* Cultural notification badge */}
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center border-2 border-background">
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-ocean-blue text-white text-xs rounded-full flex items-center justify-center border-2 border-background">
             3
           </div>
         </button>
