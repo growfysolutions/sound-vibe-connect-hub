@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { DashboardRightSidebar } from '@/components/dashboard/DashboardRightSidebar';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
-import ActivityFeed from '@/components/dashboard/ActivityFeed';
+import { FeedTimeline } from '@/components/feed/FeedTimeline';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
 import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
@@ -100,7 +101,7 @@ export default function Dashboard() {
 
   const renderTabContent = () => {
     const tabComponents = {
-      feed: <ActivityFeed />,
+      feed: <FeedTimeline />,
       discover: <DiscoverTab 
         professionals={mockData.professionals}
         pendingConnections={mockData.pendingConnections}
@@ -161,14 +162,21 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       <div className="flex w-full">
+        {/* Left Sidebar */}
         <div className="w-64 border-r border-border bg-card">
           <DashboardSidebar activeTab={activeTab} setActiveTab={handleTabChange} />
         </div>
         
+        {/* Main Content */}
         <div className="flex-1 bg-background">
           <main className="p-6">
             {renderTabContent()}
           </main>
+        </div>
+        
+        {/* Right Sidebar - Hidden on small screens */}
+        <div className="hidden xl:block">
+          <DashboardRightSidebar />
         </div>
       </div>
     </div>
