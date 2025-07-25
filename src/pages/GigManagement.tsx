@@ -1,5 +1,7 @@
+
 import { useState } from 'react';
-import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,8 +11,10 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 
 const GigManagement = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [pitchText, setPitchText] = useState('');
   const [proposedRate, setProposedRate] = useState('');
@@ -47,15 +51,50 @@ const GigManagement = () => {
     { item: "Recording Equipment", required: false, available: true }
   ];
 
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
+        {/* Header with Navigation */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBackToDashboard}
+              className="flex items-center gap-2 hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Button>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink 
+                    onClick={handleBackToDashboard}
+                    className="cursor-pointer hover:text-orange-600"
+                  >
+                    Dashboard
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-foreground">Gig Management</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </div>
+
+        {/* Title Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{gigDetails.title}</h1>
-              <div className="flex items-center gap-4 text-gray-600">
+              <div className="flex items-center gap-4 text-gray-800">
                 <Badge className="bg-saffron text-white border-0">
                   {gigDetails.type}
                 </Badge>
@@ -71,7 +110,7 @@ const GigManagement = () => {
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold text-green-600 mb-1">{gigDetails.budgetRange}</div>
-              <div className="text-sm text-gray-500">Budget Range</div>
+              <div className="text-sm text-gray-700">Budget Range</div>
             </div>
           </div>
 
@@ -82,7 +121,7 @@ const GigManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-2xl font-bold text-orange-600">{gigDetails.daysUntilDeadline}</div>
-                    <div className="text-sm text-gray-600">Days to Apply</div>
+                    <div className="text-sm text-gray-700">Days to Apply</div>
                   </div>
                   <AlertTriangle className="w-8 h-8 text-orange-500" />
                 </div>
@@ -94,7 +133,7 @@ const GigManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-2xl font-bold text-green-600">{gigDetails.daysUntilEvent}</div>
-                    <div className="text-sm text-gray-600">Days to Event</div>
+                    <div className="text-sm text-gray-700">Days to Event</div>
                   </div>
                   <Calendar className="w-8 h-8 text-green-500" />
                 </div>
@@ -106,7 +145,7 @@ const GigManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-2xl font-bold text-blue-600">{gigDetails.duration}</div>
-                    <div className="text-sm text-gray-600">Performance Duration</div>
+                    <div className="text-sm text-gray-700">Performance Duration</div>
                   </div>
                   <Clock className="w-8 h-8 text-blue-500" />
                 </div>
@@ -137,24 +176,24 @@ const GigManagement = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Musical Style</label>
+                    <label className="text-sm font-medium text-gray-800">Musical Style</label>
                     <p className="text-gray-900">{gigDetails.style}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Special Requests</label>
+                    <label className="text-sm font-medium text-gray-800">Special Requests</label>
                     <p className="text-gray-900">{gigDetails.specialRequests}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700">Equipment Needed</label>
+                    <label className="text-sm font-medium text-gray-800">Equipment Needed</label>
                     <p className="text-gray-900">{gigDetails.equipment}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Audience Size</label>
+                      <label className="text-sm font-medium text-gray-800">Audience Size</label>
                       <p className="text-gray-900">{gigDetails.audienceSize}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Duration</label>
+                      <label className="text-sm font-medium text-gray-800">Duration</label>
                       <p className="text-gray-900">{gigDetails.duration}</p>
                     </div>
                   </div>
@@ -172,8 +211,8 @@ const GigManagement = () => {
                   {milestones.map((milestone, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">{milestone.name}</span>
-                        <span className="text-sm text-gray-500">{milestone.date}</span>
+                        <span className="font-medium text-gray-900">{milestone.name}</span>
+                        <span className="text-sm text-gray-700">{milestone.date}</span>
                       </div>
                       <Progress value={milestone.progress} className="h-2" />
                     </div>
@@ -195,18 +234,18 @@ const GigManagement = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-800 mb-2 block">
                       Upload Audio Samples
                     </label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors cursor-pointer">
                       <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Drop audio files here or click to browse</p>
-                      <p className="text-xs text-gray-500 mt-1">MP3, WAV up to 10MB each</p>
+                      <p className="text-sm text-gray-700">Drop audio files here or click to browse</p>
+                      <p className="text-xs text-gray-600 mt-1">MP3, WAV up to 10MB each</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-800 mb-2 block">
                       Custom Pitch ({pitchText.length}/500)
                     </label>
                     <Textarea
@@ -219,7 +258,7 @@ const GigManagement = () => {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                    <label className="text-sm font-medium text-gray-800 mb-2 block">
                       Rate Proposal (₹)
                     </label>
                     <Input
@@ -228,7 +267,7 @@ const GigManagement = () => {
                       value={proposedRate}
                       onChange={(e) => setProposedRate(e.target.value)}
                     />
-                    <p className="text-xs text-gray-500 mt-1">Budget range: {gigDetails.budgetRange}</p>
+                    <p className="text-xs text-gray-600 mt-1">Budget range: {gigDetails.budgetRange}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -245,7 +284,7 @@ const GigManagement = () => {
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
                         <Checkbox checked={item.available} />
-                        <span className={item.required ? "font-medium" : ""}>{item.item}</span>
+                        <span className={item.required ? "font-medium text-gray-900" : "text-gray-800"}>{item.item}</span>
                         {item.required && <Badge variant="destructive" className="text-xs">Required</Badge>}
                       </div>
                       <Badge variant={item.available ? "default" : "secondary"}>
@@ -259,34 +298,34 @@ const GigManagement = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Travel Requirements</CardTitle>
+                <CardTitle className="text-gray-900">Travel Requirements</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-sm font-medium text-gray-800 mb-2 block">
                     Accommodation Needed
                   </label>
-                  <select className="w-full p-2 border rounded-md">
+                  <select className="w-full p-2 border rounded-md text-gray-900">
                     <option>No</option>
                     <option>Yes - 1 night</option>
                     <option>Yes - 2 nights</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-sm font-medium text-gray-800 mb-2 block">
                     Transportation
                   </label>
-                  <select className="w-full p-2 border rounded-md">
+                  <select className="w-full p-2 border rounded-md text-gray-900">
                     <option>Self-arranged</option>
                     <option>Client-provided</option>
                     <option>Reimbursement needed</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-sm font-medium text-gray-800 mb-2 block">
                     Setup Time Required
                   </label>
-                  <select className="w-full p-2 border rounded-md">
+                  <select className="w-full p-2 border rounded-md text-gray-900">
                     <option>1 hour</option>
                     <option>2 hours</option>
                     <option>3+ hours</option>
@@ -317,41 +356,41 @@ const GigManagement = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2">Performance Agreement</h3>
-                  <p className="text-sm text-gray-700 mb-4">
+                  <h3 className="font-semibold mb-2 text-gray-900">Performance Agreement</h3>
+                  <p className="text-sm text-gray-800 mb-4">
                     This agreement is between [Artist Name] and [Client Name] for the performance at {gigDetails.title}.
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div>
+                    <div className="text-gray-800">
                       <strong>Event Date:</strong> {gigDetails.date}
                     </div>
-                    <div>
+                    <div className="text-gray-800">
                       <strong>Venue:</strong> {gigDetails.venue}
                     </div>
-                    <div>
+                    <div className="text-gray-800">
                       <strong>Duration:</strong> {gigDetails.duration}
                     </div>
-                    <div>
+                    <div className="text-gray-800">
                       <strong>Total Fee:</strong> ₹{proposedRate || '___'}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-semibold">Payment Milestones</h4>
+                  <h4 className="font-semibold text-gray-900">Payment Milestones</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="border p-3 rounded">
-                      <div className="font-medium">Contract Signing</div>
-                      <div className="text-sm text-gray-600">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
+                      <div className="font-medium text-gray-900">Contract Signing</div>
+                      <div className="text-sm text-gray-700">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
                     </div>
                     <div className="border p-3 rounded">
-                      <div className="font-medium">Sound Check</div>
-                      <div className="text-sm text-gray-600">50% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.50)}</div>
+                      <div className="font-medium text-gray-900">Sound Check</div>
+                      <div className="text-sm text-gray-700">50% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.50)}</div>
                     </div>
                     <div className="border p-3 rounded">
-                      <div className="font-medium">Performance Complete</div>
-                      <div className="text-sm text-gray-600">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
+                      <div className="font-medium text-gray-900">Performance Complete</div>
+                      <div className="text-sm text-gray-700">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
                     </div>
                   </div>
                 </div>
@@ -359,29 +398,29 @@ const GigManagement = () => {
                 <Separator />
 
                 <div className="space-y-3">
-                  <h4 className="font-semibold">Terms & Conditions</h4>
+                  <h4 className="font-semibold text-gray-900">Terms & Conditions</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span>Cancellation policy: 72 hours notice required</span>
+                      <span className="text-gray-800">Cancellation policy: 72 hours notice required</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span>Recording permissions: Client may record for personal use</span>
+                      <span className="text-gray-800">Recording permissions: Client may record for personal use</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span>Equipment responsibility: Client provides basic PA system</span>
+                      <span className="text-gray-800">Equipment responsibility: Client provides basic PA system</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span>Force majeure clause: Weather/emergency cancellations</span>
+                      <span className="text-gray-800">Force majeure clause: Weather/emergency cancellations</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-600 mb-2">Digital Signature Area</p>
+                  <p className="text-sm text-gray-700 mb-2">Digital Signature Area</p>
                   <Button variant="outline">Sign Contract</Button>
                 </div>
               </CardContent>
@@ -406,11 +445,11 @@ const GigManagement = () => {
                   ].map((payment, index) => (
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
-                        <div className="font-medium">{payment.milestone}</div>
-                        <div className="text-sm text-gray-500">{payment.date}</div>
+                        <div className="font-medium text-gray-900">{payment.milestone}</div>
+                        <div className="text-sm text-gray-700">{payment.date}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold">₹{Math.round((parseInt(proposedRate) || 0) * payment.amount / 100)}</div>
+                        <div className="font-semibold text-gray-900">₹{Math.round((parseInt(proposedRate) || 0) * payment.amount / 100)}</div>
                         <Badge variant={payment.status === "pending" ? "secondary" : "default"}>
                           {payment.status}
                         </Badge>
@@ -422,17 +461,17 @@ const GigManagement = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Earnings Summary</CardTitle>
+                  <CardTitle className="text-gray-900">Earnings Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-green-50 rounded-lg">
                       <div className="text-2xl font-bold text-green-600">₹0</div>
-                      <div className="text-sm text-gray-600">Received</div>
+                      <div className="text-sm text-gray-700">Received</div>
                     </div>
                     <div className="text-center p-4 bg-orange-50 rounded-lg">
                       <div className="text-2xl font-bold text-orange-600">₹{proposedRate || 0}</div>
-                      <div className="text-sm text-gray-600">Pending</div>
+                      <div className="text-sm text-gray-700">Pending</div>
                     </div>
                   </div>
                   
@@ -459,9 +498,9 @@ const GigManagement = () => {
                     <div className="flex-1 bg-gray-50 rounded p-4 mb-4 overflow-y-auto">
                       <div className="space-y-3">
                         <div className="bg-white p-3 rounded-lg shadow-sm">
-                          <div className="text-sm font-medium">Rajesh Kumar (Organizer)</div>
-                          <div className="text-sm text-gray-600">Looking forward to your performance! Do you need any specific arrangements?</div>
-                          <div className="text-xs text-gray-400 mt-1">2 hours ago</div>
+                          <div className="text-sm font-medium text-gray-900">Rajesh Kumar (Organizer)</div>
+                          <div className="text-sm text-gray-800">Looking forward to your performance! Do you need any specific arrangements?</div>
+                          <div className="text-xs text-gray-600 mt-1">2 hours ago</div>
                         </div>
                       </div>
                     </div>
@@ -476,7 +515,7 @@ const GigManagement = () => {
               <div className="space-y-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Quick Actions</CardTitle>
+                    <CardTitle className="text-sm text-gray-900">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <Button variant="outline" className="w-full justify-start" size="sm">
@@ -496,7 +535,7 @@ const GigManagement = () => {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Notifications</CardTitle>
+                    <CardTitle className="text-sm text-gray-900">Notifications</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2 text-sm">
@@ -527,15 +566,15 @@ const GigManagement = () => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
-                        <div className="font-medium">Traditional Wedding Ceremony</div>
-                        <div className="text-sm text-gray-500">Mar 15, 2025 • Chandigarh</div>
+                        <div className="font-medium text-gray-900">Traditional Wedding Ceremony</div>
+                        <div className="text-sm text-gray-700">Mar 15, 2025 • Chandigarh</div>
                       </div>
                       <Badge className="bg-orange-100 text-orange-700">Applied</Badge>
                     </div>
                     <div className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
-                        <div className="font-medium">Corporate Event</div>
-                        <div className="text-sm text-gray-500">Mar 22, 2025 • Delhi</div>
+                        <div className="font-medium text-gray-900">Corporate Event</div>
+                        <div className="text-sm text-gray-700">Mar 22, 2025 • Delhi</div>
                       </div>
                       <Badge className="bg-green-100 text-green-700">Confirmed</Badge>
                     </div>
@@ -546,11 +585,11 @@ const GigManagement = () => {
               <div className="space-y-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-sm">Monthly Earnings</CardTitle>
+                    <CardTitle className="text-sm text-gray-900">Monthly Earnings</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-green-600">₹45,000</div>
-                    <div className="text-sm text-gray-500">March 2025</div>
+                    <div className="text-sm text-gray-700">March 2025</div>
                   </CardContent>
                 </Card>
 
@@ -562,8 +601,8 @@ const GigManagement = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">4.8</div>
-                    <div className="text-sm text-gray-500">Based on 24 reviews</div>
+                    <div className="text-2xl font-bold text-gray-900">4.8</div>
+                    <div className="text-sm text-gray-700">Based on 24 reviews</div>
                   </CardContent>
                 </Card>
               </div>
@@ -576,8 +615,8 @@ const GigManagement = () => {
             <Card className="max-w-md mx-4">
               <CardContent className="p-6 text-center">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Application Submitted!</h3>
-                <p className="text-gray-600 mb-4">
+                <h3 className="text-lg font-semibold mb-2 text-gray-900">Application Submitted!</h3>
+                <p className="text-gray-800 mb-4">
                   Your application has been sent to the event organizer. You'll receive a notification once they respond.
                 </p>
                 <Button onClick={() => setApplicationSubmitted(false)}>
