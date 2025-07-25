@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { MoreHorizontal, Heart, MessageCircle, Share, Bookmark } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -211,32 +210,29 @@ export function PostCard({ post }: PostCardProps) {
   const profileInitial = profileName.charAt(0).toUpperCase();
 
   return (
-    <Card className={cn(
-      "border-hsl(var(--ocean-blue))/20 bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm transition-all duration-300 hover:shadow-lg",
-      isMobile ? "mx-0" : ""
-    )}>
+    <Card className="border-none shadow-none bg-transparent">
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <Avatar className="w-12 h-12 border-2 border-hsl(var(--ocean-blue))/30">
+            <Avatar className="w-12 h-12 border-2 border-hsl(var(--color-primary-500))/30">
               <AvatarImage src={avatarUrl || undefined} />
-              <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white font-semibold">
+              <AvatarFallback className="bg-gradient-to-r from-hsl(var(--color-primary-500)) to-hsl(var(--color-secondary-500)) text-white font-semibold">
                 {profileInitial}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-foreground truncate">
+                <h3 className="font-semibold text-hsl(var(--color-primary-900)) truncate">
                   {profileName}
                 </h3>
-                <span className="text-xs bg-hsl(var(--ocean-blue))/20 text-hsl(var(--ocean-blue)) px-2 py-1 rounded-full">
+                <span className="text-xs bg-hsl(var(--color-primary-500))/20 text-hsl(var(--color-primary-600)) px-2 py-1 rounded-full">
                   ✓ Verified Artist
                 </span>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2 text-sm text-hsl(var(--color-neutral-600))">
                 <button 
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-hsl(var(--color-primary-600)) transition-colors"
                   onClick={() => toast.info('Post details coming soon!')}
                 >
                   {formatDistanceToNow(new Date(post.created_at))} ago
@@ -249,50 +245,50 @@ export function PostCard({ post }: PostCardProps) {
             </div>
           </div>
           
-          <Button variant="ghost" size="sm" className="p-2">
-            <MoreHorizontal className="w-4 h-4" />
+          <Button variant="ghost" size="sm" className="p-2 hover:bg-hsl(var(--color-primary-100))">
+            <MoreHorizontal className="w-4 h-4 text-hsl(var(--color-neutral-600))" />
           </Button>
         </div>
 
         {/* Content */}
         <div className="mb-4">
-          <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+          <p className="text-hsl(var(--color-primary-900)) leading-relaxed whitespace-pre-wrap">
             {post.content}
           </p>
         </div>
 
         {/* Engagement Stats */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4 px-2">
+        <div className="flex items-center justify-between text-sm text-hsl(var(--color-neutral-600)) mb-4 px-2">
           <div className="flex items-center space-x-4">
             <button 
-              className="flex items-center hover:text-foreground transition-colors"
+              className="flex items-center hover:text-hsl(var(--color-primary-600)) transition-colors"
               onClick={() => setShowComments(!showComments)}
             >
               ❤️ {likesCount} likes
             </button>
             <button 
-              className="flex items-center hover:text-foreground transition-colors"
+              className="flex items-center hover:text-hsl(var(--color-primary-600)) transition-colors"
               onClick={() => setShowComments(!showComments)}
             >
               💬 {commentsCount} comments
             </button>
           </div>
           <div className="flex items-center space-x-2">
-            <span>🎵 Traditional</span>
+            <span className="text-hsl(var(--color-primary-600))">🎵 Traditional</span>
             <span>•</span>
-            <span style={{ fontFamily: 'serif' }}>ਪਰੰਪਰਾਗਤ</span>
+            <span style={{ fontFamily: 'serif' }} className="text-hsl(var(--color-primary-600))">ਪਰੰਪਰਾਗਤ</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between border-t border-hsl(var(--ocean-blue))/10 pt-4">
+        <div className="flex items-center justify-between border-t border-hsl(var(--color-primary-500))/10 pt-4">
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="sm"
               className={cn(
-                "flex items-center space-x-2 transition-all duration-200",
-                isLiked ? "text-hsl(var(--color-error-500)) hover:text-hsl(var(--color-error-500))/90" : "hover:text-hsl(var(--color-error-500))"
+                "flex items-center space-x-2 transition-all duration-200 hover:bg-hsl(var(--color-primary-100))",
+                isLiked ? "text-hsl(var(--color-error-500)) hover:text-hsl(var(--color-error-500))/90" : "text-hsl(var(--color-neutral-600)) hover:text-hsl(var(--color-error-500))"
               )}
               onClick={handleLike}
               disabled={isLoading}
@@ -304,7 +300,7 @@ export function PostCard({ post }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center space-x-2 hover:text-hsl(var(--teal)) transition-colors"
+              className="flex items-center space-x-2 text-hsl(var(--color-neutral-600)) hover:text-hsl(var(--color-secondary-500)) hover:bg-hsl(var(--color-primary-100)) transition-colors"
               onClick={() => {
                 setShowComments(!showComments);
                 if (!showComments) {
@@ -321,7 +317,7 @@ export function PostCard({ post }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center space-x-2 hover:text-hsl(var(--color-success-500)) transition-colors"
+              className="flex items-center space-x-2 text-hsl(var(--color-neutral-600)) hover:text-hsl(var(--color-success-500)) hover:bg-hsl(var(--color-primary-100)) transition-colors"
               onClick={handleShare}
             >
               <Share className="w-4 h-4" />
@@ -333,8 +329,8 @@ export function PostCard({ post }: PostCardProps) {
             variant="ghost"
             size="sm"
             className={cn(
-              "flex items-center space-x-2 transition-all duration-200",
-              isSaved ? "text-hsl(var(--color-warning-500)) hover:text-hsl(var(--color-warning-500))/90" : "hover:text-hsl(var(--color-warning-500))"
+              "flex items-center space-x-2 transition-all duration-200 hover:bg-hsl(var(--color-primary-100))",
+              isSaved ? "text-hsl(var(--color-warning-500)) hover:text-hsl(var(--color-warning-500))/90" : "text-hsl(var(--color-neutral-600)) hover:text-hsl(var(--color-warning-500))"
             )}
             onClick={handleSave}
           >
@@ -345,12 +341,12 @@ export function PostCard({ post }: PostCardProps) {
 
         {/* Comments Section */}
         {showComments && (
-          <div className="mt-4 border-t border-hsl(var(--ocean-blue))/10 pt-4">
+          <div className="mt-4 border-t border-hsl(var(--color-primary-500))/10 pt-4">
             {/* Comment Input */}
             <div className="flex space-x-3 mb-4">
-              <Avatar className="w-8 h-8 border border-hsl(var(--ocean-blue))/30">
+              <Avatar className="w-8 h-8 border border-hsl(var(--color-primary-500))/30">
                 <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white text-sm">
+                <AvatarFallback className="bg-gradient-to-r from-hsl(var(--color-primary-500)) to-hsl(var(--color-secondary-500)) text-white text-sm">
                   {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
@@ -360,7 +356,7 @@ export function PostCard({ post }: PostCardProps) {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Write a comment... ਟਿੱਪਣੀ ਲਿਖੋ..."
-                  className="border-hsl(var(--ocean-blue))/30 focus:border-hsl(var(--ocean-blue))"
+                  className="border-hsl(var(--color-primary-500))/30 focus:border-hsl(var(--color-primary-500)) bg-white/50"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -374,7 +370,7 @@ export function PostCard({ post }: PostCardProps) {
                       size="sm"
                       onClick={handleComment}
                       disabled={isCommenting}
-                      className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) hover:from-hsl(var(--ocean-blue))/90 hover:to-hsl(var(--ocean-blue-light))/90"
+                      className="bg-gradient-to-r from-hsl(var(--color-primary-500)) to-hsl(var(--color-secondary-500)) hover:from-hsl(var(--color-primary-600)) hover:to-hsl(var(--color-secondary-600)) text-white"
                     >
                       {isCommenting ? 'Posting...' : 'Post Comment'}
                     </Button>
@@ -387,27 +383,27 @@ export function PostCard({ post }: PostCardProps) {
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {comments.map((comment) => (
                 <div key={comment.id} className="flex space-x-3">
-                  <Avatar className="w-8 h-8 border border-hsl(var(--ocean-blue))/30">
+                  <Avatar className="w-8 h-8 border border-hsl(var(--color-primary-500))/30">
                     <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white text-sm">
+                    <AvatarFallback className="bg-gradient-to-r from-hsl(var(--color-primary-500)) to-hsl(var(--color-secondary-500)) text-white text-sm">
                       {comment.profiles?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 bg-muted/20 rounded-lg p-3">
+                  <div className="flex-1 bg-hsl(var(--color-primary-50))/50 rounded-lg p-3">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-medium text-sm">{comment.profiles?.full_name || 'Unknown User'}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="font-medium text-sm text-hsl(var(--color-primary-900))">{comment.profiles?.full_name || 'Unknown User'}</span>
+                      <span className="text-xs text-hsl(var(--color-neutral-600))">
                         {formatDistanceToNow(new Date(comment.created_at))} ago
                       </span>
                     </div>
-                    <p className="text-sm text-foreground">{comment.content}</p>
+                    <p className="text-sm text-hsl(var(--color-primary-800))">{comment.content}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {comments.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
+              <div className="text-center py-4 text-hsl(var(--color-neutral-600))">
                 <p className="text-sm">No comments yet. Be the first to comment!</p>
               </div>
             )}
