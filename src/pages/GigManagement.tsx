@@ -11,15 +11,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+
 const GigManagement = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [pitchText, setPitchText] = useState('');
   const [proposedRate, setProposedRate] = useState('');
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
+
   const gigDetails = {
     title: "Traditional Wedding Ceremony - Chandigarh",
-    type: "Live Performance",
+    type: "Live Performance", 
     date: "March 15, 2025",
     venue: "Golden Temple Banquet Hall",
     budgetRange: "₹25,000 - ₹40,000",
@@ -32,13 +34,14 @@ const GigManagement = () => {
     daysUntilEvent: 45,
     daysUntilDeadline: 12
   };
+
   const milestones = [{
     name: "Application Deadline",
     date: "Feb 28",
     status: "upcoming",
     progress: 75
   }, {
-    name: "Contract Finalization",
+    name: "Contract Finalization", 
     date: "Mar 5",
     status: "pending",
     progress: 0
@@ -53,6 +56,7 @@ const GigManagement = () => {
     status: "pending",
     progress: 0
   }];
+
   const equipmentChecklist = [{
     item: "Professional PA System",
     required: true,
@@ -74,9 +78,11 @@ const GigManagement = () => {
     required: false,
     available: true
   }];
+
   const handleBackToDashboard = () => {
     navigate('/dashboard');
   };
+
   return <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with Navigation */}
@@ -207,7 +213,7 @@ const GigManagement = () => {
                     </div>
                     <div className="text-lime-200">
                       <label className="text-sm font-medium text-blue-300">Duration</label>
-                      <p className="text-gray-900">{gigDetails.duration}</p>
+                      <span className="text-blue-300">{gigDetails.duration}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -630,4 +636,5 @@ const GigManagement = () => {
       </div>
     </div>;
 };
+
 export default GigManagement;
