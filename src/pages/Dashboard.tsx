@@ -1,22 +1,19 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
-import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
-import { DiscoverTab } from '@/components/dashboard/DiscoverTab';
-import { NetworkTab } from '@/components/dashboard/NetworkTab';
-import { MyProjectsTab } from '@/components/dashboard/MyProjectsTab';
+import ActivityFeed from '@/components/dashboard/ActivityFeed';
+import DiscoverTab from '@/components/dashboard/DiscoverTab';
+import NetworkTab from '@/components/dashboard/NetworkTab';
+import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { CalendarTab } from '@/components/dashboard/CalendarTab';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useProfile } from '@/contexts/ProfileContext';
-import { useEffect as useEffectHook } from 'react';
 
 export default function Dashboard() {
-  const { profile } = useProfile();
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,14 +39,6 @@ export default function Dashboard() {
   };
 
   const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
-
-  // Update active tab when URL changes
-  useEffectHook(() => {
-    const newTab = getTabFromPath(location.pathname);
-    if (newTab !== activeTab) {
-      setActiveTab(newTab);
-    }
-  }, [location.pathname, activeTab]);
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
