@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -13,14 +13,14 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, User, MapPin, Music, Briefcase, X } from 'lucide-react';
 
 const ProfileSettings = () => {
-  const { profile, updateProfile } = useProfile();
+  const { profile, refetchProfile } = useProfile();
   const [isUpdating, setIsUpdating] = useState(false);
   const [profileData, setProfileData] = useState({
     full_name: profile?.full_name || '',
     bio: profile?.bio || '',
     location: profile?.location || '',
-    genres: profile?.genres || [],
-    professional_roles: profile?.professional_roles || [],
+    genres: [],
+    professional_roles: [],
   });
 
   const musicGenres = [
@@ -48,7 +48,7 @@ const ProfileSettings = () => {
     setProfileData(prev => ({
       ...prev,
       professional_roles: prev.professional_roles.includes(role)
-        ? prev.professional_roles.filter(r => r !== role)
+        ? prev.professional_roles.filter((r: string) => r !== role)
         : [...prev.professional_roles, role]
     }));
   };
@@ -77,7 +77,8 @@ const ProfileSettings = () => {
 
       const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(data.path);
       
-      await updateProfile({ avatar_url: publicUrl });
+      await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', profile?.id);
+      await refetchProfile();
       toast.success('Profile picture updated successfully!');
     } catch (error) {
       console.error('Error uploading avatar:', error);
@@ -90,7 +91,14 @@ const ProfileSettings = () => {
 
     setIsUpdating(true);
     try {
-      await updateProfile(profileData);
+      const { error } = await supabase
+        .from('profiles')
+        .update(profileData)
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      await refetchProfile();
       toast.success('Profile updated successfully!');
     } catch (error) {
       console.error('Error updating profile:', error);

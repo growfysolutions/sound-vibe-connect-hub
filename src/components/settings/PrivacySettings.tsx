@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Shield, Eye, EyeOff, Download, FileText } from 'lucide-react';
+import { Shield, Eye, Download, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PrivacySettings = () => {

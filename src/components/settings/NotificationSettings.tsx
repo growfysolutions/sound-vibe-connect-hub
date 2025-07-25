@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { useCulturalNotifications } from '@/hooks/useCulturalNotifications';
 
 const NotificationSettings = () => {
-  const { notifications, unreadCount, markAllAsRead } = useCulturalNotifications();
+  const { unreadCount, markAllAsRead } = useCulturalNotifications();
   const [notificationSettings, setNotificationSettings] = useState({
     email: {
       connectionRequests: true,

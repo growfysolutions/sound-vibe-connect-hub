@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe, Star, Users, Music } from 'lucide-react';
 import CulturalProfileSetup from '@/components/cultural/CulturalProfileSetup';

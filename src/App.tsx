@@ -1,9 +1,9 @@
-import React from 'react';
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from '@/pages/Dashboard';
 import ProfileSetup from '@/pages/ProfileSetup';
 import GigManagement from '@/pages/GigManagement';
-import Auth from '@/pages/Auth';
+import Login from '@/pages/Login';
 import Messages from '@/pages/Messages';
 import Settings from '@/pages/Settings';
 import UnifiedSettings from '@/pages/UnifiedSettings';
@@ -13,8 +13,8 @@ function App() {
     <Router>
       <div className="min-h-screen bg-background">
         <Routes>
-          <Route path="/" element={<Auth />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/auth" element={<Login />} />
           <Route path="/profile-setup" element={<ProfileSetup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/gig-management" element={<GigManagement />} />

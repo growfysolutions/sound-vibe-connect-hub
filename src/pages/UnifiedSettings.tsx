@@ -1,15 +1,10 @@
 
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { ArrowLeft, User, Bell, Shield, Palette, Globe, Settings as SettingsIcon } from 'lucide-react';
-
-// Import existing settings components
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import CulturalProfileSetup from '@/components/cultural/CulturalProfileSetup';
 
 // Import settings sections
 import AccountSettings from '@/components/settings/AccountSettings';
@@ -21,7 +16,6 @@ import AppearanceSettings from '@/components/settings/AppearanceSettings';
 
 const UnifiedSettings = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [activeTab, setActiveTab] = useState('account');
 
   const settingsSections = [

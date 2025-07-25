@@ -1,7 +1,6 @@
 
-import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Palette, Monitor, Sun, Moon } from 'lucide-react';
+import { Palette, Monitor } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const AppearanceSettings = () => {
