@@ -120,7 +120,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       punjabi: 'ਸੈਟਿੰਗਜ਼',
       color: 'text-muted-foreground',
       type: 'route',
-      route: '/settings',
+      route: '/unified-settings',
       badge: undefined
     }
   ];
