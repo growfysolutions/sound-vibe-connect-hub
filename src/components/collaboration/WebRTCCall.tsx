@@ -35,7 +35,7 @@ const WebRTCCall = ({ projectId, isOpen, onClose }: WebRTCCallProps) => {
     toggleVideo,
     localVideoRef,
     remoteVideoRef
-  } = useWebRTC(projectId);
+  } = useWebRTC();
 
   const handleStartAudioCall = () => {
     startCall(true);

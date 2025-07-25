@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Edit3, 
@@ -197,9 +196,6 @@ const CollaborationWorkspace = () => {
                     <AdvancedMediaPlayer
                       fileUrl={selectedMediaFile}
                       fileName="Sample Audio Track.mp3"
-                      onEdit={(editedData) => {
-                        console.log('Media edited:', editedData);
-                      }}
                     />
                   ) : (
                     <div className="text-center py-12">
