@@ -226,7 +226,7 @@ const GigManagement = () => {
                         <span className="font-medium text-gray-900">{milestone.name}</span>
                         <span className="text-sm text-gray-900">{milestone.date}</span>
                       </div>
-                      <Progress value={milestone.progress} className="h-2" />
+                      <Progress value={milestone.progress} className="h-2 text-[text-blue-300]" />
                     </div>)}
                 </CardContent>
               </Card>
