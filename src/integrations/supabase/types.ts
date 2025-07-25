@@ -356,6 +356,44 @@ export type Database = {
           },
         ]
       }
+      escrow_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          dispute_reason: string | null
+          gig_id: number
+          id: string
+          released_at: string | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          dispute_reason?: string | null
+          gig_id: number
+          id?: string
+          released_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          dispute_reason?: string | null
+          gig_id?: number
+          id?: string
+          released_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_transactions_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "gigs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_attendees: {
         Row: {
           created_at: string
@@ -448,36 +486,54 @@ export type Database = {
       gigs: {
         Row: {
           budget: number | null
+          category: string | null
+          client_id: string | null
           created_at: string
           deadline: string | null
           description: string | null
+          escrow_status: string | null
           id: number
           location: string | null
+          professional_id: string | null
+          required_skills: string[] | null
           skills_required: string[] | null
+          status: string | null
           title: string
           type: Database["public"]["Enums"]["gig_type"] | null
           user_id: string
         }
         Insert: {
           budget?: number | null
+          category?: string | null
+          client_id?: string | null
           created_at?: string
           deadline?: string | null
           description?: string | null
+          escrow_status?: string | null
           id?: never
           location?: string | null
+          professional_id?: string | null
+          required_skills?: string[] | null
           skills_required?: string[] | null
+          status?: string | null
           title: string
           type?: Database["public"]["Enums"]["gig_type"] | null
           user_id: string
         }
         Update: {
           budget?: number | null
+          category?: string | null
+          client_id?: string | null
           created_at?: string
           deadline?: string | null
           description?: string | null
+          escrow_status?: string | null
           id?: never
           location?: string | null
+          professional_id?: string | null
+          required_skills?: string[] | null
           skills_required?: string[] | null
+          status?: string | null
           title?: string
           type?: Database["public"]["Enums"]["gig_type"] | null
           user_id?: string

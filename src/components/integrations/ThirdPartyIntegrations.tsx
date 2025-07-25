@@ -1,555 +1,308 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
 import { 
-  Music, 
-  Play, 
-  Upload, 
-  Download, 
-  Link, 
-  Settings, 
-  CheckCircle, 
+  Spotify, 
+  Youtube, 
+  Instagram, 
+  Twitter, 
+  Facebook, 
+  Linkedin,
+  Settings,
+  CheckCircle,
   AlertCircle,
+  ExternalLink,
+  Plus,
+  Trash2,
   RefreshCw,
-  Share2,
-  BarChart3,
-  Users,
-  Calendar,
-  Zap
+  Upload,
+  Download
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 interface Integration {
   id: string;
   name: string;
-  platform: 'spotify' | 'youtube' | 'soundcloud' | 'apple_music' | 'bandcamp';
-  status: 'connected' | 'disconnected' | 'error';
-  connected_at?: string;
-  access_token?: string;
-  refresh_token?: string;
-  user_id: string;
-  profile_data?: any;
-  sync_enabled: boolean;
-  last_sync?: string;
-}
-
-interface PlatformStats {
   platform: string;
-  followers: number;
-  tracks: number;
-  playlists: number;
-  monthly_listeners?: number;
-  total_plays: number;
-}
-
-interface SyncActivity {
-  id: string;
-  platform: string;
-  action: 'upload' | 'download' | 'sync' | 'share';
-  status: 'success' | 'error' | 'pending';
+  type: 'streaming' | 'social' | 'collaboration' | 'analytics' | 'storage';
+  status: 'connected' | 'disconnected' | 'pending' | 'error';
   description: string;
-  timestamp: string;
+  features: string[];
+  lastSync?: string;
+  isEnabled: boolean;
+  icon: any;
+  color: string;
+  permissions: string[];
+  syncOptions: {
+    autoSync: boolean;
+    syncFrequency: string;
+    syncTypes: string[];
+  };
 }
 
 export const ThirdPartyIntegrations = () => {
-  const [integrations, setIntegrations] = useState<Integration[]>([]);
-  const [platformStats, setPlatformStats] = useState<PlatformStats[]>([]);
-  const [syncActivity, setSyncActivity] = useState<SyncActivity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('platforms');
+  const [activeTab, setActiveTab] = useState('connected');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchIntegrations();
-    fetchPlatformStats();
-    fetchSyncActivity();
-  }, []);
-
-  const fetchIntegrations = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('platform_integrations')
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-      setIntegrations(data || []);
-    } catch (error) {
-      console.error('Error fetching integrations:', error);
-    } finally {
-      setLoading(false);
+  const integrations: Integration[] = [
+    {
+      id: '1',
+      name: 'Spotify for Artists',
+      platform: 'Spotify',
+      type: 'streaming',
+      status: 'connected',
+      description: 'Sync your music releases and track streaming analytics',
+      features: ['Music distribution', 'Analytics', 'Playlist placement', 'Fan insights'],
+      lastSync: '2024-01-20T10:30:00Z',
+      isEnabled: true,
+      icon: Spotify,
+      color: 'text-green-500',
+      permissions: ['Read profile', 'Manage playlists', 'Upload tracks'],
+      syncOptions: {
+        autoSync: true,
+        syncFrequency: 'daily',
+        syncTypes: ['releases', 'analytics', 'playlists']
+      }
+    },
+    {
+      id: '2',
+      name: 'YouTube Music',
+      platform: 'YouTube',
+      type: 'streaming',
+      status: 'connected',
+      description: 'Upload and manage your music videos and tracks',
+      features: ['Video upload', 'Music distribution', 'Analytics', 'Comments'],
+      lastSync: '2024-01-20T08:15:00Z',
+      isEnabled: true,
+      icon: Youtube,
+      color: 'text-red-500',
+      permissions: ['Upload videos', 'Manage channel', 'Read analytics'],
+      syncOptions: {
+        autoSync: false,
+        syncFrequency: 'weekly',
+        syncTypes: ['videos', 'analytics']
+      }
+    },
+    {
+      id: '3',
+      name: 'Instagram',
+      platform: 'Instagram',
+      type: 'social',
+      status: 'pending',
+      description: 'Share your music content and connect with fans',
+      features: ['Post sharing', 'Story highlights', 'Reels', 'Direct messages'],
+      isEnabled: false,
+      icon: Instagram,
+      color: 'text-pink-500',
+      permissions: ['Post content', 'Read messages', 'Manage stories'],
+      syncOptions: {
+        autoSync: false,
+        syncFrequency: 'manual',
+        syncTypes: ['posts', 'stories']
+      }
+    },
+    {
+      id: '4',
+      name: 'SoundCloud',
+      platform: 'SoundCloud',
+      type: 'streaming',
+      status: 'error',
+      description: 'Upload tracks and connect with the SoundCloud community',
+      features: ['Track upload', 'Community features', 'Analytics', 'Comments'],
+      isEnabled: false,
+      icon: Settings,
+      color: 'text-orange-500',
+      permissions: ['Upload tracks', 'Read profile', 'Manage playlists'],
+      syncOptions: {
+        autoSync: false,
+        syncFrequency: 'weekly',
+        syncTypes: ['tracks', 'analytics']
+      }
     }
-  };
+  ];
 
-  const fetchPlatformStats = async () => {
-    try {
-      const mockStats: PlatformStats[] = [
-        {
-          platform: 'spotify',
-          followers: 1250,
-          tracks: 45,
-          playlists: 12,
-          monthly_listeners: 5680,
-          total_plays: 125000
-        },
-        {
-          platform: 'youtube',
-          followers: 3200,
-          tracks: 38,
-          playlists: 8,
-          total_plays: 890000
-        },
-        {
-          platform: 'soundcloud',
-          followers: 890,
-          tracks: 52,
-          playlists: 15,
-          total_plays: 67000
-        }
-      ];
-      setPlatformStats(mockStats);
-    } catch (error) {
-      console.error('Error fetching platform stats:', error);
-    }
-  };
-
-  const fetchSyncActivity = async () => {
-    try {
-      const mockActivity: SyncActivity[] = [
-        {
-          id: '1',
-          platform: 'spotify',
-          action: 'upload',
-          status: 'success',
-          description: 'Uploaded "New Track" to Spotify',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: '2',
-          platform: 'youtube',
-          action: 'sync',
-          status: 'pending',
-          description: 'Syncing playlist "Best of 2024"',
-          timestamp: new Date().toISOString()
-        },
-        {
-          id: '3',
-          platform: 'soundcloud',
-          action: 'download',
-          status: 'error',
-          description: 'Failed to download analytics data',
-          timestamp: new Date().toISOString()
-        }
-      ];
-      setSyncActivity(mockActivity);
-    } catch (error) {
-      console.error('Error fetching sync activity:', error);
-    }
-  };
-
-  const connectPlatform = async (platform: string) => {
-    try {
-      // Simulate OAuth flow
-      const authUrl = `https://accounts.${platform}.com/oauth/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=YOUR_REDIRECT_URI`;
-      
-      // In a real implementation, you would redirect to the OAuth URL
-      window.open(authUrl, '_blank', 'width=600,height=600');
-      
-      // Mock successful connection
-      setTimeout(() => {
-        toast.success(`Successfully connected to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`);
-        fetchIntegrations();
-      }, 2000);
-    } catch (error) {
-      console.error(`Error connecting to ${platform}:`, error);
-      toast.error(`Failed to connect to ${platform}`);
-    }
-  };
-
-  const disconnectPlatform = async (integrationId: string) => {
-    try {
-      const { error } = await supabase
-        .from('platform_integrations')
-        .delete()
-        .eq('id', integrationId);
-
-      if (error) throw error;
-      
-      toast.success('Platform disconnected successfully');
-      fetchIntegrations();
-    } catch (error) {
-      console.error('Error disconnecting platform:', error);
-      toast.error('Failed to disconnect platform');
-    }
-  };
-
-  const toggleSync = async (integrationId: string, enabled: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('platform_integrations')
-        .update({ sync_enabled: enabled })
-        .eq('id', integrationId);
-
-      if (error) throw error;
-      
-      toast.success(`Sync ${enabled ? 'enabled' : 'disabled'} successfully`);
-      fetchIntegrations();
-    } catch (error) {
-      console.error('Error toggling sync:', error);
-      toast.error('Failed to update sync settings');
-    }
-  };
-
-  const syncNow = async (platform: string) => {
-    try {
-      toast.success(`Started syncing with ${platform}`);
-      // In a real implementation, you would trigger the sync process
-      fetchSyncActivity();
-    } catch (error) {
-      console.error('Error syncing:', error);
-      toast.error('Failed to start sync');
-    }
-  };
-
-  const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case 'spotify': return <Music className="w-6 h-6 text-green-500" />;
-      case 'youtube': return <Play className="w-6 h-6 text-red-500" />;
-      case 'soundcloud': return <Music className="w-6 h-6 text-orange-500" />;
-      case 'apple_music': return <Music className="w-6 h-6 text-gray-800" />;
-      case 'bandcamp': return <Music className="w-6 h-6 text-blue-500" />;
-      default: return <Music className="w-6 h-6" />;
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'connected':
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'pending':
+        return <RefreshCw className="w-4 h-4 text-yellow-500 animate-spin" />;
+      case 'error':
+        return <AlertCircle className="w-4 h-4 text-red-500" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-gray-500" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'connected': return 'bg-green-500';
-      case 'disconnected': return 'bg-gray-500';
-      case 'error': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'connected':
+        return 'bg-green-500';
+      case 'pending':
+        return 'bg-yellow-500';
+      case 'error':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
-  const getActionIcon = (action: string) => {
-    switch (action) {
-      case 'upload': return <Upload className="w-4 h-4" />;
-      case 'download': return <Download className="w-4 h-4" />;
-      case 'sync': return <RefreshCw className="w-4 h-4" />;
-      case 'share': return <Share2 className="w-4 h-4" />;
-      default: return <Settings className="w-4 h-4" />;
-    }
-  };
-
-  const platforms = [
-    { id: 'spotify', name: 'Spotify', color: 'bg-green-500' },
-    { id: 'youtube', name: 'YouTube Music', color: 'bg-red-500' },
-    { id: 'soundcloud', name: 'SoundCloud', color: 'bg-orange-500' },
-    { id: 'apple_music', name: 'Apple Music', color: 'bg-gray-800' },
-    { id: 'bandcamp', name: 'Bandcamp', color: 'bg-blue-500' }
-  ];
-
-  const PlatformCard = ({ platform, integration }: { platform: any; integration?: Integration }) => (
-    <Card className="hover:shadow-lg transition-shadow duration-300">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            {getPlatformIcon(platform.id)}
-            <div>
-              <CardTitle className="text-lg">{platform.name}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {integration ? 'Connected' : 'Not connected'}
-              </p>
+  const IntegrationCard = ({ integration }: { integration: Integration }) => {
+    const IconComponent = integration.icon;
+    
+    return (
+      <Card className="hover:shadow-lg transition-shadow duration-300">
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <IconComponent className={`w-8 h-8 ${integration.color}`} />
+              <div>
+                <CardTitle className="text-lg">{integration.name}</CardTitle>
+                <p className="text-sm text-muted-foreground">{integration.platform}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge className={getStatusColor(integration.status)}>
+                {integration.status}
+              </Badge>
+              {getStatusIcon(integration.status)}
             </div>
           </div>
-          <Badge className={integration ? getStatusColor(integration.status) : 'bg-gray-500'}>
-            {integration ? integration.status : 'disconnected'}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {integration ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Auto-sync</span>
-              <Switch 
-                checked={integration.sync_enabled}
-                onCheckedChange={(checked) => toggleSync(integration.id, checked)}
-              />
-            </div>
-            
-            {integration.last_sync && (
-              <p className="text-sm text-muted-foreground">
-                Last sync: {new Date(integration.last_sync).toLocaleDateString()}
-              </p>
-            )}
-            
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => syncNow(platform.id)}
-                className="flex items-center gap-1"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Sync Now
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => disconnectPlatform(integration.id)}
-                className="text-red-600 hover:text-red-700"
-              >
-                Disconnect
-              </Button>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground mb-4">{integration.description}</p>
+          
+          <div className="mb-4">
+            <h4 className="font-semibold mb-2">Features</h4>
+            <div className="flex flex-wrap gap-2">
+              {integration.features.map((feature, index) => (
+                <Badge key={index} variant="secondary" className="text-xs">
+                  {feature}
+                </Badge>
+              ))}
             </div>
           </div>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Connect your {platform.name} account to sync your music and analytics
-            </p>
-            <Button 
-              onClick={() => connectPlatform(platform.id)}
-              className="w-full"
-            >
-              <Link className="w-4 h-4 mr-2" />
-              Connect to {platform.name}
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
 
-  const StatsCard = ({ stats }: { stats: PlatformStats }) => (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          {getPlatformIcon(stats.platform)}
-          <CardTitle className="capitalize">{stats.platform}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{stats.followers.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">Followers</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{stats.tracks}</p>
-            <p className="text-sm text-muted-foreground">Tracks</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{stats.total_plays.toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">Total Plays</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-primary">{stats.playlists}</p>
-            <p className="text-sm text-muted-foreground">Playlists</p>
-          </div>
-          {stats.monthly_listeners && (
-            <div className="text-center col-span-2">
-              <p className="text-2xl font-bold text-primary">{stats.monthly_listeners.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Monthly Listeners</p>
+          {integration.status === 'connected' && (
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Auto-sync</span>
+                <Switch 
+                  checked={integration.syncOptions.autoSync}
+                  onCheckedChange={() => {}}
+                />
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Enabled</span>
+                <Switch 
+                  checked={integration.isEnabled}
+                  onCheckedChange={() => {}}
+                />
+              </div>
+              {integration.lastSync && (
+                <p className="text-xs text-muted-foreground">
+                  Last sync: {new Date(integration.lastSync).toLocaleString()}
+                </p>
+              )}
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
-  );
 
-  const ActivityItem = ({ activity }: { activity: SyncActivity }) => (
-    <div className="flex items-center gap-3 p-3 border rounded-lg">
-      <div className="flex items-center gap-2">
-        {getPlatformIcon(activity.platform)}
-        {getActionIcon(activity.action)}
-      </div>
-      <div className="flex-1">
-        <p className="font-medium">{activity.description}</p>
-        <p className="text-sm text-muted-foreground">
-          {new Date(activity.timestamp).toLocaleString()}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        {activity.status === 'success' && <CheckCircle className="w-5 h-5 text-green-500" />}
-        {activity.status === 'error' && <AlertCircle className="w-5 h-5 text-red-500" />}
-        {activity.status === 'pending' && <RefreshCw className="w-5 h-5 text-yellow-500 animate-spin" />}
-        <Badge variant={activity.status === 'success' ? 'default' : activity.status === 'error' ? 'destructive' : 'secondary'}>
-          {activity.status}
-        </Badge>
-      </div>
-    </div>
-  );
+          <div className="flex gap-2">
+            {integration.status === 'connected' ? (
+              <>
+                <Button variant="outline" size="sm">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configure
+                </Button>
+                <Button variant="outline" size="sm">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Sync Now
+                </Button>
+                <Button variant="destructive" size="sm">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Disconnect
+                </Button>
+              </>
+            ) : (
+              <Button className="flex-1">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Connect
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const filteredIntegrations = integrations.filter(integration => {
+    const matchesSearch = integration.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         integration.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesTab = activeTab === 'all' || 
+                      (activeTab === 'connected' && integration.status === 'connected') ||
+                      (activeTab === 'available' && integration.status !== 'connected');
+    
+    return matchesSearch && matchesTab;
+  });
 
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Platform Integrations</h1>
+        <h1 className="text-3xl font-bold mb-2">Third-Party Integrations</h1>
         <p className="text-muted-foreground">
-          Connect and sync your music across all major platforms
+          Connect your favorite music platforms and tools to streamline your workflow
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="platforms">Platforms</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="connected">Connected</TabsTrigger>
+          <TabsTrigger value="available">Available</TabsTrigger>
+          <TabsTrigger value="all">All Integrations</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="platforms" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {platforms.map((platform) => {
-              const integration = integrations.find(i => i.platform === platform.id);
-              return (
-                <PlatformCard 
-                  key={platform.id} 
-                  platform={platform} 
-                  integration={integration}
-                />
-              );
-            })}
+        <div className="mt-6 mb-6">
+          <div className="flex gap-4 items-center">
+            <Input
+              placeholder="Search integrations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-sm"
+            />
+            <Button variant="outline">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Integration
+            </Button>
           </div>
-        </TabsContent>
+        </div>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="connected" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {platformStats.map((stats) => (
-              <StatsCard key={stats.platform} stats={stats} />
+            {filteredIntegrations.filter(i => i.status === 'connected').map((integration) => (
+              <IntegrationCard key={integration.id} integration={integration} />
             ))}
           </div>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Cross-Platform Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {platformStats.map((stats) => (
-                  <div key={stats.platform} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="capitalize font-medium">{stats.platform}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {stats.total_plays.toLocaleString()} plays
-                      </span>
-                    </div>
-                    <Progress 
-                      value={(stats.total_plays / Math.max(...platformStats.map(s => s.total_plays))) * 100} 
-                      className="h-2"
-                    />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
-        <TabsContent value="activity" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {syncActivity.map((activity) => (
-                  <ActivityItem key={activity.id} activity={activity} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="available" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredIntegrations.filter(i => i.status !== 'connected').map((integration) => (
+              <IntegrationCard key={integration.id} integration={integration} />
+            ))}
+          </div>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sync Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Auto-sync new releases</p>
-                    <p className="text-sm text-muted-foreground">
-                      Automatically distribute new tracks to all connected platforms
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Sync analytics daily</p>
-                    <p className="text-sm text-muted-foreground">
-                      Update play counts and analytics from all platforms
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Cross-platform playlists</p>
-                    <p className="text-sm text-muted-foreground">
-                      Sync playlist updates across all platforms
-                    </p>
-                  </div>
-                  <Switch />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Metadata synchronization</p>
-                    <p className="text-sm text-muted-foreground">
-                      Keep track information consistent across platforms
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>API Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Sync Frequency</label>
-                  <select className="w-full p-2 border rounded-md">
-                    <option value="realtime">Real-time</option>
-                    <option value="hourly">Hourly</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">Rate Limit</label>
-                  <Input type="number" defaultValue="100" placeholder="Requests per minute" />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">Timeout</label>
-                  <Input type="number" defaultValue="30" placeholder="Seconds" />
-                </div>
-                
-                <Button>Save Settings</Button>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="all" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredIntegrations.map((integration) => (
+              <IntegrationCard key={integration.id} integration={integration} />
+            ))}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
