@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import ActivityFeed from '@/components/dashboard/ActivityFeed';
@@ -60,6 +59,28 @@ export default function Dashboard() {
     }
   };
 
+  // Mock data and handlers for components that require props
+  const mockData = {
+    professionals: [],
+    pendingConnections: [],
+    connections: [],
+    incomingRequests: [],
+    projects: [],
+    searchQuery: '',
+  };
+
+  const mockHandlers = {
+    handleConnect: (id: string) => console.log('Connect:', id),
+    handleSendMessage: (id: string) => console.log('Send message:', id),
+    handleSearch: (query: string) => console.log('Search:', query),
+    handleRequestAction: (connectionId: number, status: 'accepted' | 'declined') => 
+      console.log('Request action:', connectionId, status),
+    setSearchQuery: (query: string) => console.log('Set search query:', query),
+    handleFindConnections: () => console.log('Find connections'),
+    handleViewProfile: (id: string) => console.log('View profile:', id),
+    handleOpenModal: () => console.log('Open modal'),
+  };
+
   // Error boundary component for tab content
   const TabErrorBoundary = ({ children }: { children: React.ReactNode }) => {
     try {
@@ -80,9 +101,27 @@ export default function Dashboard() {
   const renderTabContent = () => {
     const tabComponents = {
       feed: <ActivityFeed />,
-      discover: <DiscoverTab />,
-      network: <NetworkTab />,
-      projects: <MyProjectsTab />,
+      discover: <DiscoverTab 
+        professionals={mockData.professionals}
+        pendingConnections={mockData.pendingConnections}
+        handleConnect={mockHandlers.handleConnect}
+        handleSendMessage={mockHandlers.handleSendMessage}
+        handleSearch={mockHandlers.handleSearch}
+      />,
+      network: <NetworkTab 
+        connections={mockData.connections}
+        incomingRequests={mockData.incomingRequests}
+        handleRequestAction={mockHandlers.handleRequestAction}
+        searchQuery={mockData.searchQuery}
+        setSearchQuery={mockHandlers.setSearchQuery}
+        handleFindConnections={mockHandlers.handleFindConnections}
+        handleViewProfile={mockHandlers.handleViewProfile}
+        handleSendMessage={mockHandlers.handleSendMessage}
+      />,
+      projects: <MyProjectsTab 
+        projects={mockData.projects}
+        handleOpenModal={mockHandlers.handleOpenModal}
+      />,
       achievements: <AchievementsTab />,
       analytics: <AnalyticsDashboard />,
       calendar: <CalendarTab />
