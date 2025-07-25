@@ -25,6 +25,8 @@ import { MobileHeader } from '@/components/dashboard/MobileHeader';
 import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
 import { TodaysInspirationWidget } from '@/components/dashboard/TodaysInspirationWidget';
 import { MusicalJourneyWidget } from '@/components/dashboard/MusicalJourneyWidget';
+import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
+import { CalendarTab } from '@/components/dashboard/CalendarTab';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -335,6 +337,12 @@ const Dashboard = () => {
                     handleSendMessage={handleSendMessage}
                   />
                 </TabsContent>
+                <TabsContent value="achievements">
+                  <AchievementsTab />
+                </TabsContent>
+                <TabsContent value="calendar">
+                  <CalendarTab />
+                </TabsContent>
                 <TabsContent value="progress">
                   <ProgressPanel connectionsCount={connectedProfiles.length} projectsCount={projects.length} />
                 </TabsContent>
@@ -415,6 +423,12 @@ const Dashboard = () => {
                   handleViewProfile={handleViewProfile}
                   handleSendMessage={handleSendMessage}
                 />
+              </TabsContent>
+              <TabsContent value="achievements" className="h-full">
+                <AchievementsTab />
+              </TabsContent>
+              <TabsContent value="calendar" className="h-full">
+                <CalendarTab />
               </TabsContent>
               <TabsContent value="progress" className="h-full">
                 <ProgressPanel connectionsCount={connectedProfiles.length} projectsCount={projects.length} />

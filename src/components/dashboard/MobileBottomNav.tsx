@@ -13,7 +13,7 @@ const mobileNavItems = [
   { id: 'discover', icon: '🔍', label: 'Discover', punjabi: 'ਖੋਜ', route: '/dashboard/discover' },
   { id: 'projects', icon: '🎹', label: 'Projects', punjabi: 'ਪ੍ਰੋਜੈਕਟ', route: '/dashboard/projects' },
   { id: 'network', icon: '🤝', label: 'Network', punjabi: 'ਨੈਟਵਰਕ', route: '/dashboard/network' },
-  { id: 'progress', icon: '📈', label: 'Progress', punjabi: 'ਤਰੱਕੀ', route: '/dashboard/progress' },
+  { id: 'achievements', icon: '🏆', label: 'Awards', punjabi: 'ਪ੍ਰਾਪਤੀਆਂ', route: '/dashboard/achievements' },
 ];
 
 export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {

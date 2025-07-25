@@ -16,6 +16,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -24,6 +25,7 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarProps) {
   const { profile } = useProfile();
+  const navigate = useNavigate();
 
   const navigationItems = [
     { 
@@ -32,7 +34,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Home, 
       punjabi: 'ਫੀਡ',
       color: 'text-ocean-blue',
-      badge: '12'
+      badge: '12',
+      type: 'tab'
     },
     { 
       id: 'discover', 
@@ -40,7 +43,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Search, 
       punjabi: 'ਖੋਜ',
       color: 'text-teal',
-      badge: 'NEW'
+      badge: 'NEW',
+      type: 'tab'
     },
     { 
       id: 'network', 
@@ -48,7 +52,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Users, 
       punjabi: 'ਨੈੱਟਵਰਕ',
       color: 'text-ocean-blue-light',
-      badge: '3'
+      badge: '3',
+      type: 'tab'
     },
     { 
       id: 'messages', 
@@ -56,14 +61,17 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: MessageCircle, 
       punjabi: 'ਸੁਨੇਹੇ',
       color: 'text-teal-light',
-      badge: '8'
+      badge: '8',
+      type: 'route',
+      route: '/messages'
     },
     { 
       id: 'projects', 
       label: 'My Projects', 
       icon: FileMusic, 
       punjabi: 'ਪ੍ਰੋਜੈਕਟ',
-      color: 'text-ocean-blue-dark'
+      color: 'text-ocean-blue-dark',
+      type: 'tab'
     },
     { 
       id: 'gigs', 
@@ -71,7 +79,9 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       icon: Briefcase, 
       punjabi: 'ਗਿਗਸ',
       color: 'text-teal-dark',
-      badge: '5'
+      badge: '5',
+      type: 'route',
+      route: '/gig-management'
     }
   ];
 
@@ -81,28 +91,33 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       label: 'Achievements', 
       icon: Trophy, 
       punjabi: 'ਪ੍ਰਾਪਤੀਆਂ',
-      color: 'text-ocean-blue'
+      color: 'text-ocean-blue',
+      type: 'tab'
     },
     { 
       id: 'analytics', 
       label: 'Analytics', 
       icon: TrendingUp, 
       punjabi: 'ਵਿਸ਼ਲੇਸ਼ਣ',
-      color: 'text-teal'
+      color: 'text-teal',
+      type: 'tab'
     },
     { 
       id: 'calendar', 
       label: 'Calendar', 
       icon: Calendar, 
       punjabi: 'ਕੈਲੰਡਰ',
-      color: 'text-ocean-blue-light'
+      color: 'text-ocean-blue-light',
+      type: 'tab'
     },
     { 
       id: 'settings', 
       label: 'Settings', 
       icon: Settings, 
       punjabi: 'ਸੈਟਿੰਗਜ਼',
-      color: 'text-muted-foreground'
+      color: 'text-muted-foreground',
+      type: 'route',
+      route: '/settings'
     }
   ];
 
@@ -129,6 +144,46 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       color: 'text-ocean-blue-light'
     }
   ];
+
+  const handleItemClick = (item: typeof navigationItems[0] | typeof secondaryItems[0]) => {
+    if (item.type === 'route' && item.route) {
+      navigate(item.route);
+    } else {
+      setActiveTab(item.id);
+    }
+  };
+
+  const renderNavItem = (item: typeof navigationItems[0] | typeof secondaryItems[0]) => {
+    const Icon = item.icon;
+    const isActive = activeTab === item.id;
+    
+    return (
+      <button
+        key={item.id}
+        className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
+          isActive && item.type === 'tab'
+            ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        }`}
+        onClick={() => handleItemClick(item)}
+      >
+        <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
+        <div className="flex-1 text-left">
+          <div className="font-medium">{item.label}</div>
+          <div className="text-xs opacity-70">{item.punjabi}</div>
+        </div>
+        {item.badge && (
+          <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
+            item.badge === 'NEW' 
+              ? 'bg-teal text-white' 
+              : 'bg-ocean-blue text-white'
+          }`}>
+            {item.badge}
+          </span>
+        )}
+      </button>
+    );
+  };
 
   return (
     <div className="h-full flex flex-col bg-card text-card-foreground">
@@ -178,35 +233,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
               Main Menu
             </h3>
           </div>
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <div className="font-medium">{item.label}</div>
-                  <div className="text-xs opacity-70">{item.punjabi}</div>
-                </div>
-                {item.badge && (
-                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
-                    item.badge === 'NEW' 
-                      ? 'bg-teal text-white' 
-                      : 'bg-ocean-blue text-white'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {navigationItems.map(renderNavItem)}
         </div>
 
         <div className="mb-8">
@@ -215,26 +242,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
               Tools & Analytics
             </h3>
           </div>
-          {secondaryItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                <div className="flex-1 text-left">
-                  <div className="font-medium">{item.label}</div>
-                  <div className="text-xs opacity-70">{item.punjabi}</div>
-                </div>
-              </button>
-            );
-          })}
+          {secondaryItems.map(renderNavItem)}
         </div>
 
         {/* Quick Actions */}
