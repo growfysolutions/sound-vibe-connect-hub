@@ -14,6 +14,8 @@ const mobileNavItems = [
   { id: 'projects', icon: '🎹', label: 'Projects', punjabi: 'ਪ੍ਰੋਜੈਕਟ', route: '/dashboard/projects' },
   { id: 'network', icon: '🤝', label: 'Network', punjabi: 'ਨੈਟਵਰਕ', route: '/dashboard/network' },
   { id: 'achievements', icon: '🏆', label: 'Awards', punjabi: 'ਪ੍ਰਾਪਤੀਆਂ', route: '/dashboard/achievements' },
+  { id: 'analytics', icon: '📊', label: 'Analytics', punjabi: 'ਵਿਸ਼ਲੇਸ਼ਣ', route: '/dashboard/analytics' },
+  { id: 'calendar', icon: '📅', label: 'Calendar', punjabi: 'ਕੈਲੰਡਰ', route: '/dashboard/calendar' },
 ];
 
 export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps) {
@@ -30,7 +32,7 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-card/98 to-background/95 backdrop-blur-xl border-t border-saffron/20">
-      <div className="flex items-center justify-around px-4 py-2 safe-area-pb">
+      <div className="flex items-center justify-around px-2 py-2 safe-area-pb overflow-x-auto">
         {mobileNavItems.map((item) => {
           const isActive = activeTab === item.id || location.pathname.includes(item.route);
           
@@ -49,7 +51,7 @@ export function MobileBottomNav({ activeTab, onTabChange }: MobileBottomNavProps
               }}
             >
               <div className={cn(
-                "text-xl mb-1 transition-all duration-300",
+                "text-base mb-1 transition-all duration-300",
                 isActive && "animate-pulse scale-110"
               )}>
                 {item.icon}
