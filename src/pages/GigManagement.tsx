@@ -136,7 +136,7 @@ const GigManagement = () => {
                     <div className="text-2xl font-bold text-orange-600">{gigDetails.daysUntilDeadline}</div>
                     <div className="text-sm text-gray-900">Days to Apply</div>
                   </div>
-                  <AlertTriangle className="w-8 h-8 text-orange-500" />
+                  <AlertTriangle className="w-8 h-8 text-orange-500 bg-slate-50" />
                 </div>
               </CardContent>
             </Card>
@@ -148,7 +148,7 @@ const GigManagement = () => {
                     <div className="text-2xl font-bold text-green-600">{gigDetails.daysUntilEvent}</div>
                     <div className="text-sm text-gray-900">Days to Event</div>
                   </div>
-                  <Calendar className="w-8 h-8 text-green-500" />
+                  <Calendar className="w-8 h-8 text-green-500 bg-slate-50" />
                 </div>
               </CardContent>
             </Card>
@@ -160,7 +160,7 @@ const GigManagement = () => {
                     <div className="text-2xl font-bold text-blue-600">{gigDetails.duration}</div>
                     <div className="text-sm text-gray-900">Performance Duration</div>
                   </div>
-                  <Clock className="w-8 h-8 text-blue-500" />
+                  <Clock className="w-8 h-8 text-blue-500 bg-slate-50" />
                 </div>
               </CardContent>
             </Card>
