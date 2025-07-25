@@ -9,11 +9,13 @@ interface DashboardNavProps {
 
 const DashboardNav: React.FC<DashboardNavProps> = ({ searchQuery, setSearchQuery, handleOpenModal }) => {
   return (
-    <ModernHeader 
-      searchQuery={searchQuery}
-      setSearchQuery={setSearchQuery}
-      handleOpenModal={handleOpenModal}
-    />
+    <div className="w-full h-full">
+      <ModernHeader 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleOpenModal={handleOpenModal}
+      />
+    </div>
   );
 };
 

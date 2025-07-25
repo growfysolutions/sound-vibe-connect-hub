@@ -73,7 +73,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
   );
 
   return (
-    <header className="modern-header" role="banner">
+    <header className="modern-header w-full h-full" role="banner">
       <div className="header-container">
         {/* Logo Section */}
         <div className="header-logo header-element" tabIndex={0} role="button" onClick={() => navigate('/dashboard')}>
@@ -203,14 +203,13 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
                 <div className="user-status-dot" aria-hidden="true" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="user-dropdown" align="end">
+            <DropdownMenuContent className="w-56" align="end">
               <DropdownMenuLabel>
-                <div className="user-info">
-                  <p className="user-name">{profile?.full_name ?? user?.email ?? 'User'}</p>
-                  <p className="user-level">Level 7 • 75% Complete</p>
-                  <div className="user-progress">
-                    <div className="progress-bar" style={{ width: '75%' }} />
-                  </div>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{profile?.full_name ?? user?.email ?? 'User'}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    Level 7 • 75% Complete
+                  </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -219,7 +218,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
                 My Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="logout-item">
+              <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -229,32 +228,34 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({ searchQuery, setSearchQuery
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <nav className="mobile-menu" aria-label="Mobile navigation">
-          <NavButton 
-            icon={ShoppingBag} 
-            label="Marketplace" 
-            onClick={() => {
-              navigate('/marketplace');
-              setIsMobileMenuOpen(false);
-            }}
-          />
-          <NavButton 
-            icon={Upload} 
-            label="Share Art"
-            onClick={() => {
-              handleOpenModal();
-              setIsMobileMenuOpen(false);
-            }}
-          />
-          <NavButton 
-            icon={Radio} 
-            label="Go Live"
-          />
-          <NavButton 
-            icon={Calendar} 
-            label="Events"
-          />
-        </nav>
+        <div className="absolute top-full left-0 right-0 bg-card border-t border-border shadow-lg z-50">
+          <nav className="p-4 space-y-2" aria-label="Mobile navigation">
+            <NavButton 
+              icon={ShoppingBag} 
+              label="Marketplace" 
+              onClick={() => {
+                navigate('/marketplace');
+                setIsMobileMenuOpen(false);
+              }}
+            />
+            <NavButton 
+              icon={Upload} 
+              label="Share Art"
+              onClick={() => {
+                handleOpenModal();
+                setIsMobileMenuOpen(false);
+              }}
+            />
+            <NavButton 
+              icon={Radio} 
+              label="Go Live"
+            />
+            <NavButton 
+              icon={Calendar} 
+              label="Events"
+            />
+          </nav>
+        </div>
       )}
     </header>
   );
