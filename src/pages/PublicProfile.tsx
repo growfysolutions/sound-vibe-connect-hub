@@ -39,16 +39,22 @@ interface PublicProfileData {
 }
 
 const PublicProfile = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<PublicProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('about');
 
   useEffect(() => {
-    fetchProfile();
+    if (id) {
+      fetchProfile();
+    } else {
+      setIsLoading(false);
+    }
   }, [id]);
 
   const fetchProfile = async () => {
+    if (!id) return;
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -57,7 +63,23 @@ const PublicProfile = () => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Transform the data to match our interface
+      const profileData: PublicProfileData = {
+        id: data.id,
+        full_name: data.full_name || '',
+        bio: data.bio || '',
+        location: data.location || '',
+        professional_roles: data.professional_roles || [],
+        skills: data.skills || [],
+        avatar_url: data.avatar_url || '',
+        created_at: data.updated_at || new Date().toISOString(),
+        portfolio_items: [], // TODO: Fetch from portfolio_media table
+        collaborations: [], // TODO: Fetch from projects/collaborations
+        reviews: [] // TODO: Fetch from reviews table
+      };
+      
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -86,7 +108,7 @@ const PublicProfile = () => {
     );
   }
 
-  if (!profile) {
+  if (!id || !profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center">
         <Card className="max-w-md">
