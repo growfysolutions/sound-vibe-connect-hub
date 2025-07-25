@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
@@ -12,17 +11,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
-
 const GigManagement = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [pitchText, setPitchText] = useState('');
   const [proposedRate, setProposedRate] = useState('');
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
-
   const gigDetails = {
     title: "Traditional Wedding Ceremony - Chandigarh",
-    type: "Live Performance", 
+    type: "Live Performance",
     date: "March 15, 2025",
     venue: "Golden Temple Banquet Hall",
     budgetRange: "₹25,000 - ₹40,000",
@@ -35,48 +32,64 @@ const GigManagement = () => {
     daysUntilEvent: 45,
     daysUntilDeadline: 12
   };
-
-  const milestones = [
-    { name: "Application Deadline", date: "Feb 28", status: "upcoming", progress: 75 },
-    { name: "Contract Finalization", date: "Mar 5", status: "pending", progress: 0 },
-    { name: "Sound Check", date: "Mar 14", status: "pending", progress: 0 },
-    { name: "Event Day", date: "Mar 15", status: "pending", progress: 0 }
-  ];
-
-  const equipmentChecklist = [
-    { item: "Professional PA System", required: true, available: true },
-    { item: "Wireless Microphones (4)", required: true, available: true },
-    { item: "Traditional Instruments", required: true, available: false },
-    { item: "Stage Lighting", required: false, available: true },
-    { item: "Recording Equipment", required: false, available: true }
-  ];
-
+  const milestones = [{
+    name: "Application Deadline",
+    date: "Feb 28",
+    status: "upcoming",
+    progress: 75
+  }, {
+    name: "Contract Finalization",
+    date: "Mar 5",
+    status: "pending",
+    progress: 0
+  }, {
+    name: "Sound Check",
+    date: "Mar 14",
+    status: "pending",
+    progress: 0
+  }, {
+    name: "Event Day",
+    date: "Mar 15",
+    status: "pending",
+    progress: 0
+  }];
+  const equipmentChecklist = [{
+    item: "Professional PA System",
+    required: true,
+    available: true
+  }, {
+    item: "Wireless Microphones (4)",
+    required: true,
+    available: true
+  }, {
+    item: "Traditional Instruments",
+    required: true,
+    available: false
+  }, {
+    item: "Stage Lighting",
+    required: false,
+    available: true
+  }, {
+    item: "Recording Equipment",
+    required: false,
+    available: true
+  }];
   const handleBackToDashboard = () => {
     navigate('/dashboard');
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 p-6">
+  return <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with Navigation */}
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBackToDashboard}
-              className="flex items-center gap-2 hover:bg-gray-100"
-            >
+            <Button variant="ghost" size="sm" onClick={handleBackToDashboard} className="flex items-center gap-2 hover:bg-gray-100">
               <ArrowLeft className="w-4 h-4" />
               Back
             </Button>
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink 
-                    onClick={handleBackToDashboard}
-                    className="cursor-pointer hover:text-orange-600"
-                  >
+                  <BreadcrumbLink onClick={handleBackToDashboard} className="cursor-pointer hover:text-orange-600">
                     Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
@@ -192,7 +205,7 @@ const GigManagement = () => {
                       <label className="text-sm font-medium text-blue-300">Audience Size</label>
                       <p className="text-gray-900">{gigDetails.audienceSize}</p>
                     </div>
-                    <div>
+                    <div className="text-lime-200">
                       <label className="text-sm font-medium text-blue-300">Duration</label>
                       <p className="text-gray-900">{gigDetails.duration}</p>
                     </div>
@@ -200,7 +213,7 @@ const GigManagement = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="text-lime-200">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-green-500" />
@@ -208,15 +221,13 @@ const GigManagement = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {milestones.map((milestone, index) => (
-                    <div key={index} className="space-y-2">
+                  {milestones.map((milestone, index) => <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-gray-900">{milestone.name}</span>
                         <span className="text-sm text-gray-900">{milestone.date}</span>
                       </div>
                       <Progress value={milestone.progress} className="h-2" />
-                    </div>
-                  ))}
+                    </div>)}
                 </CardContent>
               </Card>
             </div>
@@ -225,7 +236,7 @@ const GigManagement = () => {
           {/* Application Interface Tab */}
           <TabsContent value="apply" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
+              <Card className="text-[text-blue-300]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Upload className="w-5 h-5 text-blue-500" />
@@ -248,25 +259,14 @@ const GigManagement = () => {
                     <label className="text-sm font-medium text-blue-300 mb-2 block">
                       Custom Pitch ({pitchText.length}/500)
                     </label>
-                    <Textarea
-                      placeholder="Tell the client why you're perfect for this gig..."
-                      value={pitchText}
-                      onChange={(e) => setPitchText(e.target.value)}
-                      maxLength={500}
-                      className="min-h-[120px]"
-                    />
+                    <Textarea placeholder="Tell the client why you're perfect for this gig..." value={pitchText} onChange={e => setPitchText(e.target.value)} maxLength={500} className="min-h-[120px]" />
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-blue-300 mb-2 block">
                       Rate Proposal (₹)
                     </label>
-                    <Input
-                      type="number"
-                      placeholder="Enter your rate"
-                      value={proposedRate}
-                      onChange={(e) => setProposedRate(e.target.value)}
-                    />
+                    <Input type="number" placeholder="Enter your rate" value={proposedRate} onChange={e => setProposedRate(e.target.value)} />
                     <p className="text-xs text-gray-900 mt-1">Budget range: {gigDetails.budgetRange}</p>
                   </div>
                 </CardContent>
@@ -280,8 +280,7 @@ const GigManagement = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {equipmentChecklist.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  {equipmentChecklist.map((item, index) => <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
                         <Checkbox checked={item.available} />
                         <span className={item.required ? "font-medium text-gray-900" : "text-gray-900"}>{item.item}</span>
@@ -290,8 +289,7 @@ const GigManagement = () => {
                       <Badge variant={item.available ? "default" : "secondary"}>
                         {item.available ? "Available" : "Not Available"}
                       </Badge>
-                    </div>
-                  ))}
+                    </div>)}
                 </CardContent>
               </Card>
             </div>
@@ -335,11 +333,7 @@ const GigManagement = () => {
             </Card>
 
             <div className="flex justify-end">
-              <Button 
-                size="lg" 
-                className="bg-orange-600 hover:bg-orange-700 text-white"
-                onClick={() => setApplicationSubmitted(true)}
-              >
+              <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white" onClick={() => setApplicationSubmitted(true)}>
                 Submit Application
               </Button>
             </div>
@@ -438,12 +432,22 @@ const GigManagement = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {[
-                    { milestone: "Contract Signing", amount: 25, status: "pending", date: "Mar 5" },
-                    { milestone: "Sound Check", amount: 50, status: "pending", date: "Mar 14" },
-                    { milestone: "Performance Complete", amount: 25, status: "pending", date: "Mar 15" }
-                  ].map((payment, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                  {[{
+                  milestone: "Contract Signing",
+                  amount: 25,
+                  status: "pending",
+                  date: "Mar 5"
+                }, {
+                  milestone: "Sound Check",
+                  amount: 50,
+                  status: "pending",
+                  date: "Mar 14"
+                }, {
+                  milestone: "Performance Complete",
+                  amount: 25,
+                  status: "pending",
+                  date: "Mar 15"
+                }].map((payment, index) => <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>
                         <div className="font-medium text-gray-900">{payment.milestone}</div>
                         <div className="text-sm text-gray-900">{payment.date}</div>
@@ -454,8 +458,7 @@ const GigManagement = () => {
                           {payment.status}
                         </Badge>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </CardContent>
               </Card>
 
@@ -610,8 +613,7 @@ const GigManagement = () => {
           </TabsContent>
         </Tabs>
 
-        {applicationSubmitted && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        {applicationSubmitted && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <Card className="max-w-md mx-4">
               <CardContent className="p-6 text-center">
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
@@ -624,11 +626,8 @@ const GigManagement = () => {
                 </Button>
               </CardContent>
             </Card>
-          </div>
-        )}
+          </div>}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default GigManagement;
