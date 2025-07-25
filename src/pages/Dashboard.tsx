@@ -169,8 +169,10 @@ export default function Dashboard() {
         
         {/* Main Content */}
         <div className="flex-1 bg-background">
-          <main className="p-6">
-            {renderTabContent()}
+          <main className="p-6 max-w-none">
+            <div className="bg-background min-h-[calc(100vh-3rem)]">
+              {renderTabContent()}
+            </div>
           </main>
         </div>
         

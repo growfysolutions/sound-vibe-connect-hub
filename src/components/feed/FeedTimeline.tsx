@@ -66,12 +66,18 @@ export function FeedTimeline() {
               ))}
             </div>
           ) : (
-            <div className="text-center text-muted-foreground py-10 bg-gradient-to-r from-card/50 to-background/30 rounded-lg border border-saffron/20">
-              <div className="space-y-2">
-                <p>No posts yet. Be the first to share something!</p>
-                <p className="text-sm" style={{ fontFamily: 'serif' }}>
-                  ਅਜੇ ਕੋਈ ਪੋਸਟ ਨਹੀਂ। ਪਹਿਲੇ ਬਣੋ ਜੋ ਕੁਝ ਸਾਂਝਾ ਕਰਦਾ ਹੈ!
-                </p>
+            <div className="text-center text-muted-foreground py-10 bg-gradient-to-r from-card/50 to-background/30 rounded-lg border border-hsl(var(--ocean-blue))/20">
+              <div className="space-y-4">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-hsl(var(--ocean-blue))/10 to-hsl(var(--teal))/10 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🎵</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-foreground">No posts yet</h3>
+                  <p className="text-muted-foreground">Be the first to share something amazing!</p>
+                  <p className="text-sm text-muted-foreground/80" style={{ fontFamily: 'serif' }}>
+                    ਅਜੇ ਕੋਈ ਪੋਸਟ ਨਹੀਂ। ਪਹਿਲੇ ਬਣੋ ਜੋ ਕੁਝ ਸਾਂਝਾ ਕਰਦਾ ਹੈ!
+                  </p>
+                </div>
               </div>
             </div>
           )}

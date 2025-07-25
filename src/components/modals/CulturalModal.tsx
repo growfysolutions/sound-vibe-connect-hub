@@ -105,21 +105,21 @@ export const CulturalModal: React.FC<CulturalModalProps> = ({
       <div
         ref={modalRef}
         className={cn(
-          'relative w-full bg-white rounded-lg shadow-2xl animate-scale-in',
-          'border-2 border-saffron/20',
-          'focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-opacity-50',
+          'relative w-full bg-card rounded-lg shadow-2xl animate-scale-in',
+          'border-2 border-hsl(var(--ocean-blue))/20',
+          'focus:outline-none focus:ring-2 focus:ring-hsl(var(--ocean-blue)) focus:ring-opacity-50',
           maxWidthClasses[maxWidth]
         )}
         tabIndex={-1}
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff6b35' fill-opacity='0.02'%3E%3Cpath d='M20 0l20 20-20 20L0 20z'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007acc' fill-opacity='0.02'%3E%3Cpath d='M20 0l20 20-20 20L0 20z'/%3E%3C/g%3E%3C/svg%3E")`,
         }}
       >
         {/* Header with cultural design */}
-        <div className="relative px-6 py-4 bg-gradient-to-r from-saffron/10 to-primary/10 rounded-t-lg border-b border-saffron/20">
+        <div className="relative px-6 py-4 bg-gradient-to-r from-hsl(var(--ocean-blue))/10 to-hsl(var(--teal))/10 rounded-t-lg border-b border-hsl(var(--ocean-blue))/20">
           <div className="absolute inset-0 opacity-5 rounded-t-lg"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ff6b35'%3E%3Cpath d='M30 0l15 15-15 15-15-15z'/%3E%3Cpath d='M30 30l15 15-15 15-15-15z'/%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007acc'%3E%3Cpath d='M30 0l15 15-15 15-15-15z'/%3E%3Cpath d='M30 30l15 15-15 15-15-15z'/%3E%3C/g%3E%3C/svg%3E")`,
             }}
           />
           <div className="relative flex items-center justify-between">
@@ -129,7 +129,7 @@ export const CulturalModal: React.FC<CulturalModalProps> = ({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-saffron/10 transition-colors focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-opacity-50"
+                className="p-2 rounded-full hover:bg-hsl(var(--ocean-blue))/10 transition-colors focus:outline-none focus:ring-2 focus:ring-hsl(var(--ocean-blue)) focus:ring-opacity-50"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5 text-muted-foreground" />

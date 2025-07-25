@@ -1,105 +1,106 @@
+
 import { cn } from './utils';
 
 // Modern Ocean Blue music platform design system utilities
 export const culturalStyles = {
-  // Modern Ocean Blue Color System
+  // Modern Ocean Blue Color System using CSS variables
   colors: {
     // Primary Ocean Blue - Trust, professionalism, creativity
-    primary: 'text-ocean-blue',
-    primaryBg: 'bg-ocean-blue',
-    primaryGradient: 'bg-ocean-gradient',
-    primaryLight: 'text-ocean-blue-light',
-    primaryDark: 'text-ocean-blue-dark',
+    primary: 'text-hsl(var(--ocean-blue))',
+    primaryBg: 'bg-hsl(var(--ocean-blue))',
+    primaryGradient: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light))',
+    primaryLight: 'text-hsl(var(--ocean-blue-light))',
+    primaryDark: 'text-hsl(var(--ocean-blue-dark))',
     
     // Secondary Teal - Innovation, growth, collaboration
-    secondary: 'text-teal',
-    secondaryBg: 'bg-teal',
-    secondaryGradient: 'bg-teal-gradient',
-    secondaryLight: 'text-teal-light',
-    secondaryDark: 'text-teal-dark',
+    secondary: 'text-hsl(var(--teal))',
+    secondaryBg: 'bg-hsl(var(--teal))',
+    secondaryGradient: 'bg-gradient-to-r from-hsl(var(--teal)) to-hsl(var(--teal-light))',
+    secondaryLight: 'text-hsl(var(--teal-light))',
+    secondaryDark: 'text-hsl(var(--teal-dark))',
     
     // Accent combinations
-    accent: 'text-teal',
-    accentBg: 'bg-teal',
-    accentGradient: 'bg-teal-gradient',
-    accentLight: 'text-teal-light',
-    accentDark: 'text-teal-dark',
+    accent: 'text-hsl(var(--teal))',
+    accentBg: 'bg-hsl(var(--teal))',
+    accentGradient: 'bg-gradient-to-r from-hsl(var(--teal)) to-hsl(var(--teal-light))',
+    accentLight: 'text-hsl(var(--teal-light))',
+    accentDark: 'text-hsl(var(--teal-dark))',
     
-    // Success, warning, error remain the same
-    success: 'text-green-600',
-    successBg: 'bg-green-600',
-    successGradient: 'bg-gradient-to-r from-green-500 to-green-600',
+    // Success, warning, error using defined variables
+    success: 'text-hsl(var(--color-success-500))',
+    successBg: 'bg-hsl(var(--color-success-500))',
+    successGradient: 'bg-gradient-to-r from-hsl(var(--color-success-500)) to-hsl(var(--color-success-900))',
     
-    warning: 'text-amber-600',
-    warningBg: 'bg-amber-600',
-    warningGradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
+    warning: 'text-hsl(var(--color-warning-500))',
+    warningBg: 'bg-hsl(var(--color-warning-500))',
+    warningGradient: 'bg-gradient-to-r from-hsl(var(--color-warning-500)) to-hsl(var(--warm-gold))',
     
-    error: 'text-red-600',
-    errorBg: 'bg-red-600',
-    errorGradient: 'bg-gradient-to-r from-red-500 to-red-600',
+    error: 'text-hsl(var(--color-error-500))',
+    errorBg: 'bg-hsl(var(--color-error-500))',
+    errorGradient: 'bg-gradient-to-r from-hsl(var(--color-error-500)) to-hsl(var(--destructive))',
     
-    // Modern backgrounds
+    // Modern backgrounds using defined variables
     modernBg: 'bg-background',
     modernBgSecondary: 'bg-card',
     modernBgTertiary: 'bg-muted',
-    modernNeutral: 'bg-neutral-100',
-    modernNeutralLight: 'bg-neutral-50',
-    modernNeutralDark: 'bg-neutral-200',
+    modernNeutral: 'bg-hsl(var(--color-neutral-100))',
+    modernNeutralLight: 'bg-hsl(var(--color-neutral-50))',
+    modernNeutralDark: 'bg-hsl(var(--color-neutral-200))',
   },
 
   // Typography system for modern music platform
   typography: {
-    header: 'font-bold tracking-wide',
-    subheader: 'font-semibold text-lg',
-    body: 'font-medium leading-relaxed',
+    header: 'font-bold tracking-wide text-foreground',
+    subheader: 'font-semibold text-lg text-foreground',
+    body: 'font-medium leading-relaxed text-foreground',
     label: 'font-medium text-sm text-foreground',
     button: 'font-medium tracking-wide',
     caption: 'text-sm text-muted-foreground',
-    modern: 'font-sans tracking-tight',
+    modern: 'font-sans tracking-tight text-foreground',
   },
 
   // Modern patterns for contemporary design
   patterns: {
     card: 'relative overflow-hidden backdrop-blur-sm',
-    modern: 'bg-gradient-to-br from-ocean-blue/5 to-teal/5',
-    glass: 'backdrop-blur-md bg-white/10 border border-white/20',
-    modernFrame: 'border border-ocean-blue/30 shadow-modern-ocean',
-    tech: 'bg-gradient-to-br from-teal/5 to-ocean-blue/5',
-    premium: 'bg-modern-primary',
+    modern: 'bg-gradient-to-br from-hsl(var(--ocean-blue))/5 to-hsl(var(--teal))/5',
+    glass: 'backdrop-blur-md bg-card/50 border border-border',
+    modernFrame: 'border border-hsl(var(--ocean-blue))/30 shadow-lg shadow-hsl(var(--ocean-blue))/10',
+    tech: 'bg-gradient-to-br from-hsl(var(--teal))/5 to-hsl(var(--ocean-blue))/5',
+    premium: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal))',
   },
 
   // Component styles with modern aesthetics
   components: {
     // Form elements
-    input: 'border-2 border-ocean-blue/20 hover:border-ocean-blue/40 focus:border-ocean-blue rounded-lg transition-all duration-200',
-    inputError: 'border-red-500 focus:border-red-500',
-    inputSuccess: 'border-green-500 focus:border-green-500',
+    input: 'border-2 border-hsl(var(--ocean-blue))/20 hover:border-hsl(var(--ocean-blue))/40 focus:border-hsl(var(--ocean-blue)) rounded-lg transition-all duration-200 bg-background text-foreground',
+    inputError: 'border-hsl(var(--color-error-500)) focus:border-hsl(var(--color-error-500))',
+    inputSuccess: 'border-hsl(var(--color-success-500)) focus:border-hsl(var(--color-success-500))',
     
     // Buttons with modern gradients
-    primaryButton: 'bg-ocean-gradient text-white shadow-modern-ocean hover:shadow-ocean-glow hover:scale-[1.02] transition-all duration-300',
-    secondaryButton: 'border-2 border-teal text-teal hover:bg-teal/10 transition-all duration-200',
-    accentButton: 'bg-teal-gradient text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
-    successButton: 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
-    warningButton: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
-    errorButton: 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    primaryButton: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white shadow-lg shadow-hsl(var(--ocean-blue))/25 hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
+    secondaryButton: 'border-2 border-hsl(var(--teal)) text-hsl(var(--teal)) hover:bg-hsl(var(--teal))/10 transition-all duration-200',
+    accentButton: 'bg-gradient-to-r from-hsl(var(--teal)) to-hsl(var(--teal-light)) text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
+    successButton: 'bg-gradient-to-r from-hsl(var(--color-success-500)) to-hsl(var(--color-success-900)) text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    warningButton: 'bg-gradient-to-r from-hsl(var(--color-warning-500)) to-hsl(var(--warm-gold)) text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    errorButton: 'bg-gradient-to-r from-hsl(var(--color-error-500)) to-hsl(var(--destructive)) text-white shadow-lg hover:shadow-xl transition-all duration-300',
     
     // Cards with modern depth
-    card: 'bg-card rounded-xl border border-ocean-blue/20 shadow-modern-ocean hover:shadow-ocean-glow transition-all duration-300',
-    profileCard: 'bg-card rounded-xl border border-ocean-blue/20 p-4 relative overflow-hidden',
-    premiumCard: 'bg-modern-primary rounded-xl border border-teal/30 shadow-lg',
-    glassCard: 'backdrop-blur-md bg-white/10 border border-white/20 rounded-xl',
+    card: 'bg-card rounded-xl border border-hsl(var(--ocean-blue))/20 shadow-lg shadow-hsl(var(--ocean-blue))/5 hover:shadow-xl hover:shadow-hsl(var(--ocean-blue))/10 transition-all duration-300',
+    profileCard: 'bg-card rounded-xl border border-hsl(var(--ocean-blue))/20 p-4 relative overflow-hidden',
+    premiumCard: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal)) rounded-xl border border-hsl(var(--teal))/30 shadow-lg text-white',
+    glassCard: 'backdrop-blur-md bg-card/50 border border-border rounded-xl',
     
     // Navigation with modern trust elements
     navItem: 'rounded-xl transition-all duration-300 hover:scale-105',
-    navActive: 'bg-gradient-to-r from-ocean-blue/20 to-teal/20 text-ocean-blue border border-ocean-blue/30 shadow-modern-trust',
+    navActive: 'bg-gradient-to-r from-hsl(var(--ocean-blue))/20 to-hsl(var(--teal))/20 text-hsl(var(--ocean-blue)) border border-hsl(var(--ocean-blue))/30 shadow-lg shadow-hsl(var(--ocean-blue))/10',
     
     // Loading states with modern aesthetics
-    loader: 'animate-spin text-ocean-blue',
-    progress: 'bg-ocean-gradient',
+    loader: 'animate-spin text-hsl(var(--ocean-blue))',
+    progress: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal))',
     
     // Trust indicators
-    verified: 'bg-teal/10 text-teal border border-teal/30',
-    premium: 'bg-ocean-gradient text-white shadow-ocean-glow',
+    verified: 'bg-hsl(var(--teal))/10 text-hsl(var(--teal)) border border-hsl(var(--teal))/30',
+    premium: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal)) text-white shadow-lg shadow-hsl(var(--ocean-blue))/25',
   },
 
   // Modern elements and symbols
@@ -118,14 +119,14 @@ export const culturalStyles = {
 
   // Modern gradients for specific use cases
   gradients: {
-    primary: 'bg-ocean-gradient',
-    secondary: 'bg-teal-gradient',
-    success: 'bg-gradient-to-r from-green-500 to-green-600',
-    warning: 'bg-gradient-to-r from-amber-500 to-amber-600',
-    error: 'bg-gradient-to-r from-red-500 to-red-600',
-    modern: 'bg-modern-primary',
-    neutral: 'bg-modern-neutral',
-    glass: 'backdrop-blur-md bg-white/10',
+    primary: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light))',
+    secondary: 'bg-gradient-to-r from-hsl(var(--teal)) to-hsl(var(--teal-light))',
+    success: 'bg-gradient-to-r from-hsl(var(--color-success-500)) to-hsl(var(--color-success-900))',
+    warning: 'bg-gradient-to-r from-hsl(var(--color-warning-500)) to-hsl(var(--warm-gold))',
+    error: 'bg-gradient-to-r from-hsl(var(--color-error-500)) to-hsl(var(--destructive))',
+    modern: 'bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal))',
+    neutral: 'bg-gradient-to-r from-hsl(var(--color-neutral-100)) to-hsl(var(--color-neutral-200))',
+    glass: 'backdrop-blur-md bg-card/50',
   },
 };
 
@@ -139,7 +140,7 @@ export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' 
     case 'project':
       return cn(baseStyles, 'hover:-translate-y-1');
     case 'testimonial':
-      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-ocean-blue/20 before:font-serif');
+      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-hsl(var(--ocean-blue))/20 before:font-serif');
     case 'premium':
       return cn(baseStyles, culturalStyles.components.premiumCard);
     case 'glass':
@@ -150,7 +151,7 @@ export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' 
 };
 
 export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'destructive' = 'primary') => {
-  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-blue/50';
+  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-hsl(var(--ocean-blue))/50';
   
   switch (variant) {
     case 'primary':
@@ -171,7 +172,7 @@ export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accen
 };
 
 export const getCulturalInputStyle = (state: 'default' | 'error' | 'success' = 'default') => {
-  const baseStyles = culturalStyles.components.input + ' px-4 py-3 bg-background';
+  const baseStyles = culturalStyles.components.input + ' px-4 py-3';
   
   switch (state) {
     case 'error':
@@ -196,12 +197,12 @@ export const getCulturalNavigationStyle = (isActive: boolean = false) => {
 // Modern color palette accessibility helper
 export const getCulturalColorContrast = (colorName: string) => {
   const contrastMap = {
-    'ocean-blue': { light: 'text-white', dark: 'text-gray-900' },
-    'teal': { light: 'text-white', dark: 'text-gray-100' },
-    'green': { light: 'text-white', dark: 'text-gray-100' },
-    'amber': { light: 'text-white', dark: 'text-gray-900' },
-    'red': { light: 'text-white', dark: 'text-gray-100' },
+    'ocean-blue': { light: 'text-white', dark: 'text-foreground' },
+    'teal': { light: 'text-white', dark: 'text-foreground' },
+    'success': { light: 'text-white', dark: 'text-foreground' },
+    'warning': { light: 'text-white', dark: 'text-foreground' },
+    'error': { light: 'text-white', dark: 'text-foreground' },
   };
   
-  return contrastMap[colorName as keyof typeof contrastMap] || { light: 'text-white', dark: 'text-gray-900' };
+  return contrastMap[colorName as keyof typeof contrastMap] || { light: 'text-white', dark: 'text-foreground' };
 };
