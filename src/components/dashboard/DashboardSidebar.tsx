@@ -13,7 +13,8 @@ import {
   Mic,
   Radio,
   FileMusic,
-  Zap
+  Zap,
+  GitBranch
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useNavigate } from 'react-router-dom';
@@ -82,6 +83,16 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       badge: '5',
       type: 'route',
       route: '/gig-management'
+    },
+    { 
+      id: 'collaboration', 
+      label: 'Collaborate', 
+      icon: GitBranch, 
+      punjabi: 'ਸਹਿਯੋਗ',
+      color: 'text-ocean-blue',
+      badge: undefined,
+      type: 'route',
+      route: '/collaboration-workspace'
     }
   ];
 

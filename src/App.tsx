@@ -7,6 +7,7 @@ import Login from '@/pages/Login';
 import Messages from '@/pages/Messages';
 import Settings from '@/pages/Settings';
 import UnifiedSettings from '@/pages/UnifiedSettings';
+import CollaborationWorkspace from '@/pages/CollaborationWorkspace';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/unified-settings" element={<UnifiedSettings />} />
+          <Route path="/collaboration-workspace" element={<CollaborationWorkspace />} />
         </Routes>
       </div>
     </Router>
