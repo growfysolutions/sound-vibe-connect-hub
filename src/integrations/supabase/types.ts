@@ -53,6 +53,130 @@ export type Database = {
           },
         ]
       }
+      competition_participants: {
+        Row: {
+          competition_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_participants_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competition_submissions: {
+        Row: {
+          competition_id: string
+          created_at: string
+          description: string | null
+          file_url: string | null
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string
+          description?: string | null
+          file_url?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_submissions_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string
+          entry_fee: number | null
+          id: string
+          judges: string[] | null
+          prizes: Json
+          rules: string[] | null
+          start_date: string
+          status: string
+          submission_deadline: string
+          theme: string
+          title: string
+          updated_at: string
+          voting_deadline: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date: string
+          entry_fee?: number | null
+          id?: string
+          judges?: string[] | null
+          prizes?: Json
+          rules?: string[] | null
+          start_date: string
+          status?: string
+          submission_deadline: string
+          theme: string
+          title: string
+          updated_at?: string
+          voting_deadline: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          entry_fee?: number | null
+          id?: string
+          judges?: string[] | null
+          prizes?: Json
+          rules?: string[] | null
+          start_date?: string
+          status?: string
+          submission_deadline?: string
+          theme?: string
+          title?: string
+          updated_at?: string
+          voting_deadline?: string
+        }
+        Relationships: []
+      }
       connections: {
         Row: {
           addressee_id: string
@@ -231,6 +355,95 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      event_attendees: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          capacity: number
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_free: boolean
+          location: string
+          organizer_id: string
+          price: number | null
+          status: string
+          tags: string[] | null
+          time: string
+          title: string
+          type: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_free?: boolean
+          location: string
+          organizer_id: string
+          price?: number | null
+          status?: string
+          tags?: string[] | null
+          time: string
+          title: string
+          type: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_free?: boolean
+          location?: string
+          organizer_id?: string
+          price?: number | null
+          status?: string
+          tags?: string[] | null
+          time?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
       }
       gigs: {
         Row: {

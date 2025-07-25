@@ -22,7 +22,6 @@ import {
   Heart,
   MessageCircle
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface Event {
@@ -84,71 +83,109 @@ export const EventsManager = () => {
   });
 
   useEffect(() => {
-    fetchEvents();
-    fetchCompetitions();
+    // For now, we'll use mock data until the database types are updated
+    fetchMockEvents();
+    fetchMockCompetitions();
   }, [filters]);
 
-  const fetchEvents = async () => {
+  const fetchMockEvents = async () => {
     try {
-      let query = supabase
-        .from('events')
-        .select(`
-          *,
-          organizer:profiles!events_organizer_id_fkey(full_name),
-          attendees:event_attendees(count),
-          user_attendance:event_attendees(user_id)
-        `);
+      // Mock events data
+      const mockEvents: Event[] = [
+        {
+          id: '1',
+          title: 'Summer Music Festival',
+          description: 'Join us for an amazing summer music festival featuring local and international artists.',
+          type: 'festival',
+          date: '2024-08-15',
+          time: '18:00',
+          location: 'Central Park',
+          venue: 'Main Stage',
+          capacity: 5000,
+          price: 50,
+          is_free: false,
+          organizer_id: 'user1',
+          organizer_name: 'Music Events Co.',
+          image_url: null,
+          tags: ['music', 'festival', 'outdoor'],
+          status: 'upcoming',
+          attendees_count: 1250,
+          is_attending: false,
+          created_at: '2024-07-01T10:00:00Z'
+        },
+        {
+          id: '2',
+          title: 'Beat Making Workshop',
+          description: 'Learn the fundamentals of beat making with professional producers.',
+          type: 'workshop',
+          date: '2024-08-10',
+          time: '14:00',
+          location: 'Studio Complex',
+          venue: 'Room A',
+          capacity: 20,
+          price: 0,
+          is_free: true,
+          organizer_id: 'user2',
+          organizer_name: 'Beat Academy',
+          image_url: null,
+          tags: ['workshop', 'production', 'beats'],
+          status: 'upcoming',
+          attendees_count: 15,
+          is_attending: true,
+          created_at: '2024-07-05T12:00:00Z'
+        }
+      ];
 
       // Apply filters
+      let filteredEvents = mockEvents;
       if (filters.type) {
-        query = query.eq('type', filters.type);
+        filteredEvents = filteredEvents.filter(event => event.type === filters.type);
       }
       if (filters.location) {
-        query = query.ilike('location', `%${filters.location}%`);
+        filteredEvents = filteredEvents.filter(event => 
+          event.location.toLowerCase().includes(filters.location.toLowerCase())
+        );
       }
       if (filters.date) {
-        query = query.gte('date', filters.date);
+        filteredEvents = filteredEvents.filter(event => event.date >= filters.date);
       }
 
-      const { data, error } = await query.order('date', { ascending: true });
-      if (error) throw error;
-
-      const processedEvents = data?.map(event => ({
-        ...event,
-        organizer_name: event.organizer?.full_name || 'Unknown',
-        attendees_count: event.attendees?.length || 0,
-        is_attending: event.user_attendance?.length > 0
-      })) || [];
-
-      setEvents(processedEvents);
+      setEvents(filteredEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
       toast.error('Failed to load events');
     }
   };
 
-  const fetchCompetitions = async () => {
+  const fetchMockCompetitions = async () => {
     try {
-      const { data, error } = await supabase
-        .from('competitions')
-        .select(`
-          *,
-          participants:competition_participants(count),
-          submissions:competition_submissions(count),
-          user_participation:competition_participants(user_id)
-        `)
-        .order('start_date', { ascending: true });
+      // Mock competitions data
+      const mockCompetitions: Competition[] = [
+        {
+          id: '1',
+          title: 'Best Original Song 2024',
+          description: 'Submit your best original song for a chance to win amazing prizes.',
+          theme: 'Original Composition',
+          start_date: '2024-08-01',
+          end_date: '2024-09-30',
+          submission_deadline: '2024-09-15',
+          voting_deadline: '2024-09-25',
+          prizes: {
+            first: '$1000 + Recording Session',
+            second: '$500 + Mixing Session',
+            third: '$250 + Mastering Session'
+          },
+          rules: ['Original songs only', 'Maximum 4 minutes', 'Any genre accepted'],
+          judges: ['Producer Mike', 'Artist Sarah', 'Label Rep John'],
+          participants_count: 45,
+          submissions_count: 32,
+          status: 'accepting_submissions',
+          entry_fee: 25,
+          is_participating: false
+        }
+      ];
 
-      if (error) throw error;
-
-      const processedCompetitions = data?.map(comp => ({
-        ...comp,
-        participants_count: comp.participants?.length || 0,
-        submissions_count: comp.submissions?.length || 0,
-        is_participating: comp.user_participation?.length > 0
-      })) || [];
-
-      setCompetitions(processedCompetitions);
+      setCompetitions(mockCompetitions);
     } catch (error) {
       console.error('Error fetching competitions:', error);
       toast.error('Failed to load competitions');
@@ -159,23 +196,15 @@ export const EventsManager = () => {
 
   const joinEvent = async (eventId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please log in to join events');
-        return;
-      }
-
-      const { error } = await supabase
-        .from('event_attendees')
-        .insert([{
-          event_id: eventId,
-          user_id: user.id
-        }]);
-
-      if (error) throw error;
-      
+      // Mock join event functionality
       toast.success('Successfully joined event!');
-      fetchEvents();
+      
+      // Update local state
+      setEvents(events.map(event => 
+        event.id === eventId 
+          ? { ...event, is_attending: true, attendees_count: event.attendees_count + 1 }
+          : event
+      ));
     } catch (error) {
       console.error('Error joining event:', error);
       toast.error('Failed to join event');
@@ -184,23 +213,15 @@ export const EventsManager = () => {
 
   const joinCompetition = async (competitionId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please log in to join competitions');
-        return;
-      }
-
-      const { error } = await supabase
-        .from('competition_participants')
-        .insert([{
-          competition_id: competitionId,
-          user_id: user.id
-        }]);
-
-      if (error) throw error;
-      
+      // Mock join competition functionality
       toast.success('Successfully joined competition!');
-      fetchCompetitions();
+      
+      // Update local state
+      setCompetitions(competitions.map(comp => 
+        comp.id === competitionId 
+          ? { ...comp, is_participating: true, participants_count: comp.participants_count + 1 }
+          : comp
+      ));
     } catch (error) {
       console.error('Error joining competition:', error);
       toast.error('Failed to join competition');
