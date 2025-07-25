@@ -7,7 +7,10 @@ import {
   MessageSquare,
   CheckSquare2,
   Radio,
-  GitBranch
+  GitBranch,
+  Phone,
+  Users,
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +22,9 @@ import ChatTab from '@/components/collaboration/ChatTab';
 import TasksTab from '@/components/collaboration/TasksTab';
 import AudioMixerPanel from '@/components/collaboration/AudioMixerPanel';
 import VersionControl from '@/components/collaboration/VersionControl';
+import WebRTCCall from '@/components/collaboration/WebRTCCall';
+import AdvancedMediaPlayer from '@/components/collaboration/AdvancedMediaPlayer';
+import EnhancedTaskManager from '@/components/collaboration/EnhancedTaskManager';
 
 interface Collaborator {
   id: string;
@@ -34,6 +40,8 @@ const CollaborationWorkspace = () => {
   const [activeTab, setActiveTab] = useState('files');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [projectTitle, setProjectTitle] = useState('Sufi Romance - Wedding Album');
+  const [isCallOpen, setIsCallOpen] = useState(false);
+  const [selectedMediaFile, setSelectedMediaFile] = useState<string | null>(null);
 
   const [collaborators] = useState<Collaborator[]>([
     { 
@@ -99,12 +107,22 @@ const CollaborationWorkspace = () => {
               <h1 className="text-2xl font-semibold">{projectTitle}</h1>
             )}
           </div>
-          {!isEditingTitle && (
-            <Button onClick={handleTitleEdit} variant="ghost" className="text-white hover:bg-purple-700">
-              <Edit3 className="h-5 w-5 mr-2" />
-              Edit Title
+          <div className="flex items-center space-x-2">
+            <Button 
+              onClick={() => setIsCallOpen(true)}
+              variant="ghost" 
+              className="text-white hover:bg-purple-700"
+            >
+              <Phone className="h-5 w-5 mr-2" />
+              Start Call
             </Button>
-          )}
+            {!isEditingTitle && (
+              <Button onClick={handleTitleEdit} variant="ghost" className="text-white hover:bg-purple-700">
+                <Edit3 className="h-5 w-5 mr-2" />
+                Edit Title
+              </Button>
+            )}
+          </div>
         </div>
       </div>
       
@@ -130,9 +148,17 @@ const CollaborationWorkspace = () => {
                 <CheckSquare2 className="h-4 w-4 mr-2" />
                 Tasks
               </TabsTrigger>
+              <TabsTrigger value="enhanced-tasks" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
+                <Users className="h-4 w-4 mr-2" />
+                Enhanced Tasks
+              </TabsTrigger>
               <TabsTrigger value="mixer" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
                 <Radio className="h-4 w-4 mr-2" />
                 Audio Mixer
+              </TabsTrigger>
+              <TabsTrigger value="media-player" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
+                <Zap className="h-4 w-4 mr-2" />
+                Media Player
               </TabsTrigger>
               <TabsTrigger value="versions" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
                 <GitBranch className="h-4 w-4 mr-2" />
@@ -157,8 +183,36 @@ const CollaborationWorkspace = () => {
                 <TasksTab projectId="sample-project" collaborators={collaborators} />
               </TabsContent>
               
+              <TabsContent value="enhanced-tasks" className="h-full">
+                <EnhancedTaskManager projectId="sample-project" />
+              </TabsContent>
+              
               <TabsContent value="mixer" className="h-full">
                 <AudioMixerPanel projectId="sample-project" />
+              </TabsContent>
+              
+              <TabsContent value="media-player" className="h-full">
+                <div className="p-4 space-y-4">
+                  {selectedMediaFile ? (
+                    <AdvancedMediaPlayer
+                      fileUrl={selectedMediaFile}
+                      fileName="Sample Audio Track.mp3"
+                      onEdit={(editedData) => {
+                        console.log('Media edited:', editedData);
+                      }}
+                    />
+                  ) : (
+                    <div className="text-center py-12">
+                      <p className="text-muted-foreground">Select a media file to play</p>
+                      <Button 
+                        onClick={() => setSelectedMediaFile('/sample-audio.mp3')}
+                        className="mt-4"
+                      >
+                        Load Sample Audio
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
               
               <TabsContent value="versions" className="h-full">
@@ -168,6 +222,13 @@ const CollaborationWorkspace = () => {
           </Tabs>
         </div>
       </div>
+
+      {/* WebRTC Call Component */}
+      <WebRTCCall
+        projectId="sample-project"
+        isOpen={isCallOpen}
+        onClose={() => setIsCallOpen(false)}
+      />
     </div>
   );
 };
