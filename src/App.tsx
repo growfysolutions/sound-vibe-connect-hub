@@ -37,45 +37,43 @@ const App = () => (
           <ProfileProvider>
             <ABTestProvider>
               <Routes>
+                {/* Public Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Login />} />
+                <Route path="/showcase" element={<SoundVibeCardsShowcase />} />
                 
-                {/* Dashboard with sub-routes */}
+                {/* Dashboard Routes */}
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/dashboard/:tab" element={<DashboardPage />} />
                 
-                {/* Profile and Setup Routes */}
+                {/* Profile Routes */}
                 <Route path="/profile-setup" element={<ProfileSetup />} />
                 <Route path="/profile/:id" element={<ProfilePage />} />
-                <Route path="/profile/:id/portfolio" element={<ProfilePage />} />
-                <Route path="/profile/:id/collaborations" element={<ProfilePage />} />
+                <Route path="/profile/:id/:section" element={<ProfilePage />} />
                 <Route path="/public-profile" element={<PublicProfilePage />} />
                 
                 {/* Settings Routes */}
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/settings/:section" element={<Settings />} />
                 
-                {/* Project Management Routes */}
+                {/* Project and Collaboration Routes */}
                 <Route path="/projects" element={<DashboardPage />} />
                 <Route path="/projects/:projectId" element={<CollaborationWorkspace />} />
-                <Route path="/projects/:projectId/milestones" element={<CollaborationWorkspace />} />
-                <Route path="/projects/:projectId/files" element={<CollaborationWorkspace />} />
+                <Route path="/projects/:projectId/:section" element={<CollaborationWorkspace />} />
+                <Route path="/collaborations" element={<DashboardPage />} />
+                <Route path="/collaborations/:collaborationId" element={<CollaborationWorkspace />} />
+                <Route path="/collaborate/:projectId" element={<CollaborationWorkspace />} />
                 
-                {/* Marketplace and Gigs */}
+                {/* Marketplace and Gig Routes */}
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/gigs/:gigId" element={<GigDetails />} />
                 <Route path="/gigs/:gigId/propose" element={<SubmitProposal />} />
                 <Route path="/gigs/:gigId/proposals" element={<GigProposals />} />
                 <Route path="/gig-management" element={<GigManagement />} />
                 
-                {/* Messaging Routes */}
+                {/* Communication Routes */}
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/messages/:conversationId" element={<Messages />} />
-                
-                {/* Collaboration Routes */}
-                <Route path="/collaborations" element={<DashboardPage />} />
-                <Route path="/collaborations/:collaborationId" element={<CollaborationWorkspace />} />
-                <Route path="/collaborate/:projectId" element={<CollaborationWorkspace />} />
                 
                 {/* Contract Management */}
                 <Route path="/contracts" element={<MyContracts />} />
@@ -84,9 +82,6 @@ const App = () => (
                 {/* Artist Discovery */}
                 <Route path="/artists" element={<DashboardPage />} />
                 <Route path="/artists/:id" element={<ProfilePage />} />
-                
-                {/* Showcase and Help */}
-                <Route path="/showcase" element={<SoundVibeCardsShowcase />} />
                 
                 {/* Catch-all route MUST be last */}
                 <Route path="*" element={<NotFound />} />
