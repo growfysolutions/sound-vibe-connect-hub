@@ -196,7 +196,7 @@ const GigManagement = () => {
                     <label className="text-sm font-medium text-blue-300">Special Requests</label>
                     <p className="text-gray-900">{gigDetails.specialRequests}</p>
                   </div>
-                  <div>
+                  <div className="text-[lime-20] text-lime-200">
                     <label className="text-sm font-medium text-blue-300">Equipment Needed</label>
                     <p className="text-gray-900">{gigDetails.equipment}</p>
                   </div>
