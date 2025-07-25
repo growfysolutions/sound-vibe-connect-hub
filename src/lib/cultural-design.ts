@@ -1,59 +1,50 @@
-
 import { cn } from './utils';
 
-// Modern music platform design system utilities
+// Modern Ocean Blue music platform design system utilities
 export const culturalStyles = {
-  // Modern Music Platform Color System
+  // Modern Ocean Blue Color System
   colors: {
-    // Primary Purple - Creativity, premium feel, music industry standard
-    primary: 'text-music-purple',
-    primaryBg: 'bg-music-purple',
-    primaryGradient: 'bg-music-gradient',
-    primaryLight: 'text-music-purple-light',
-    primaryDark: 'text-music-purple-dark',
+    // Primary Ocean Blue - Trust, professionalism, creativity
+    primary: 'text-ocean-blue',
+    primaryBg: 'bg-ocean-blue',
+    primaryGradient: 'bg-ocean-gradient',
+    primaryLight: 'text-ocean-blue-light',
+    primaryDark: 'text-ocean-blue-dark',
     
-    // Secondary Blue - Trust, technology, professional networking
-    secondary: 'text-electric-blue',
-    secondaryBg: 'bg-electric-blue',
-    secondaryGradient: 'bg-electric-gradient',
-    secondaryLight: 'text-electric-blue-light',
-    secondaryDark: 'text-electric-blue-dark',
+    // Secondary Teal - Innovation, growth, collaboration
+    secondary: 'text-teal',
+    secondaryBg: 'bg-teal',
+    secondaryGradient: 'bg-teal-gradient',
+    secondaryLight: 'text-teal-light',
+    secondaryDark: 'text-teal-dark',
     
-    // Accent Green - Success, growth, positive interactions
-    accent: 'text-vibrant-green',
-    accentBg: 'bg-vibrant-green',
-    accentGradient: 'bg-success-gradient',
-    accentLight: 'text-vibrant-green-light',
-    accentDark: 'text-vibrant-green-dark',
+    // Accent combinations
+    accent: 'text-teal',
+    accentBg: 'bg-teal',
+    accentGradient: 'bg-teal-gradient',
+    accentLight: 'text-teal-light',
+    accentDark: 'text-teal-dark',
     
-    // Success Green - Growth, completed actions
-    success: 'text-vibrant-green',
-    successBg: 'bg-vibrant-green',
-    successGradient: 'bg-success-gradient',
-    successLight: 'text-vibrant-green-light',
-    successDark: 'text-vibrant-green-dark',
+    // Success, warning, error remain the same
+    success: 'text-green-600',
+    successBg: 'bg-green-600',
+    successGradient: 'bg-gradient-to-r from-green-500 to-green-600',
     
-    // Warning Orange - Attention, warnings
-    warning: 'text-modern-orange',
-    warningBg: 'bg-modern-orange',
-    warningGradient: 'bg-warning-gradient',
-    warningLight: 'text-modern-orange-light',
-    warningDark: 'text-modern-orange-dark',
+    warning: 'text-amber-600',
+    warningBg: 'bg-amber-600',
+    warningGradient: 'bg-gradient-to-r from-amber-500 to-amber-600',
     
-    // Error Red - Destructive actions, errors
-    error: 'text-modern-red',
-    errorBg: 'bg-modern-red',
-    errorGradient: 'bg-error-gradient',
-    errorLight: 'text-modern-red-light',
-    errorDark: 'text-modern-red-dark',
+    error: 'text-red-600',
+    errorBg: 'bg-red-600',
+    errorGradient: 'bg-gradient-to-r from-red-500 to-red-600',
     
     // Modern backgrounds
-    modernBg: 'bg-modern-bg-primary',
-    modernBgSecondary: 'bg-modern-bg-secondary',
-    modernBgTertiary: 'bg-modern-bg-tertiary',
-    modernNeutral: 'bg-modern-neutral',
-    modernNeutralLight: 'bg-modern-neutral-light',
-    modernNeutralDark: 'bg-modern-neutral-dark',
+    modernBg: 'bg-background',
+    modernBgSecondary: 'bg-card',
+    modernBgTertiary: 'bg-muted',
+    modernNeutral: 'bg-neutral-100',
+    modernNeutralLight: 'bg-neutral-50',
+    modernNeutralDark: 'bg-neutral-200',
   },
 
   // Typography system for modern music platform
@@ -64,77 +55,77 @@ export const culturalStyles = {
     label: 'font-medium text-sm text-foreground',
     button: 'font-medium tracking-wide',
     caption: 'text-sm text-muted-foreground',
-    modern: 'font-sans tracking-tight', // Clean, modern typography
+    modern: 'font-sans tracking-tight',
   },
 
   // Modern patterns for contemporary design
   patterns: {
     card: 'relative overflow-hidden backdrop-blur-sm',
-    modern: 'bg-gradient-to-br from-music-purple/5 to-electric-blue/5',
+    modern: 'bg-gradient-to-br from-ocean-blue/5 to-teal/5',
     glass: 'backdrop-blur-md bg-white/10 border border-white/20',
-    modernFrame: 'border border-music-purple/30 shadow-modern-purple',
-    tech: 'bg-gradient-to-br from-electric-blue/5 to-vibrant-green/5',
+    modernFrame: 'border border-ocean-blue/30 shadow-modern-ocean',
+    tech: 'bg-gradient-to-br from-teal/5 to-ocean-blue/5',
     premium: 'bg-modern-primary',
   },
 
   // Component styles with modern aesthetics
   components: {
     // Form elements
-    input: 'border-2 border-music-purple/20 hover:border-music-purple/40 focus:border-music-purple rounded-lg transition-all duration-200',
-    inputError: 'border-modern-red focus:border-modern-red',
-    inputSuccess: 'border-vibrant-green focus:border-vibrant-green',
+    input: 'border-2 border-ocean-blue/20 hover:border-ocean-blue/40 focus:border-ocean-blue rounded-lg transition-all duration-200',
+    inputError: 'border-red-500 focus:border-red-500',
+    inputSuccess: 'border-green-500 focus:border-green-500',
     
     // Buttons with modern gradients
-    primaryButton: 'bg-music-gradient text-white shadow-modern-purple hover:shadow-modern-glow hover:scale-[1.02] transition-all duration-300',
-    secondaryButton: 'border-2 border-electric-blue text-electric-blue hover:bg-electric-blue/10 transition-all duration-200',
-    accentButton: 'bg-success-gradient text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
-    successButton: 'bg-success-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
-    warningButton: 'bg-warning-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
-    errorButton: 'bg-error-gradient text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    primaryButton: 'bg-ocean-gradient text-white shadow-modern-ocean hover:shadow-ocean-glow hover:scale-[1.02] transition-all duration-300',
+    secondaryButton: 'border-2 border-teal text-teal hover:bg-teal/10 transition-all duration-200',
+    accentButton: 'bg-teal-gradient text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300',
+    successButton: 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    warningButton: 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
+    errorButton: 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300',
     
     // Cards with modern depth
-    card: 'bg-white rounded-xl border border-music-purple/20 shadow-modern-purple hover:shadow-modern-glow transition-all duration-300',
-    profileCard: 'bg-white rounded-xl border border-music-purple/20 p-4 relative overflow-hidden',
-    premiumCard: 'bg-modern-primary rounded-xl border border-electric-blue/30 shadow-lg',
+    card: 'bg-card rounded-xl border border-ocean-blue/20 shadow-modern-ocean hover:shadow-ocean-glow transition-all duration-300',
+    profileCard: 'bg-card rounded-xl border border-ocean-blue/20 p-4 relative overflow-hidden',
+    premiumCard: 'bg-modern-primary rounded-xl border border-teal/30 shadow-lg',
     glassCard: 'backdrop-blur-md bg-white/10 border border-white/20 rounded-xl',
     
     // Navigation with modern trust elements
     navItem: 'rounded-xl transition-all duration-300 hover:scale-105',
-    navActive: 'bg-gradient-to-r from-music-purple/20 to-electric-blue/20 text-music-purple border border-music-purple/30 shadow-modern-trust',
+    navActive: 'bg-gradient-to-r from-ocean-blue/20 to-teal/20 text-ocean-blue border border-ocean-blue/30 shadow-modern-trust',
     
     // Loading states with modern aesthetics
-    loader: 'animate-spin text-music-purple',
-    progress: 'bg-music-gradient',
+    loader: 'animate-spin text-ocean-blue',
+    progress: 'bg-ocean-gradient',
     
     // Trust indicators
-    verified: 'bg-electric-blue/10 text-electric-blue border border-electric-blue/30',
-    premium: 'bg-music-gradient text-white shadow-modern-glow',
+    verified: 'bg-teal/10 text-teal border border-teal/30',
+    premium: 'bg-ocean-gradient text-white shadow-ocean-glow',
   },
 
   // Modern elements and symbols
   elements: {
-    separator: '🎵', // Musical note
-    success: '✅', // Success checkmark
-    music: '🎶', // Musical notes
-    star: '⭐', // Star rating
-    premium: '👑', // Premium crown
-    verified: '✓', // Verified checkmark
-    collaboration: '🤝', // Handshake
-    creative: '🎨', // Art palette
-    tech: '⚡', // Lightning bolt
-    community: '👥', // Community
+    separator: '🎵',
+    success: '✅',
+    music: '🎶',
+    star: '⭐',
+    premium: '👑',
+    verified: '✓',
+    collaboration: '🤝',
+    creative: '🎨',
+    tech: '⚡',
+    community: '👥',
   },
 
   // Modern gradients for specific use cases
   gradients: {
-    primary: 'bg-music-gradient', // Purple gradient
-    secondary: 'bg-electric-gradient', // Blue gradient
-    success: 'bg-success-gradient', // Green gradient
-    warning: 'bg-warning-gradient', // Orange gradient
-    error: 'bg-error-gradient', // Red gradient
-    modern: 'bg-modern-primary', // Multi-color modern gradient
-    neutral: 'bg-modern-neutral', // Neutral gradient
-    glass: 'backdrop-blur-md bg-white/10', // Glass effect
+    primary: 'bg-ocean-gradient',
+    secondary: 'bg-teal-gradient',
+    success: 'bg-gradient-to-r from-green-500 to-green-600',
+    warning: 'bg-gradient-to-r from-amber-500 to-amber-600',
+    error: 'bg-gradient-to-r from-red-500 to-red-600',
+    modern: 'bg-modern-primary',
+    neutral: 'bg-modern-neutral',
+    glass: 'backdrop-blur-md bg-white/10',
   },
 };
 
@@ -148,7 +139,7 @@ export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' 
     case 'project':
       return cn(baseStyles, 'hover:-translate-y-1');
     case 'testimonial':
-      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-music-purple/20 before:font-serif');
+      return cn(baseStyles, 'relative before:absolute before:top-2 before:left-2 before:content-["""] before:text-6xl before:text-ocean-blue/20 before:font-serif');
     case 'premium':
       return cn(baseStyles, culturalStyles.components.premiumCard);
     case 'glass':
@@ -159,7 +150,7 @@ export const getCulturalCardStyle = (variant: 'default' | 'profile' | 'project' 
 };
 
 export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'destructive' = 'primary') => {
-  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-music-purple/50';
+  const baseStyles = culturalStyles.typography.button + ' rounded-lg px-6 py-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-blue/50';
   
   switch (variant) {
     case 'primary':
@@ -180,7 +171,7 @@ export const getCulturalButtonStyle = (variant: 'primary' | 'secondary' | 'accen
 };
 
 export const getCulturalInputStyle = (state: 'default' | 'error' | 'success' = 'default') => {
-  const baseStyles = culturalStyles.components.input + ' px-4 py-3 bg-white';
+  const baseStyles = culturalStyles.components.input + ' px-4 py-3 bg-background';
   
   switch (state) {
     case 'error':
@@ -205,11 +196,11 @@ export const getCulturalNavigationStyle = (isActive: boolean = false) => {
 // Modern color palette accessibility helper
 export const getCulturalColorContrast = (colorName: string) => {
   const contrastMap = {
-    'music-purple': { light: 'text-white', dark: 'text-gray-900' },
-    'electric-blue': { light: 'text-white', dark: 'text-gray-100' },
-    'vibrant-green': { light: 'text-white', dark: 'text-gray-100' },
-    'modern-orange': { light: 'text-white', dark: 'text-gray-900' },
-    'modern-red': { light: 'text-white', dark: 'text-gray-100' },
+    'ocean-blue': { light: 'text-white', dark: 'text-gray-900' },
+    'teal': { light: 'text-white', dark: 'text-gray-100' },
+    'green': { light: 'text-white', dark: 'text-gray-100' },
+    'amber': { light: 'text-white', dark: 'text-gray-900' },
+    'red': { light: 'text-white', dark: 'text-gray-100' },
   };
   
   return contrastMap[colorName as keyof typeof contrastMap] || { light: 'text-white', dark: 'text-gray-900' };

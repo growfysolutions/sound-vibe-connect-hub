@@ -16,19 +16,19 @@ export const DholLoader: React.FC<DholLoaderProps> = ({ size = 'md', className }
 
   return (
     <div className={cn('relative', sizeClasses, className)}>
-      {/* Dhol drum shape */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 animate-spin shadow-lg">
-        {/* Drum rim */}
-        <div className="absolute inset-1 rounded-full border-2 border-amber-400/50" />
+      {/* Ocean-themed loader shape */}
+      <div className="absolute inset-0 rounded-full bg-ocean-gradient animate-spin shadow-lg">
+        {/* Loader rim */}
+        <div className="absolute inset-1 rounded-full border-2 border-ocean-blue-light/50" />
         
         {/* Center dot */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-saffron rounded-full animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-teal rounded-full animate-pulse" />
         
         {/* Decorative lines */}
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-px h-2 bg-amber-400/70" />
-        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-px h-2 bg-amber-400/70" />
-        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 h-px w-2 bg-amber-400/70" />
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 h-px w-2 bg-amber-400/70" />
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-px h-2 bg-ocean-blue-light/70" />
+        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-px h-2 bg-ocean-blue-light/70" />
+        <div className="absolute left-2 top-1/2 transform -translate-y-1/2 h-px w-2 bg-ocean-blue-light/70" />
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 h-px w-2 bg-ocean-blue-light/70" />
       </div>
     </div>
   );
