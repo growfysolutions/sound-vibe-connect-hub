@@ -369,7 +369,7 @@ const Dashboard = () => {
       
       {/* Three-Column Grid Layout */}
       <div className="dashboard-grid">
-        {/* Left Sidebar: 280px fixed */}
+        {/* Left Sidebar */}
         <div className="left-sidebar">
           <DashboardSidebar 
             activeTab={activeTab}
@@ -377,9 +377,9 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Main Content: flex-1 */}
+        {/* Main Content */}
         <div className="main-content">
-          {/* Header: 64px fixed height */}
+          {/* Header */}
           <div className="dashboard-header">
             <DashboardNav 
               searchQuery={activeSearchQuery} 
@@ -388,10 +388,12 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Content Area: flex-1 with overflow */}
+          {/* Content Area */}
           <div className="main-content-area">
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full h-full">
-              <TabsContent value="feed" className="h-full"><FeedTimeline /></TabsContent>
+              <TabsContent value="feed" className="h-full">
+                <FeedTimeline />
+              </TabsContent>
               <TabsContent value="discover" className="h-full">
                 <DiscoverTab 
                   professionals={filteredProfessionals} 
@@ -424,14 +426,20 @@ const Dashboard = () => {
               <TabsContent value="progress" className="h-full">
                 <ProgressPanel connectionsCount={connectedProfiles.length} projectsCount={projects.length} />
               </TabsContent>
-              <TabsContent value="contracts" className="h-full"><MyContracts /></TabsContent>
-              <TabsContent value="recommendations" className="h-full"><RecommendationEngine /></TabsContent>
-              <TabsContent value="analytics" className="h-full"><AnalyticsDashboard /></TabsContent>
+              <TabsContent value="contracts" className="h-full">
+                <MyContracts />
+              </TabsContent>
+              <TabsContent value="recommendations" className="h-full">
+                <RecommendationEngine />
+              </TabsContent>
+              <TabsContent value="analytics" className="h-full">
+                <AnalyticsDashboard />
+              </TabsContent>
             </Tabs>
           </div>
         </div>
 
-        {/* Right Sidebar: 320px fixed */}
+        {/* Right Sidebar */}
         <div className="right-sidebar">
           <div className="right-sidebar-content">
             <TodaysInspirationWidget />
