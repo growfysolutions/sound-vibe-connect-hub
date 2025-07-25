@@ -221,7 +221,6 @@ const CollaborationWorkspace = () => {
 
       {/* WebRTC Call Component */}
       <WebRTCCall
-        projectId="sample-project"
         isOpen={isCallOpen}
         onClose={() => setIsCallOpen(false)}
       />

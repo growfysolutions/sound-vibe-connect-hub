@@ -15,12 +15,11 @@ import {
 } from 'lucide-react';
 
 interface WebRTCCallProps {
-  projectId: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const WebRTCCall = ({ projectId, isOpen, onClose }: WebRTCCallProps) => {
+const WebRTCCall = ({ isOpen, onClose }: WebRTCCallProps) => {
   const {
     localStream,
     remoteStream,
