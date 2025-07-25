@@ -12,15 +12,23 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Upload, User, MapPin, Music, Briefcase, X } from 'lucide-react';
 
+interface ProfileFormData {
+  full_name: string;
+  bio: string;
+  location: string;
+  genres: string[];
+  professional_roles: string[];
+}
+
 const ProfileSettings = () => {
   const { profile, refetchProfile } = useProfile();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [profileData, setProfileData] = useState({
+  const [profileData, setProfileData] = useState<ProfileFormData>({
     full_name: profile?.full_name || '',
     bio: profile?.bio || '',
     location: profile?.location || '',
-    genres: [],
-    professional_roles: [],
+    genres: (profile as any)?.genres || [],
+    professional_roles: (profile as any)?.professional_roles || [],
   });
 
   const musicGenres = [
@@ -31,7 +39,7 @@ const ProfileSettings = () => {
     'Singer', 'Music Director', 'Video Editor', 'Sound Engineer', 'Actor/Model', 'Producer', 'Lyricist', 'Choreographer'
   ];
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof ProfileFormData, value: string) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -48,7 +56,7 @@ const ProfileSettings = () => {
     setProfileData(prev => ({
       ...prev,
       professional_roles: prev.professional_roles.includes(role)
-        ? prev.professional_roles.filter((r: string) => r !== role)
+        ? prev.professional_roles.filter(r => r !== role)
         : [...prev.professional_roles, role]
     }));
   };
