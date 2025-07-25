@@ -1,6 +1,4 @@
-
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useProfile } from '@/contexts/ProfileContext';
 
 interface WebRTCState {
   localStream: MediaStream | null;
@@ -16,8 +14,7 @@ interface PeerConnectionConfig {
   iceServers: RTCIceServer[];
 }
 
-export const useWebRTC = (projectId: string) => {
-  const { profile } = useProfile();
+export const useWebRTC = () => {
   const [state, setState] = useState<WebRTCState>({
     localStream: null,
     remoteStream: null,

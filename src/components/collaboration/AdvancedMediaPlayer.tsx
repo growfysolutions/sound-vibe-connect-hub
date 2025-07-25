@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,10 +21,9 @@ import {
 interface AdvancedMediaPlayerProps {
   fileUrl: string;
   fileName: string;
-  onEdit?: (editedData: any) => void;
 }
 
-const AdvancedMediaPlayer = ({ fileUrl, fileName, onEdit }: AdvancedMediaPlayerProps) => {
+const AdvancedMediaPlayer = ({ fileUrl, fileName }: AdvancedMediaPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -33,7 +31,6 @@ const AdvancedMediaPlayer = ({ fileUrl, fileName, onEdit }: AdvancedMediaPlayerP
   const [isMuted, setIsMuted] = useState(false);
   const [waveformData, setWaveformData] = useState<number[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<{ start: number; end: number } | null>(null);
-  const [editHistory, setEditHistory] = useState<any[]>([]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -168,21 +165,43 @@ const AdvancedMediaPlayer = ({ fileUrl, fileName, onEdit }: AdvancedMediaPlayerP
       }
     }, [waveformData, currentTime, duration, selectedRegion]);
 
+    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      const newTime = percentage * duration;
+      if (audioRef.current) {
+        audioRef.current.currentTime = newTime;
+      }
+    };
+
+    const handleRegionSelect = (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (e.shiftKey) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percentage = x / rect.width;
+        const clickTime = percentage * duration;
+        
+        if (selectedRegion) {
+          setSelectedRegion({
+            start: Math.min(selectedRegion.start, clickTime),
+            end: Math.max(selectedRegion.start, clickTime)
+          });
+        } else {
+          setSelectedRegion({ start: clickTime, end: clickTime });
+        }
+      } else {
+        handleCanvasClick(e);
+      }
+    };
+
     return (
       <canvas
         ref={canvasRef}
         width={800}
         height={100}
         className="w-full h-24 bg-muted rounded cursor-pointer"
-        onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const percentage = x / rect.width;
-          const newTime = percentage * duration;
-          if (audioRef.current) {
-            audioRef.current.currentTime = newTime;
-          }
-        }}
+        onClick={handleRegionSelect}
       />
     );
   };
