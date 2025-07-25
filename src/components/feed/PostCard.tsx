@@ -212,16 +212,16 @@ export function PostCard({ post }: PostCardProps) {
 
   return (
     <Card className={cn(
-      "border-saffron/20 bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm transition-all duration-300 hover:shadow-lg",
+      "border-hsl(var(--ocean-blue))/20 bg-gradient-to-r from-card/95 to-background/90 backdrop-blur-sm transition-all duration-300 hover:shadow-lg",
       isMobile ? "mx-0" : ""
     )}>
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <Avatar className="w-12 h-12 border-2 border-saffron/30">
+            <Avatar className="w-12 h-12 border-2 border-hsl(var(--ocean-blue))/30">
               <AvatarImage src={avatarUrl || undefined} />
-              <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white font-semibold">
+              <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white font-semibold">
                 {profileInitial}
               </AvatarFallback>
             </Avatar>
@@ -230,7 +230,7 @@ export function PostCard({ post }: PostCardProps) {
                 <h3 className="font-semibold text-foreground truncate">
                   {profileName}
                 </h3>
-                <span className="text-xs bg-saffron/20 text-saffron px-2 py-1 rounded-full">
+                <span className="text-xs bg-hsl(var(--ocean-blue))/20 text-hsl(var(--ocean-blue)) px-2 py-1 rounded-full">
                   ✓ Verified Artist
                 </span>
               </div>
@@ -285,14 +285,14 @@ export function PostCard({ post }: PostCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between border-t border-saffron/10 pt-4">
+        <div className="flex items-center justify-between border-t border-hsl(var(--ocean-blue))/10 pt-4">
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="sm"
               className={cn(
                 "flex items-center space-x-2 transition-all duration-200",
-                isLiked ? "text-red-600 hover:text-red-700" : "hover:text-red-600"
+                isLiked ? "text-hsl(var(--color-error-500)) hover:text-hsl(var(--color-error-500))/90" : "hover:text-hsl(var(--color-error-500))"
               )}
               onClick={handleLike}
               disabled={isLoading}
@@ -304,7 +304,7 @@ export function PostCard({ post }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center space-x-2 hover:text-blue-600 transition-colors"
+              className="flex items-center space-x-2 hover:text-hsl(var(--teal)) transition-colors"
               onClick={() => {
                 setShowComments(!showComments);
                 if (!showComments) {
@@ -321,7 +321,7 @@ export function PostCard({ post }: PostCardProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center space-x-2 hover:text-green-600 transition-colors"
+              className="flex items-center space-x-2 hover:text-hsl(var(--color-success-500)) transition-colors"
               onClick={handleShare}
             >
               <Share className="w-4 h-4" />
@@ -334,7 +334,7 @@ export function PostCard({ post }: PostCardProps) {
             size="sm"
             className={cn(
               "flex items-center space-x-2 transition-all duration-200",
-              isSaved ? "text-yellow-600 hover:text-yellow-700" : "hover:text-yellow-600"
+              isSaved ? "text-hsl(var(--color-warning-500)) hover:text-hsl(var(--color-warning-500))/90" : "hover:text-hsl(var(--color-warning-500))"
             )}
             onClick={handleSave}
           >
@@ -345,12 +345,12 @@ export function PostCard({ post }: PostCardProps) {
 
         {/* Comments Section */}
         {showComments && (
-          <div className="mt-4 border-t border-saffron/10 pt-4">
+          <div className="mt-4 border-t border-hsl(var(--ocean-blue))/10 pt-4">
             {/* Comment Input */}
             <div className="flex space-x-3 mb-4">
-              <Avatar className="w-8 h-8 border border-saffron/30">
+              <Avatar className="w-8 h-8 border border-hsl(var(--ocean-blue))/30">
                 <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white text-sm">
+                <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white text-sm">
                   {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
@@ -360,7 +360,7 @@ export function PostCard({ post }: PostCardProps) {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Write a comment... ਟਿੱਪਣੀ ਲਿਖੋ..."
-                  className="border-saffron/30 focus:border-saffron"
+                  className="border-hsl(var(--ocean-blue))/30 focus:border-hsl(var(--ocean-blue))"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -374,7 +374,7 @@ export function PostCard({ post }: PostCardProps) {
                       size="sm"
                       onClick={handleComment}
                       disabled={isCommenting}
-                      className="bg-gradient-to-r from-saffron to-amber-500 hover:from-saffron/90 hover:to-amber-500/90"
+                      className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) hover:from-hsl(var(--ocean-blue))/90 hover:to-hsl(var(--ocean-blue-light))/90"
                     >
                       {isCommenting ? 'Posting...' : 'Post Comment'}
                     </Button>
@@ -387,9 +387,9 @@ export function PostCard({ post }: PostCardProps) {
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {comments.map((comment) => (
                 <div key={comment.id} className="flex space-x-3">
-                  <Avatar className="w-8 h-8 border border-saffron/30">
+                  <Avatar className="w-8 h-8 border border-hsl(var(--ocean-blue))/30">
                     <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-r from-saffron to-amber-500 text-white text-sm">
+                    <AvatarFallback className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--ocean-blue-light)) text-white text-sm">
                       {comment.profiles?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
