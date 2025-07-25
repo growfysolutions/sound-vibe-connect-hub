@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Upload, 
   Play, 
@@ -18,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-import { toast } from 'sonner';
 
 interface FilesTabProps {
   projectId: string;

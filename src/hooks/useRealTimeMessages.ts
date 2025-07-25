@@ -35,7 +35,19 @@ export const useRealTimeMessages = (conversationId: string) => {
     if (error) {
       console.error('Error fetching messages:', error);
     } else {
-      setMessages(data || []);
+      // Transform the data to match our Message type
+      const transformedMessages: Message[] = (data || []).map(msg => ({
+        id: msg.id,
+        content: msg.content || '',
+        sender_id: msg.sender_id,
+        conversation_id: msg.conversation_id,
+        created_at: msg.created_at,
+        sender: {
+          full_name: msg.sender?.full_name || 'Unknown User',
+          avatar_url: msg.sender?.avatar_url || ''
+        }
+      }));
+      setMessages(transformedMessages);
     }
     setLoading(false);
   }, [conversationId]);
@@ -82,7 +94,19 @@ export const useRealTimeMessages = (conversationId: string) => {
             .single();
 
           if (data) {
-            setMessages(prev => [...prev, data]);
+            // Transform the data to match our Message type
+            const transformedMessage: Message = {
+              id: data.id,
+              content: data.content || '',
+              sender_id: data.sender_id,
+              conversation_id: data.conversation_id,
+              created_at: data.created_at,
+              sender: {
+                full_name: data.sender?.full_name || 'Unknown User',
+                avatar_url: data.sender?.avatar_url || ''
+              }
+            };
+            setMessages(prev => [...prev, transformedMessage]);
           }
         }
       )
