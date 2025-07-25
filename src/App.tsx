@@ -24,7 +24,6 @@ import CollaborationWorkspace from "./pages/CollaborationWorkspace";
 import GigManagement from "./pages/GigManagement";
 import NotFound from "./pages/NotFound";
 import { SoundVibeCardsShowcase } from "./components/cards/SoundVibeCardsShowcase";
-import CulturalFeedbackWidget from "./components/feedback/CulturalFeedbackWidget";
 
 const queryClient = new QueryClient();
 
@@ -92,7 +91,6 @@ const App = () => (
                 {/* Catch-all route MUST be last */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
-              <CulturalFeedbackWidget />
             </ABTestProvider>
           </ProfileProvider>
         </AuthProvider>

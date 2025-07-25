@@ -25,7 +25,6 @@ import { MobileHeader } from '@/components/dashboard/MobileHeader';
 import { OfflineIndicator } from '@/components/dashboard/OfflineIndicator';
 import { TodaysInspirationWidget } from '@/components/dashboard/TodaysInspirationWidget';
 import { MusicalJourneyWidget } from '@/components/dashboard/MusicalJourneyWidget';
-import CulturalBreadcrumb from '@/components/dashboard/CulturalBreadcrumb';
 
 // Import types
 import { Profile, Connection, Project } from '@/types';
@@ -287,9 +286,6 @@ const Dashboard = () => {
           onMenuToggle={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
         />
 
-        {/* Cultural Breadcrumb for Mobile */}
-        <CulturalBreadcrumb />
-
         {isMobileSidebarOpen && (
           <>
             <div 
@@ -363,9 +359,6 @@ const Dashboard = () => {
   return (
     <div className="dashboard-unified-theme">
       <OfflineIndicator />
-      
-      {/* Cultural Breadcrumb for Desktop */}
-      <CulturalBreadcrumb />
       
       {/* Three-Column Grid Layout */}
       <div className="dashboard-grid">
