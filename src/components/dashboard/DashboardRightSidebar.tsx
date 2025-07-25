@@ -1,6 +1,6 @@
 
-import { UserProfileCard } from '@/components/dashboard/UserProfileCard';
-import { QuickActionsBar } from '@/components/dashboard/QuickActionsBar';
+import UserProfileCard from '@/components/dashboard/UserProfileCard';
+import QuickActionsBar from '@/components/dashboard/QuickActionsBar';
 import { CollaborationMatcherWidget } from '@/components/dashboard/CollaborationMatcherWidget';
 import { TodaysInspirationWidget } from '@/components/dashboard/TodaysInspirationWidget';
 import { WeatherMusicWidget } from '@/components/dashboard/WeatherMusicWidget';
