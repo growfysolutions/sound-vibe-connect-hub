@@ -8,6 +8,8 @@ import Messages from '@/pages/Messages';
 import Settings from '@/pages/Settings';
 import UnifiedSettings from '@/pages/UnifiedSettings';
 import CollaborationWorkspace from '@/pages/CollaborationWorkspace';
+import PlatformExpansion from '@/pages/PlatformExpansion';
+import Marketplace from '@/pages/Marketplace';
 
 function App() {
   return (
@@ -19,10 +21,12 @@ function App() {
           <Route path="/profile-setup" element={<ProfileSetup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/gig-management" element={<GigManagement />} />
+          <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/unified-settings" element={<UnifiedSettings />} />
           <Route path="/collaboration-workspace" element={<CollaborationWorkspace />} />
+          <Route path="/platform-expansion" element={<PlatformExpansion />} />
         </Routes>
       </div>
     </Router>

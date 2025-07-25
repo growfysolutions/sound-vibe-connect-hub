@@ -88,6 +88,24 @@ export function EnhancedSidebarNav({
       route: '/dashboard/network'
     },
     { 
+      id: 'marketplace', 
+      label: 'Marketplace', 
+      icon: Briefcase, 
+      color: 'text-purple-500',
+      description: 'Advanced gig management with escrow',
+      badge: 'NEW',
+      route: '/marketplace'
+    },
+    { 
+      id: 'platform_expansion', 
+      label: 'Platform Hub', 
+      icon: Zap, 
+      color: 'text-yellow-500',
+      description: 'Next-gen features and integrations',
+      badge: 'BETA',
+      route: '/platform-expansion'
+    },
+    { 
       id: 'progress', 
       label: 'Progress', 
       icon: TrendingUp, 
@@ -254,7 +272,7 @@ export function EnhancedSidebarNav({
                 {item.badge && (
                   <NotificationBadge 
                     count={typeof item.badge === 'number' ? item.badge : 0}
-                    variant={item.badge === 'NEW' ? 'success' : 'cultural'}
+                    variant={item.badge === 'NEW' ? 'success' : item.badge === 'BETA' ? 'warning' : 'cultural'}
                     className={cn(
                       collapsed ? "top-1 right-1" : "top-2 right-2"
                     )}
