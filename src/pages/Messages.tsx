@@ -1,5 +1,3 @@
-
-
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageSquare, Send, Paperclip } from 'lucide-react';
@@ -9,9 +7,12 @@ import { Button } from '@/components/ui/button';
 import FileAttachment from '@/components/chat/FileAttachment';
 import { VoiceMessageRecorder } from '@/components/chat/VoiceMessageRecorder';
 import { VoiceMessagePlayer } from '@/components/chat/VoiceMessagePlayer';
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import { supabase } from '@/integrations/supabase/client';
 import { Conversation, Message } from '@/types';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const getOtherParticipants = (conversation: Conversation, currentUserId: string) => {
   return conversation.conversation_participants.filter(p => p.user_id !== currentUserId);
@@ -33,6 +34,8 @@ const getConversationDisplayInfo = (conversation: Conversation, currentUserId: s
 
 const Messages = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState('messages');
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -291,122 +294,155 @@ const Messages = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 h-full">
-      <div className="flex border rounded-lg h-full bg-card text-card-foreground shadow-sm" style={{minHeight: '80vh'}}>
-        <div className="w-1/3 border-r">
-          <div className="p-4 border-b">
-            <h2 className="text-xl font-semibold">Chats</h2>
+    <div className="min-h-screen bg-background">
+      <div className="flex h-screen">
+        {/* Sidebar - Hidden on Mobile */}
+        {!isMobile && (
+          <DashboardSidebar 
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+        )}
+
+        {/* Main Messages Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Messages Header */}
+          <div className="h-16 border-b border-border bg-card px-6 flex items-center">
+            <h1 className="text-2xl font-semibold text-foreground">Messages</h1>
+            <div className="ml-4 text-sm text-muted-foreground">ਸੁਨੇਹੇ</div>
           </div>
-          <div className="overflow-y-auto p-2">
-            {loading ? (
-              <p>Loading conversations...</p>
-            ) : conversations.length > 0 ? (
-              conversations.map(convo => {
-                const displayInfo = getConversationDisplayInfo(convo, currentUser.id);
-                return (
-                  <div
-                    key={convo.id}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer ${
-                      selectedConversation?.id === convo.id ? 'bg-muted' : ''
-                    }`}
-                    onClick={() => setSelectedConversation(convo)}
-                  >
-                    <img src={displayInfo.avatar_url} alt={displayInfo.name} className="w-12 h-12 rounded-full" />
-                    <div className="flex-1">
-                      <p className="font-semibold">{displayInfo.name}</p>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {convo.messages?.[0]?.content || 'No messages yet'}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-muted-foreground">No conversations yet.</p>
-            )}
-          </div>
-        </div>
-        <div className="w-2/3 flex flex-col">
-          <div className="p-4 border-b flex items-center">
-            <h2 className="text-xl font-semibold">
-              {selectedConversation && currentUser ? getConversationDisplayInfo(selectedConversation, currentUser.id).name : 'Select a conversation'}
-            </h2>
-          </div>
-          <div className="flex-1 p-4 overflow-y-auto" style={{maxHeight: 'calc(100vh - 250px)'}}>
-            {selectedConversation ? (
-              <div className="space-y-4">
-                {loadingMessages ? (
-                  <p>Loading messages...</p>
-                ) : messages.length > 0 ? (
-                  messages.map(msg => (
-                    <div key={msg.id} className={`flex items-end gap-2 ${msg.sender_id === currentUser.id ? 'justify-end' : ''}`}>
-                      {msg.sender_id !== currentUser.id && (
-                        <img src={msg.sender?.avatar_url || '/placeholder.jpg'} alt={msg.sender?.full_name || 'Avatar'} className="w-8 h-8 rounded-full" />
-                      )}
-                      <div className={`rounded-lg px-3 py-2 max-w-sm ${msg.sender_id === currentUser.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                        {msg.content && <p>{msg.content}</p>}
-                        {msg.file_path && msg.file_metadata && (
-                          (msg.file_metadata as any)?.isVoiceMessage ? (
-                            <VoiceMessagePlayer 
-                              filePath={msg.file_path} 
-                              duration={(msg.file_metadata as any)?.duration}
-                            />
-                          ) : (
-                            <FileAttachment filePath={msg.file_path} fileMetadata={msg.file_metadata as { name: string; size: number; type: string; }} />
-                          )
-                        )}
-                        <p className={`text-xs mt-1 ${msg.sender_id === currentUser.id ? 'text-primary-foreground/80' : 'text-muted-foreground/80'}`}>
-                          {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                      </div>
-                      {msg.sender_id === currentUser.id && currentUserProfile && (
-                        <img src={currentUserProfile.avatar_url || '/placeholder.jpg'} alt={currentUserProfile.full_name || 'Avatar'} className="w-8 h-8 rounded-full" />
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-muted-foreground">No messages yet. Say hello!</p>
-                )}
-                <div ref={messagesEndRef} />
+
+          {/* Messages Interface */}
+          <div className="flex-1 flex">
+            <div className="flex border rounded-lg h-full bg-card text-card-foreground shadow-sm m-4" style={{minHeight: 'calc(100vh - 120px)'}}>
+              {/* Conversations List */}
+              <div className="w-1/3 border-r">
+                <div className="p-4 border-b">
+                  <h2 className="text-xl font-semibold">Chats</h2>
+                </div>
+                <div className="overflow-y-auto p-2">
+                  {loading ? (
+                    <p>Loading conversations...</p>
+                  ) : conversations.length > 0 ? (
+                    conversations.map(convo => {
+                      const displayInfo = getConversationDisplayInfo(convo, currentUser.id);
+                      return (
+                        <div
+                          key={convo.id}
+                          className={`flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer ${
+                            selectedConversation?.id === convo.id ? 'bg-muted' : ''
+                          }`}
+                          onClick={() => setSelectedConversation(convo)}
+                        >
+                          <img src={displayInfo.avatar_url} alt={displayInfo.name} className="w-12 h-12 rounded-full" />
+                          <div className="flex-1">
+                            <p className="font-semibold">{displayInfo.name}</p>
+                            <p className="text-sm text-muted-foreground truncate">
+                              {convo.messages?.[0]?.content || 'No messages yet'}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-muted-foreground">No conversations yet.</p>
+                  )}
+                </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                <MessageSquare size={48} />
-                <p className="mt-2">Select a conversation to start chatting.</p>
+
+              {/* Chat Area */}
+              <div className="w-2/3 flex flex-col">
+                <div className="p-4 border-b flex items-center">
+                  <h2 className="text-xl font-semibold">
+                    {selectedConversation && currentUser ? getConversationDisplayInfo(selectedConversation, currentUser.id).name : 'Select a conversation'}
+                  </h2>
+                </div>
+                <div className="flex-1 p-4 overflow-y-auto" style={{maxHeight: 'calc(100vh - 250px)'}}>
+                  {selectedConversation ? (
+                    <div className="space-y-4">
+                      {loadingMessages ? (
+                        <p>Loading messages...</p>
+                      ) : messages.length > 0 ? (
+                        messages.map(msg => (
+                          <div key={msg.id} className={`flex items-end gap-2 ${msg.sender_id === currentUser.id ? 'justify-end' : ''}`}>
+                            {msg.sender_id !== currentUser.id && (
+                              <img src={msg.sender?.avatar_url || '/placeholder.jpg'} alt={msg.sender?.full_name || 'Avatar'} className="w-8 h-8 rounded-full" />
+                            )}
+                            <div className={`rounded-lg px-3 py-2 max-w-sm ${msg.sender_id === currentUser.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                              {msg.content && <p>{msg.content}</p>}
+                              {msg.file_path && msg.file_metadata && (
+                                (msg.file_metadata as any)?.isVoiceMessage ? (
+                                  <VoiceMessagePlayer 
+                                    filePath={msg.file_path} 
+                                    duration={(msg.file_metadata as any)?.duration}
+                                  />
+                                ) : (
+                                  <FileAttachment filePath={msg.file_path} fileMetadata={msg.file_metadata as { name: string; size: number; type: string; }} />
+                                )
+                              )}
+                              <p className={`text-xs mt-1 ${msg.sender_id === currentUser.id ? 'text-primary-foreground/80' : 'text-muted-foreground/80'}`}>
+                                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                            {msg.sender_id === currentUser.id && currentUserProfile && (
+                              <img src={currentUserProfile.avatar_url || '/placeholder.jpg'} alt={currentUserProfile.full_name || 'Avatar'} className="w-8 h-8 rounded-full" />
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground">No messages yet. Say hello!</p>
+                      )}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                      <MessageSquare size={48} />
+                      <p className="mt-2">Select a conversation to start chatting.</p>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 border-t">
+                  {selectedConversation && (
+                    <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                      <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
+                        <Paperclip className="w-4 h-4" />
+                      </Button>
+                      <VoiceMessageRecorder 
+                        onSendVoiceMessage={handleSendVoiceMessage}
+                        disabled={!selectedConversation}
+                      />
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                        className="hidden"
+                        accept="image/jpeg,image/png,audio/mpeg,audio/wav,application/pdf"
+                      />
+                      <Input
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type a message..."
+                        autoComplete="off"
+                      />
+                      <Button type="submit" size="icon" disabled={!newMessage.trim() && !fileInputRef.current?.files?.length}>
+                        <Send className="w-4 h-4" />
+                      </Button>
+                    </form>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-          <div className="p-4 border-t">
-            {selectedConversation && (
-              <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
-                  <Paperclip className="w-4 h-4" />
-                </Button>
-                <VoiceMessageRecorder 
-                  onSendVoiceMessage={handleSendVoiceMessage}
-                  disabled={!selectedConversation}
-                />
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  accept="image/jpeg,image/png,audio/mpeg,audio/wav,application/pdf"
-                />
-                <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type a message..."
-                  autoComplete="off"
-                />
-                <Button type="submit" size="icon" disabled={!newMessage.trim() && !fileInputRef.current?.files?.length}>
-                  <Send className="w-4 h-4" />
-                </Button>
-              </form>
-            )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <MobileBottomNav 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      )}
     </div>
   );
 };

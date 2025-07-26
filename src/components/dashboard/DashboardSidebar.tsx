@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Home, 
@@ -17,7 +16,7 @@ import {
   GitBranch
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -27,6 +26,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarProps) {
   const { profile } = useProfile();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems = [
     { 
@@ -170,13 +170,15 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
 
   const renderNavItem = (item: typeof navigationItems[0] | typeof secondaryItems[0]) => {
     const Icon = item.icon;
-    const isActive = activeTab === item.id;
+    const isActive = activeTab === item.id || 
+      (item.route && location.pathname.startsWith(item.route)) ||
+      (item.id === 'messages' && location.pathname.startsWith('/messages'));
     
     return (
       <button
         key={item.id}
         className={`w-full flex items-center px-6 py-3 text-sm font-medium transition-colors ${
-          isActive && item.type === 'tab'
+          isActive
             ? 'bg-ocean-blue/10 text-ocean-blue border-r-2 border-ocean-blue'
             : 'text-muted-foreground hover:bg-muted hover:text-foreground'
         }`}
