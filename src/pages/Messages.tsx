@@ -1,19 +1,22 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MessageSquare, Send, Paperclip } from 'lucide-react';
+import { MessageSquare, Send, Paperclip, AlertCircle, Wifi, WifiOff, RefreshCw } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import FileAttachment from '@/components/chat/FileAttachment';
 import { VoiceMessageRecorder } from '@/components/chat/VoiceMessageRecorder';
 import { VoiceMessagePlayer } from '@/components/chat/VoiceMessagePlayer';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
 import { supabase } from '@/integrations/supabase/client';
-import { Conversation, Message } from '@/types';
+import { Conversation } from '@/types';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useRealTimeMessages } from '@/hooks/useRealTimeMessages';
 
 const getOtherParticipants = (conversation: Conversation, currentUserId: string) => {
   return conversation.conversation_participants.filter(p => p.user_id !== currentUserId);
@@ -23,7 +26,7 @@ const getConversationDisplayInfo = (conversation: Conversation, currentUserId: s
   if (conversation.is_group_chat) {
     return {
       name: conversation.name || 'Group Chat',
-      avatar_url: '/group-avatar.png', // Placeholder for group avatar
+      avatar_url: '/group-avatar.png',
     };
   }
   const otherParticipant = getOtherParticipants(conversation, currentUserId)[0];
@@ -42,14 +45,46 @@ const Messages = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loadingMessages, setLoadingMessages] = useState(false);
   const [newMessage, setNewMessage] = useState('');
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [conversationsError, setConversationsError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Use the updated hook for real-time messages
+  const { 
+    messages, 
+    loading: messagesLoading, 
+    sending, 
+    error: messagesError, 
+    sendMessage, 
+    refetch: refetchMessages 
+  } = useRealTimeMessages(selectedConversation?.id || '');
+
+  // Network status monitoring
   useEffect(() => {
-    const fetchConversations = async () => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      toast.success('Connection restored');
+    };
+    
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast.error('Connection lost');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const fetchConversations = async () => {
+    try {
+      setConversationsError(null);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setLoading(false);
@@ -64,64 +99,62 @@ const Messages = () => {
         .single();
 
       if (profileError) {
+        console.error('Profile error:', profileError);
         toast.error('Failed to fetch user profile.');
       } else {
         setCurrentUserProfile(profileData);
       }
 
-      // Use a simple approach - get all conversations and then filter by participants
-      const { data: directConversations, error: directError } = await supabase
-        .from('conversations')
-        .select(`
-          id,
-          name,
-          is_group_chat,
-          last_message_at,
-          created_at,
-          created_by
-        `)
-        .order('last_message_at', { ascending: false, nullsFirst: false });
+      // Get conversations where user is a participant
+      const { data: participantData, error: participantError } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('user_id', user.id);
 
-      if (directError) {
-        toast.error('Failed to fetch user conversations.');
-        console.error('Error fetching conversations:', directError);
+      if (participantError) {
+        throw participantError;
+      }
+
+      const conversationIds = participantData?.map(p => p.conversation_id) || [];
+      
+      if (conversationIds.length === 0) {
+        setConversations([]);
         setLoading(false);
         return;
       }
 
-      // For each conversation, get participants separately to avoid recursion
-      const conversationsWithParticipants = [];
-      
-      for (const conv of directConversations || []) {
-        try {
-          const { data: participants } = await supabase
-            .from('conversation_participants')
-            .select(`
-              user_id,
-              profiles (
-                id,
-                full_name,
-                avatar_url
-              )
-            `)
-            .eq('conversation_id', conv.id);
+      // Fetch conversations with all participants
+      const { data: conversationsData, error: conversationsError } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          conversation_participants (
+            user_id,
+            profiles (
+              id,
+              full_name,
+              avatar_url
+            )
+          )
+        `)
+        .in('id', conversationIds)
+        .order('last_message_at', { ascending: false, nullsFirst: false });
 
-          // Only include conversations where current user is a participant
-          if (participants?.some(p => p.user_id === user.id)) {
-            conversationsWithParticipants.push({
-              ...conv,
-              conversation_participants: participants || []
-            });
-          }
-        } catch (error) {
-          console.error(`Error fetching participants for conversation ${conv.id}:`, error);
-        }
+      if (conversationsError) {
+        throw conversationsError;
       }
 
-      setConversations(conversationsWithParticipants as Conversation[]);
+      setConversations(conversationsData as Conversation[] || []);
+    } catch (error: any) {
+      console.error('Error fetching conversations:', error);
+      setConversationsError(error.message || 'Failed to load conversations');
+      toast.error('Failed to load conversations');
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchConversations();
   }, []);
 
@@ -137,161 +170,144 @@ const Messages = () => {
   }, [location.state, conversations]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (!selectedConversation) return;
-
-      setLoadingMessages(true);
-      // Fetch messages first
-      const { data: messagesData, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('conversation_id', selectedConversation.id)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        toast.error('Failed to fetch messages.');
-        setLoadingMessages(false);
-        return;
-      }
-
-      // Then fetch sender profiles for each message
-      const messagesWithSenders = await Promise.all(
-        messagesData.map(async (message) => {
-          const { data: senderData } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url')
-            .eq('id', message.sender_id)
-            .single();
-          
-          return {
-            ...message,
-            sender: senderData
-          };
-        })
-      );
-
-      setMessages(messagesWithSenders as Message[]);
-      setLoadingMessages(false);
-    };
-
-    fetchMessages();
-
-    const channel = supabase
-      .channel(`messages:${selectedConversation?.id}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${selectedConversation?.id}` },
-        async (payload) => {
-          const newMessage = payload.new as Message;
-          const { data: senderData, error: senderError } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url')
-            .eq('id', newMessage.sender_id)
-            .single();
-          
-          if (senderError) {
-            console.error('Error fetching sender profile for new message', senderError);
-          } else {
-            const messageWithSender = { ...newMessage, sender: senderData };
-            setMessages(currentMessages => [...currentMessages, messageWithSender as any]);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [selectedConversation]);
-
-  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedConversation || !currentUser) return;
+    if (!newMessage.trim() || sending || !isOnline) return;
 
-    const { error } = await supabase.from('messages').insert({
-      conversation_id: selectedConversation.id,
-      sender_id: currentUser.id,
-      content: newMessage,
-    });
-
-    if (error) {
-      toast.error('Failed to send message.');
-    } else {
+    const success = await sendMessage({ content: newMessage.trim() });
+    if (success) {
       setNewMessage('');
     }
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !selectedConversation || !currentUser) return;
+    if (!file || !selectedConversation || !currentUser || !isOnline) return;
 
     const fileId = uuidv4();
     const filePath = `${currentUser.id}/${selectedConversation.id}/${fileId}-${file.name}`;
 
     const toastId = toast.loading(`Uploading ${file.name}...`);
 
-    const { error: uploadError } = await supabase.storage
-      .from('chat_attachments')
-      .upload(filePath, file);
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('chat_attachments')
+        .upload(filePath, file);
 
-    if (uploadError) {
-      toast.error(`Failed to upload file: ${uploadError.message}`, { id: toastId });
-      return;
-    }
+      if (uploadError) {
+        throw uploadError;
+      }
 
-    const { error: messageError } = await supabase.from('messages').insert({
-      conversation_id: selectedConversation.id,
-      sender_id: currentUser.id,
-      file_path: filePath,
-      file_metadata: { name: file.name, type: file.type, size: file.size },
-    });
+      const success = await sendMessage({
+        file_path: filePath,
+        file_metadata: { 
+          name: file.name, 
+          type: file.type, 
+          size: file.size 
+        }
+      });
 
-    if (messageError) {
-      toast.error('Failed to send file message.', { id: toastId });
-    } else {
-      toast.success('File sent!', { id: toastId });
+      if (success) {
+        toast.success('File sent!', { id: toastId });
+      } else {
+        toast.error('Failed to send file', { id: toastId });
+      }
+    } catch (error: any) {
+      console.error('File upload error:', error);
+      toast.error(`Failed to upload file: ${error.message}`, { id: toastId });
     }
   };
 
   const handleSendVoiceMessage = async (audioBlob: Blob, duration: number) => {
-    if (!selectedConversation || !currentUser) return;
+    if (!selectedConversation || !currentUser || !isOnline) return;
 
     const fileId = uuidv4();
     const filePath = `${currentUser.id}/${selectedConversation.id}/voice_${fileId}.webm`;
 
     const toastId = toast.loading('Sending voice message...');
 
-    const { error: uploadError } = await supabase.storage
-      .from('chat_attachments')
-      .upload(filePath, audioBlob);
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('chat_attachments')
+        .upload(filePath, audioBlob);
 
-    if (uploadError) {
-      toast.error(`Failed to upload voice message: ${uploadError.message}`, { id: toastId });
-      return;
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const success = await sendMessage({
+        file_path: filePath,
+        file_metadata: { 
+          name: `voice_message_${Date.now()}.webm`, 
+          type: 'audio/webm', 
+          size: audioBlob.size,
+          duration: duration,
+          isVoiceMessage: true
+        }
+      });
+
+      if (success) {
+        toast.success('Voice message sent!', { id: toastId });
+      } else {
+        toast.error('Failed to send voice message', { id: toastId });
+      }
+    } catch (error: any) {
+      console.error('Voice message upload error:', error);
+      toast.error(`Failed to upload voice message: ${error.message}`, { id: toastId });
     }
+  };
 
-    const { error: messageError } = await supabase.from('messages').insert({
-      conversation_id: selectedConversation.id,
-      sender_id: currentUser.id,
-      file_path: filePath,
-      file_metadata: { 
-        name: `voice_message_${Date.now()}.webm`, 
-        type: 'audio/webm', 
-        size: audioBlob.size,
-        duration: duration,
-        isVoiceMessage: true
-      },
-    });
+  const renderMessage = (message: any) => {
+    const isCurrentUser = message.sender_id === currentUser?.id;
 
-    if (messageError) {
-      toast.error('Failed to send voice message.', { id: toastId });
-    } else {
-      toast.success('Voice message sent!', { id: toastId });
-    }
+    return (
+      <div key={message.id} className={`flex items-end gap-2 ${isCurrentUser ? 'justify-end' : ''}`}>
+        {!isCurrentUser && (
+          <img 
+            src={message.sender?.avatar_url || '/placeholder.jpg'} 
+            alt={message.sender?.full_name || 'Avatar'} 
+            className="w-8 h-8 rounded-full object-cover" 
+          />
+        )}
+        <div className={`rounded-lg px-3 py-2 max-w-sm ${
+          isCurrentUser 
+            ? 'bg-primary text-primary-foreground' 
+            : 'bg-muted'
+        }`}>
+          {message.content && <p className="text-sm">{message.content}</p>}
+          {message.file_path && message.file_metadata && (
+            message.file_metadata?.isVoiceMessage ? (
+              <VoiceMessagePlayer 
+                filePath={message.file_path} 
+                duration={message.file_metadata?.duration}
+              />
+            ) : (
+              <FileAttachment 
+                filePath={message.file_path} 
+                fileMetadata={message.file_metadata} 
+              />
+            )
+          )}
+          <p className={`text-xs mt-1 ${
+            isCurrentUser 
+              ? 'text-primary-foreground/80' 
+              : 'text-muted-foreground/80'
+          }`}>
+            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+        </div>
+        {isCurrentUser && currentUserProfile && (
+          <img 
+            src={currentUserProfile.avatar_url || '/placeholder.jpg'} 
+            alt={currentUserProfile.full_name || 'Avatar'} 
+            className="w-8 h-8 rounded-full object-cover" 
+          />
+        )}
+      </div>
+    );
   };
 
   return (
@@ -307,9 +323,26 @@ const Messages = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="h-16 border-b border-border bg-card px-6 flex items-center">
-          <h1 className="text-2xl font-semibold text-foreground">Messages</h1>
-          <div className="ml-4 text-sm text-muted-foreground">ਸੁਨੇਹੇ</div>
+        <div className="h-16 border-b border-border bg-card px-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-semibold text-foreground">Messages</h1>
+            <div className="text-sm text-muted-foreground">ਸੁਨੇਹੇ</div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isOnline ? (
+              <Wifi className="w-4 h-4 text-green-500" />
+            ) : (
+              <WifiOff className="w-4 h-4 text-red-500" />
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={fetchConversations}
+              disabled={loading}
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
 
         {/* Messages Interface */}
@@ -323,6 +356,21 @@ const Messages = () => {
               <div className="p-2 space-y-1">
                 {loading ? (
                   <p className="p-4 text-muted-foreground">Loading conversations...</p>
+                ) : conversationsError ? (
+                  <Alert className="m-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      {conversationsError}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={fetchConversations}
+                        className="ml-2"
+                      >
+                        Retry
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
                 ) : conversations.length > 0 ? (
                   conversations.map(convo => {
                     const displayInfo = getConversationDisplayInfo(convo, currentUser?.id || '');
@@ -361,62 +409,43 @@ const Messages = () => {
               <>
                 {/* Chat Header */}
                 <div className="p-4 border-b border-border bg-card">
-                  <h2 className="text-lg font-semibold">
-                    {getConversationDisplayInfo(selectedConversation, currentUser.id).name}
-                  </h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold">
+                      {getConversationDisplayInfo(selectedConversation, currentUser.id).name}
+                    </h2>
+                    {!isOnline && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <WifiOff className="w-4 h-4" />
+                        Offline
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Messages Area */}
                 <ScrollArea className="flex-1 p-4">
+                  {messagesError && (
+                    <Alert className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        {messagesError}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={refetchMessages}
+                          className="ml-2"
+                        >
+                          Retry
+                        </Button>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
                   <div className="space-y-4">
-                    {loadingMessages ? (
+                    {messagesLoading ? (
                       <p className="text-center text-muted-foreground">Loading messages...</p>
                     ) : messages.length > 0 ? (
-                      messages.map(msg => (
-                        <div key={msg.id} className={`flex items-end gap-2 ${msg.sender_id === currentUser.id ? 'justify-end' : ''}`}>
-                          {msg.sender_id !== currentUser.id && (
-                            <img 
-                              src={msg.sender?.avatar_url || '/placeholder.jpg'} 
-                              alt={msg.sender?.full_name || 'Avatar'} 
-                              className="w-8 h-8 rounded-full object-cover" 
-                            />
-                          )}
-                          <div className={`rounded-lg px-3 py-2 max-w-sm ${
-                            msg.sender_id === currentUser.id 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-muted'
-                          }`}>
-                            {msg.content && <p className="text-sm">{msg.content}</p>}
-                            {msg.file_path && msg.file_metadata && (
-                              (msg.file_metadata as any)?.isVoiceMessage ? (
-                                <VoiceMessagePlayer 
-                                  filePath={msg.file_path} 
-                                  duration={(msg.file_metadata as any)?.duration}
-                                />
-                              ) : (
-                                <FileAttachment 
-                                  filePath={msg.file_path} 
-                                  fileMetadata={msg.file_metadata as { name: string; size: number; type: string; }} 
-                                />
-                              )
-                            )}
-                            <p className={`text-xs mt-1 ${
-                              msg.sender_id === currentUser.id 
-                                ? 'text-primary-foreground/80' 
-                                : 'text-muted-foreground/80'
-                            }`}>
-                              {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                          </div>
-                          {msg.sender_id === currentUser.id && currentUserProfile && (
-                            <img 
-                              src={currentUserProfile.avatar_url || '/placeholder.jpg'} 
-                              alt={currentUserProfile.full_name || 'Avatar'} 
-                              className="w-8 h-8 rounded-full object-cover" 
-                            />
-                          )}
-                        </div>
-                      ))
+                      messages.map(renderMessage)
                     ) : (
                       <p className="text-center text-muted-foreground">No messages yet. Say hello!</p>
                     )}
@@ -432,13 +461,16 @@ const Messages = () => {
                       variant="ghost" 
                       size="icon" 
                       onClick={() => fileInputRef.current?.click()}
+                      disabled={!isOnline || sending}
                     >
                       <Paperclip className="w-4 h-4" />
                     </Button>
+                    
                     <VoiceMessageRecorder 
                       onSendVoiceMessage={handleSendVoiceMessage}
-                      disabled={!selectedConversation}
+                      disabled={!selectedConversation || !isOnline || sending}
                     />
+                    
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -446,21 +478,31 @@ const Messages = () => {
                       className="hidden"
                       accept="image/jpeg,image/png,audio/mpeg,audio/wav,application/pdf"
                     />
+                    
                     <Input
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type a message..."
+                      placeholder={isOnline ? "Type a message..." : "Connect to internet to send messages"}
                       autoComplete="off"
                       className="flex-1"
+                      disabled={!isOnline || sending}
                     />
+                    
                     <Button 
                       type="submit" 
                       size="icon" 
-                      disabled={!newMessage.trim()}
+                      disabled={!newMessage.trim() || sending || !isOnline}
                     >
                       <Send className="w-4 h-4" />
                     </Button>
                   </form>
+                  
+                  {sending && (
+                    <div className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
+                      <RefreshCw className="w-3 h-3 animate-spin" />
+                      Sending message...
+                    </div>
+                  )}
                 </div>
               </>
             ) : (

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import {
   AtSign,
   MoreVertical
 } from 'lucide-react';
+import { Message } from '@/types/message';
 
 interface Collaborator {
   id: string;
@@ -30,12 +30,11 @@ interface ChatTabProps {
   collaborators: Collaborator[];
 }
 
-interface Message {
-  id: string;
+// Use the new unified Message type but extend for local chat needs
+interface LocalChatMessage extends Omit<Message, 'sender'> {
   senderId: string;
   senderName: string;
   senderAvatar: string;
-  content: string;
   timestamp: string;
   type: 'text' | 'file' | 'voice' | 'mention';
   fileUrl?: string;
@@ -46,7 +45,7 @@ interface Message {
 }
 
 const ChatTab = ({ collaborators }: ChatTabProps) => {
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState<LocalChatMessage[]>([
     {
       id: '1',
       senderId: '1',
@@ -54,7 +53,10 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
       senderAvatar: '/placeholder.svg',
       content: 'Just uploaded the latest vocal take. What do you all think?',
       timestamp: '2 hours ago',
-      type: 'text'
+      type: 'text',
+      sender_id: '1',
+      conversation_id: 'sample',
+      created_at: new Date().toISOString()
     },
     {
       id: '2',
@@ -63,7 +65,10 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
       senderAvatar: '/placeholder.svg',
       content: 'Sounds amazing! The emotion in your voice is perfect for this track.',
       timestamp: '2 hours ago',
-      type: 'text'
+      type: 'text',
+      sender_id: '2',
+      conversation_id: 'sample',
+      created_at: new Date().toISOString()
     },
     {
       id: '3',
@@ -75,7 +80,10 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
       type: 'file',
       fileUrl: '/audio/sample.wav',
       fileName: 'Main_Vocal_Take_v3.wav',
-      fileType: 'audio'
+      fileType: 'audio',
+      sender_id: '2',
+      conversation_id: 'sample',
+      created_at: new Date().toISOString()
     },
     {
       id: '4',
@@ -85,7 +93,10 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
       content: '@Jasbir Singh Can we add a slight reverb to the chorus? It might enhance the Sufi feel.',
       timestamp: '45 minutes ago',
       type: 'mention',
-      mentions: ['Jasbir Singh']
+      mentions: ['Jasbir Singh'],
+      sender_id: '3',
+      conversation_id: 'sample',
+      created_at: new Date().toISOString()
     }
   ]);
 
@@ -107,7 +118,7 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
-    const message: Message = {
+    const message: LocalChatMessage = {
       id: Date.now().toString(),
       senderId: 'current-user',
       senderName: 'You',
@@ -115,7 +126,10 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
       content: newMessage,
       timestamp: 'Just now',
       type: newMessage.includes('@') ? 'mention' : 'text',
-      mentions: newMessage.includes('@') ? extractMentions(newMessage) : undefined
+      mentions: newMessage.includes('@') ? extractMentions(newMessage) : undefined,
+      sender_id: 'current-user',
+      conversation_id: 'sample',
+      created_at: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, message]);
@@ -173,7 +187,7 @@ const ChatTab = ({ collaborators }: ChatTabProps) => {
     // Implement voice recording logic here
   };
 
-  const renderMessage = (message: Message) => {
+  const renderMessage = (message: LocalChatMessage) => {
     const isCurrentUser = message.senderId === 'current-user';
 
     return (

@@ -630,6 +630,7 @@ export type Database = {
           file_path: string | null
           id: string
           sender_id: string
+          updated_at: string | null
         }
         Insert: {
           content?: string | null
@@ -639,6 +640,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           sender_id: string
+          updated_at?: string | null
         }
         Update: {
           content?: string | null
@@ -648,6 +650,7 @@ export type Database = {
           file_path?: string | null
           id?: string
           sender_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {

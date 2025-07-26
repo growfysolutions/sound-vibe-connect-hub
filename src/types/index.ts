@@ -1,3 +1,4 @@
+
 import { Database } from '@/integrations/supabase/types';
 
 // Base types derived directly from the database schema
@@ -14,11 +15,8 @@ export type BaseConversation = Database['public']['Tables']['conversations']['Ro
 export type Connection = Database['public']['Tables']['connections']['Row'];
 export type Project = Database['public']['Tables']['projects']['Row'];
 
-// Extended types for use in components, combining base types with related data
-
-export type Message = BaseMessage & {
-  sender: Profile;
-};
+// Import the unified Message type
+export { Message } from './message';
 
 export type Conversation = BaseConversation & {
   conversation_participants: {
@@ -27,8 +25,6 @@ export type Conversation = BaseConversation & {
   }[];
   messages?: Message[];
 };
-
-
 
 // A post with the author's profile
 export type PostWithProfile = Post & {
@@ -62,4 +58,3 @@ export type ConnectionWithProfiles = Connection & {
   requester: Profile;
   addressee: Profile;
 };
-
