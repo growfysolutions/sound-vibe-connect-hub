@@ -51,7 +51,16 @@ export const useProjectTasks = (projectId?: number) => {
         return;
       }
 
-      setTasks(data || []);
+      // Transform the data to match our interface
+      const transformedTasks: ProjectTask[] = (data || []).map(task => ({
+        ...task,
+        status: task.status as ProjectTask['status'],
+        priority: task.priority as ProjectTask['priority'],
+        tags: Array.isArray(task.tags) ? task.tags : [],
+        attachments: Array.isArray(task.attachments) ? task.attachments : []
+      }));
+
+      setTasks(transformedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     } finally {

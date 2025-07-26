@@ -3,11 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { 
   ArrowLeft,
   Settings,
@@ -98,31 +94,34 @@ const CollaborationWorkspace = () => {
         setProject(data);
         setEditedTitle(data.title);
 
-        // Fetch collaborators
+        // Fetch collaborators - simplified approach
         const { data: collaboratorsData, error: collabError } = await supabase
           .from('project_collaborators')
-          .select(`
-            user_id,
-            role,
-            profiles (
-              full_name,
-              avatar_url,
-              is_online
-            )
-          `)
+          .select('user_id, role')
           .eq('project_id', parseInt(projectId));
 
         if (!collabError && collaboratorsData) {
-          const formattedCollaborators: Collaborator[] = collaboratorsData.map(collab => ({
-            id: collab.user_id,
-            name: collab.profiles?.full_name || 'Unknown User',
-            role: collab.role,
-            status: collab.profiles?.is_online ? 'online' : 'offline',
-            avatar: collab.profiles?.avatar_url || '',
-            permission: collab.role as 'Admin' | 'Contributor' | 'Viewer'
-          }));
+          // Get profile info for each collaborator
+          const collaboratorProfiles = await Promise.all(
+            collaboratorsData.map(async (collab) => {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, avatar_url, is_online')
+                .eq('id', collab.user_id)
+                .single();
 
-          // Add project owner
+              return {
+                id: collab.user_id,
+                name: profile?.full_name || 'Unknown User',
+                role: collab.role,
+                status: profile?.is_online ? 'online' : 'offline' as const,
+                avatar: profile?.avatar_url || '',
+                permission: collab.role as 'Admin' | 'Contributor' | 'Viewer'
+              };
+            })
+          );
+
+          // Add project owner if not already included
           if (data.user_id !== profile?.id) {
             const { data: ownerData } = await supabase
               .from('profiles')
@@ -131,18 +130,18 @@ const CollaborationWorkspace = () => {
               .single();
 
             if (ownerData) {
-              formattedCollaborators.unshift({
+              collaboratorProfiles.unshift({
                 id: data.user_id,
                 name: ownerData.full_name || 'Project Owner',
                 role: 'Owner',
-                status: ownerData.is_online ? 'online' : 'offline',
+                status: ownerData.is_online ? 'online' : 'offline' as const,
                 avatar: ownerData.avatar_url || '',
-                permission: 'Admin'
+                permission: 'Admin' as const
               });
             }
           }
 
-          setCollaborators(formattedCollaborators);
+          setCollaborators(collaboratorProfiles);
         }
 
       } catch (err) {
@@ -265,11 +264,6 @@ const CollaborationWorkspace = () => {
                   
                   <div className="flex items-center space-x-4 text-sm text-white/60">
                     <span>by {project.artist}</span>
-                    {project.genre && (
-                      <Badge variant="secondary" className="bg-white/10 text-white/80">
-                        {project.genre}
-                      </Badge>
-                    )}
                     <div className="flex items-center space-x-1">
                       <Users className="w-4 h-4" />
                       <span>{collaborators.length} collaborators</span>
@@ -307,7 +301,7 @@ const CollaborationWorkspace = () => {
         <div className="flex-1 flex flex-col">
           {/* Media Player Section */}
           <div className="h-64 bg-black/30 backdrop-blur-sm border-b border-white/10">
-            <AdvancedMediaPlayer projectId={project.id} />
+            <AdvancedMediaPlayer />
           </div>
 
           {/* Collaboration Tabs */}
@@ -344,19 +338,19 @@ const CollaborationWorkspace = () => {
                 </TabsContent>
                 
                 <TabsContent value="chat" className="h-full p-6 mt-0">
-                  <ChatTab projectId={project.id.toString()} />
+                  <ChatTab projectId={projectId} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="tasks" className="h-full p-6 mt-0">
-                  <TasksTab projectId={project.id.toString()} />
+                  <TasksTab projectId={projectId} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="timeline" className="h-full p-6 mt-0">
-                  <TimelineTab projectId={project.id.toString()} />
+                  <TimelineTab />
                 </TabsContent>
                 
                 <TabsContent value="versions" className="h-full p-6 mt-0 overflow-y-auto">
-                  <VersionControl projectId={project.id.toString()} />
+                  <VersionControl projectId={projectId} />
                 </TabsContent>
               </div>
             </Tabs>

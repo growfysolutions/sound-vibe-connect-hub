@@ -12,7 +12,7 @@ interface ProjectFile {
   file_type: string;
   file_size: number;
   mime_type: string;
-  duration?: number;
+  duration?: number | null;
   metadata: any;
   version_number: number;
   is_current_version: boolean;
@@ -44,7 +44,13 @@ export const useProjectFiles = (projectId?: number) => {
         return;
       }
 
-      setFiles(data || []);
+      // Transform the data to match our interface
+      const transformedFiles: ProjectFile[] = (data || []).map(file => ({
+        ...file,
+        duration: file.duration ?? undefined
+      }));
+
+      setFiles(transformedFiles);
     } catch (error) {
       console.error('Error fetching project files:', error);
     } finally {
@@ -61,12 +67,11 @@ export const useProjectFiles = (projectId?: number) => {
       setUploadProgress(0);
 
       // Generate unique file path
-      const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${file.name}`;
       const filePath = `projects/${projectId}/${fileName}`;
 
       // Upload to Supabase storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('projects')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -79,7 +84,7 @@ export const useProjectFiles = (projectId?: number) => {
       }
 
       // Get duration for audio/video files
-      let duration: number | undefined;
+      let duration: number | null = null;
       if (file.type.startsWith('audio/') || file.type.startsWith('video/')) {
         duration = await getMediaDuration(file);
       }
@@ -204,7 +209,7 @@ const getFileType = (mimeType: string): string => {
   return 'document';
 };
 
-const getMediaDuration = (file: File): Promise<number | undefined> => {
+const getMediaDuration = (file: File): Promise<number | null> => {
   return new Promise((resolve) => {
     const audio = document.createElement('audio');
     audio.preload = 'metadata';
@@ -214,7 +219,7 @@ const getMediaDuration = (file: File): Promise<number | undefined> => {
     };
     
     audio.onerror = () => {
-      resolve(undefined);
+      resolve(null);
     };
     
     audio.src = URL.createObjectURL(file);
