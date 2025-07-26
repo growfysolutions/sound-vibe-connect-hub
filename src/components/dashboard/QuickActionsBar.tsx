@@ -36,15 +36,7 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
 
       {/* Quick Actions Desktop Bar */}
       <div className="hidden lg:flex fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
-        <div className="flex items-center space-x-3 bg-card/95 backdrop-blur-xl border border-saffron/20 rounded-full px-4 py-2 shadow-lg">
-          {quickActions.map((action, index) => {
-          const Icon = action.icon;
-          return <Button key={index} onClick={action.action} className={cn("rounded-full w-12 h-12 text-white shadow-sm", "transition-all duration-300 hover:scale-110 active:scale-95", action.className)} size="icon">
-                <Icon className="w-5 h-5" />
-                <span className="sr-only">{action.label}</span>
-              </Button>;
-        })}
-        </div>
+        
       </div>
 
       {/* Voice Search Button */}
