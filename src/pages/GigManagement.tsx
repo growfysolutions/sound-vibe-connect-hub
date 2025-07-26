@@ -1,9 +1,7 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
@@ -11,6 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import { Badge } from '@/components/ui/badge';
+import { CulturalButton } from '@/components/ui/CulturalButton';
+import { CulturalCard } from '@/components/cards/CulturalCard';
+import { getCulturalNavigationStyle, culturalStyles } from '@/lib/cultural-design';
 
 const GigManagement = () => {
   const navigate = useNavigate();
@@ -83,314 +85,325 @@ const GigManagement = () => {
     navigate('/dashboard');
   };
 
-  return <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-green-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header with Navigation */}
-        <div className="mb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <Button variant="ghost" size="sm" onClick={handleBackToDashboard} className="flex items-center gap-2 hover:bg-gray-100">
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink onClick={handleBackToDashboard} className="cursor-pointer hover:text-orange-600">
-                    Dashboard
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="text-foreground">Gig Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </div>
+  const tabItems = [
+    { id: 'details', label: 'Details' },
+    { id: 'apply', label: 'Apply' },
+    { id: 'contract', label: 'Contract' },
+    { id: 'payments', label: 'Payments' },
+    { id: 'communication', label: 'Chat' },
+    { id: 'dashboard', label: 'Dashboard' },
+  ];
 
-        {/* Title Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{gigDetails.title}</h1>
-              <div className="flex items-center gap-4 text-gray-900">
-                <Badge className="bg-saffron text-white border-0">
-                  {gigDetails.type}
-                </Badge>
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{gigDetails.date}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{gigDetails.venue}</span>
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal)) text-white py-6 shadow-xl shadow-hsl(var(--ocean-blue))/20">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Header with Navigation */}
+          <div className="mb-6">
+            <div className="flex items-center gap-4 mb-4">
+              <CulturalButton 
+                variant="secondary" 
+                size="sm" 
+                onClick={handleBackToDashboard} 
+                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </CulturalButton>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink onClick={handleBackToDashboard} className="cursor-pointer hover:text-white/80 text-white/90">
+                      Dashboard
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="text-white/60" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage className="text-white font-medium">Gig Management</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </div>
+
+          {/* Title Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">{gigDetails.title}</h1>
+                <div className="flex items-center gap-4 text-white/90">
+                  <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+                    {gigDetails.type}
+                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    <span>{gigDetails.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{gigDetails.venue}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-green-600 mb-1">{gigDetails.budgetRange}</div>
-              <div className="text-sm text-gray-900">Budget Range</div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-white mb-1">{gigDetails.budgetRange}</div>
+                <div className="text-sm text-white/80">Budget Range</div>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Countdown Timers */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <Card className="border-orange-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-2xl font-bold text-orange-600">{gigDetails.daysUntilDeadline}</div>
-                    <div className="text-sm text-gray-900">Days to Apply</div>
-                  </div>
-                  <AlertTriangle className="w-8 h-8 text-orange-500 bg-transparent" />
+      <div className="max-w-7xl mx-auto p-6">
+        {/* Countdown Timers */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <CulturalCard variant="default" className="border-hsl(var(--color-warning-500))/30">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-hsl(var(--color-warning-500))">{gigDetails.daysUntilDeadline}</div>
+                  <div className="text-sm text-muted-foreground">Days to Apply</div>
                 </div>
-              </CardContent>
-            </Card>
+                <AlertTriangle className="w-8 h-8 text-hsl(var(--color-warning-500))" />
+              </div>
+            </div>
+          </CulturalCard>
 
-            <Card className="border-green-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">{gigDetails.daysUntilEvent}</div>
-                    <div className="text-sm text-gray-900">Days to Event</div>
-                  </div>
-                  <Calendar className="w-8 h-8 text-green-500 bg-transparent" />
+          <CulturalCard variant="default" className="border-hsl(var(--color-success-500))/30">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-hsl(var(--color-success-500))">{gigDetails.daysUntilEvent}</div>
+                  <div className="text-sm text-muted-foreground">Days to Event</div>
                 </div>
-              </CardContent>
-            </Card>
+                <Calendar className="w-8 h-8 text-hsl(var(--color-success-500))" />
+              </div>
+            </div>
+          </CulturalCard>
 
-            <Card className="border-blue-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-2xl font-bold text-blue-600">{gigDetails.duration}</div>
-                    <div className="text-sm text-gray-900">Performance Duration</div>
-                  </div>
-                  <Clock className="w-8 h-8 text-blue-500 bg-transparent" />
+          <CulturalCard variant="default" className="border-hsl(var(--ocean-blue))/30">
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-bold text-hsl(var(--ocean-blue))">{gigDetails.duration}</div>
+                  <div className="text-sm text-muted-foreground">Performance Duration</div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <Clock className="w-8 h-8 text-hsl(var(--ocean-blue))" />
+              </div>
+            </div>
+          </CulturalCard>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="apply">Apply</TabsTrigger>
-            <TabsTrigger value="contract">Contract</TabsTrigger>
-            <TabsTrigger value="payments">Payments</TabsTrigger>
-            <TabsTrigger value="communication">Chat</TabsTrigger>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          </TabsList>
+          <div className="border-b border-border bg-card/50 backdrop-blur-sm rounded-lg">
+            <TabsList className="bg-transparent p-2 rounded-lg border-none h-auto w-full">
+              {tabItems.map((item) => (
+                <TabsTrigger 
+                  key={item.id}
+                  value={item.id} 
+                  className={getCulturalNavigationStyle(activeTab === item.id)}
+                >
+                  {item.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
           {/* Requirements & Details Tab */}
           <TabsContent value="details" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-orange-500" />
-                    Event Requirements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <CulturalCard variant="default" title="Event Requirements" culturalIcon="🎵">
+                <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-blue-300">Musical Style</label>
-                    <p className="text-gray-900">{gigDetails.style}</p>
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue))">Musical Style</label>
+                    <p className="text-foreground">{gigDetails.style}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-blue-300">Special Requests</label>
-                    <p className="text-gray-900">{gigDetails.specialRequests}</p>
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue))">Special Requests</label>
+                    <p className="text-foreground">{gigDetails.specialRequests}</p>
                   </div>
-                  <div className="text-[lime-20] text-lime-200">
-                    <label className="text-sm font-medium text-blue-300">Equipment Needed</label>
-                    <p className="text-gray-900">{gigDetails.equipment}</p>
+                  <div>
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue))">Equipment Needed</label>
+                    <p className="text-foreground">{gigDetails.equipment}</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div>
-                      <label className="text-sm font-medium text-blue-300">Audience Size</label>
-                      <p className="text-gray-900">{gigDetails.audienceSize}</p>
+                      <label className="text-sm font-medium text-hsl(var(--ocean-blue))">Audience Size</label>
+                      <p className="text-foreground">{gigDetails.audienceSize}</p>
                     </div>
-                    <div className="text-lime-200">
-                      <label className="text-sm font-medium text-blue-300">Duration</label>
-                      <span className="text-blue-300">{gigDetails.duration}</span>
+                    <div>
+                      <label className="text-sm font-medium text-hsl(var(--ocean-blue))">Duration</label>
+                      <p className="text-foreground">{gigDetails.duration}</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CulturalCard>
 
-              <Card className="text-lime-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-green-500" />
-                    Timeline & Milestones
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {milestones.map((milestone, index) => <div key={index} className="space-y-2">
+              <CulturalCard variant="default" title="Timeline & Milestones" culturalIcon="⏰">
+                <div className="space-y-4">
+                  {milestones.map((milestone, index) => (
+                    <div key={index} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900">{milestone.name}</span>
-                        <span className="text-sm text-gray-900">{milestone.date}</span>
+                        <span className="font-medium text-foreground">{milestone.name}</span>
+                        <span className="text-sm text-muted-foreground">{milestone.date}</span>
                       </div>
-                      <Progress value={milestone.progress} className="h-2 text-[text-blue-300]" />
-                    </div>)}
-                </CardContent>
-              </Card>
+                      <Progress value={milestone.progress} className="h-2" />
+                    </div>
+                  ))}
+                </div>
+              </CulturalCard>
             </div>
           </TabsContent>
 
           {/* Application Interface Tab */}
           <TabsContent value="apply" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="text-[text-blue-300]">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="w-5 h-5 text-blue-500" />
-                    Portfolio & Pitch
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <CulturalCard variant="default" title="Portfolio & Pitch" culturalIcon="🎨">
+                <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-blue-300 mb-2 block">
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                       Upload Audio Samples
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors cursor-pointer">
-                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-900">Drop audio files here or click to browse</p>
-                      <p className="text-xs text-gray-900 mt-1">MP3, WAV up to 10MB each</p>
+                    <div className="border-2 border-dashed border-hsl(var(--ocean-blue))/30 rounded-lg p-6 text-center hover:border-hsl(var(--ocean-blue))/60 transition-colors cursor-pointer bg-hsl(var(--ocean-blue))/5">
+                      <Upload className="w-8 h-8 text-hsl(var(--ocean-blue)) mx-auto mb-2" />
+                      <p className="text-sm text-foreground">Drop audio files here or click to browse</p>
+                      <p className="text-xs text-muted-foreground mt-1">MP3, WAV up to 10MB each</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-blue-300 mb-2 block">
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                       Custom Pitch ({pitchText.length}/500)
                     </label>
-                    <Textarea placeholder="Tell the client why you're perfect for this gig..." value={pitchText} onChange={e => setPitchText(e.target.value)} maxLength={500} className="min-h-[120px]" />
+                    <Textarea 
+                      placeholder="Tell the client why you're perfect for this gig..." 
+                      value={pitchText} 
+                      onChange={e => setPitchText(e.target.value)} 
+                      maxLength={500} 
+                      className="min-h-[120px] border-hsl(var(--ocean-blue))/30 focus:border-hsl(var(--ocean-blue))" 
+                    />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-blue-300 mb-2 block">
+                    <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                       Rate Proposal (₹)
                     </label>
-                    <Input type="number" placeholder="Enter your rate" value={proposedRate} onChange={e => setProposedRate(e.target.value)} />
-                    <p className="text-xs text-gray-900 mt-1">Budget range: {gigDetails.budgetRange}</p>
+                    <Input 
+                      type="number" 
+                      placeholder="Enter your rate" 
+                      value={proposedRate} 
+                      onChange={e => setProposedRate(e.target.value)} 
+                      className="border-hsl(var(--ocean-blue))/30 focus:border-hsl(var(--ocean-blue))"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Budget range: {gigDetails.budgetRange}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CulturalCard>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
-                    Equipment Checklist
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {equipmentChecklist.map((item, index) => <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+              <CulturalCard variant="default" title="Equipment Checklist" culturalIcon="🎧">
+                <div className="space-y-3">
+                  {equipmentChecklist.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-hsl(var(--ocean-blue))/5 transition-colors">
                       <div className="flex items-center gap-3">
                         <Checkbox checked={item.available} />
-                        <span className={item.required ? "font-medium text-gray-900" : "text-gray-900"}>{item.item}</span>
+                        <span className={item.required ? "font-medium text-foreground" : "text-foreground"}>{item.item}</span>
                         {item.required && <Badge variant="destructive" className="text-xs">Required</Badge>}
                       </div>
-                      <Badge variant={item.available ? "default" : "secondary"}>
+                      <Badge variant={item.available ? "default" : "secondary"} className={item.available ? "bg-hsl(var(--color-success-500)) text-white" : ""}>
                         {item.available ? "Available" : "Not Available"}
                       </Badge>
-                    </div>)}
-                </CardContent>
-              </Card>
+                    </div>
+                  ))}
+                </div>
+              </CulturalCard>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-gray-900">Travel Requirements</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CulturalCard variant="default" title="Travel Requirements">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-blue-300 mb-2 block">
+                  <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                     Accommodation Needed
                   </label>
-                  <select className="w-full p-2 border rounded-md text-gray-900">
+                  <select className="w-full p-2 border border-hsl(var(--ocean-blue))/30 rounded-md text-foreground bg-background focus:border-hsl(var(--ocean-blue))">
                     <option>No</option>
                     <option>Yes - 1 night</option>
                     <option>Yes - 2 nights</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-300 mb-2 block">
+                  <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                     Transportation
                   </label>
-                  <select className="w-full p-2 border rounded-md text-gray-900">
+                  <select className="w-full p-2 border border-hsl(var(--ocean-blue))/30 rounded-md text-foreground bg-background focus:border-hsl(var(--ocean-blue))">
                     <option>Self-arranged</option>
                     <option>Client-provided</option>
                     <option>Reimbursement needed</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-blue-300 mb-2 block">
+                  <label className="text-sm font-medium text-hsl(var(--ocean-blue)) mb-2 block">
                     Setup Time Required
                   </label>
-                  <select className="w-full p-2 border rounded-md text-gray-900">
+                  <select className="w-full p-2 border border-hsl(var(--ocean-blue))/30 rounded-md text-foreground bg-background focus:border-hsl(var(--ocean-blue))">
                     <option>1 hour</option>
                     <option>2 hours</option>
                     <option>3+ hours</option>
                   </select>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CulturalCard>
 
             <div className="flex justify-end">
-              <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white" onClick={() => setApplicationSubmitted(true)}>
+              <CulturalButton 
+                size="lg" 
+                variant="primary"
+                onClick={() => setApplicationSubmitted(true)}
+              >
                 Submit Application
-              </Button>
+              </CulturalButton>
             </div>
           </TabsContent>
 
           {/* Contract Generator Tab */}
           <TabsContent value="contract" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-purple-500" />
-                  Contract Template
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2 text-gray-900">Performance Agreement</h3>
-                  <p className="text-sm text-gray-900 mb-4">
+            <CulturalCard variant="default" title="Contract Template" culturalIcon="📄">
+              <div className="space-y-4">
+                <div className="bg-hsl(var(--ocean-blue))/5 p-4 rounded-lg border border-hsl(var(--ocean-blue))/20">
+                  <h3 className="font-semibold mb-2 text-foreground">Performance Agreement</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
                     This agreement is between [Artist Name] and [Client Name] for the performance at {gigDetails.title}.
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="text-gray-900">
+                    <div className="text-foreground">
                       <strong>Event Date:</strong> {gigDetails.date}
                     </div>
-                    <div className="text-gray-900">
+                    <div className="text-foreground">
                       <strong>Venue:</strong> {gigDetails.venue}
                     </div>
-                    <div className="text-gray-900">
+                    <div className="text-foreground">
                       <strong>Duration:</strong> {gigDetails.duration}
                     </div>
-                    <div className="text-gray-900">
+                    <div className="text-foreground">
                       <strong>Total Fee:</strong> ₹{proposedRate || '___'}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-gray-900">Payment Milestones</h4>
+                  <h4 className="font-semibold text-foreground">Payment Milestones</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="border p-3 rounded">
-                      <div className="font-medium text-gray-900">Contract Signing</div>
-                      <div className="text-sm text-gray-900">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
+                    <div className="border border-border p-3 rounded bg-hsl(var(--color-success-500))/5">
+                      <div className="font-medium text-foreground">Contract Signing</div>
+                      <div className="text-sm text-muted-foreground">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
                     </div>
-                    <div className="border p-3 rounded">
-                      <div className="font-medium text-gray-900">Sound Check</div>
-                      <div className="text-sm text-gray-900">50% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.50)}</div>
+                    <div className="border border-border p-3 rounded bg-hsl(var(--color-warning-500))/5">
+                      <div className="font-medium text-foreground">Sound Check</div>
+                      <div className="text-sm text-muted-foreground">50% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.50)}</div>
                     </div>
-                    <div className="border p-3 rounded">
-                      <div className="font-medium text-gray-900">Performance Complete</div>
-                      <div className="text-sm text-gray-900">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
+                    <div className="border border-border p-3 rounded bg-hsl(var(--ocean-blue))/5">
+                      <div className="font-medium text-foreground">Performance Complete</div>
+                      <div className="text-sm text-muted-foreground">25% - ₹{Math.round((parseInt(proposedRate) || 0) * 0.25)}</div>
                     </div>
                   </div>
                 </div>
@@ -398,97 +411,90 @@ const GigManagement = () => {
                 <Separator />
 
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900">Terms & Conditions</h4>
+                  <h4 className="font-semibold text-foreground">Terms & Conditions</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span className="text-gray-900">Cancellation policy: 72 hours notice required</span>
+                      <span className="text-foreground">Cancellation policy: 72 hours notice required</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span className="text-gray-900">Recording permissions: Client may record for personal use</span>
+                      <span className="text-foreground">Recording permissions: Client may record for personal use</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span className="text-gray-900">Equipment responsibility: Client provides basic PA system</span>
+                      <span className="text-foreground">Equipment responsibility: Client provides basic PA system</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Checkbox />
-                      <span className="text-gray-900">Force majeure clause: Weather/emergency cancellations</span>
+                      <span className="text-foreground">Force majeure clause: Weather/emergency cancellations</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center">
-                  <p className="text-sm text-gray-900 mb-2">Digital Signature Area</p>
-                  <Button variant="outline">Sign Contract</Button>
+                <div className="border-2 border-dashed border-hsl(var(--ocean-blue))/30 p-4 rounded-lg text-center bg-hsl(var(--ocean-blue))/5">
+                  <p className="text-sm text-muted-foreground mb-2">Digital Signature Area</p>
+                  <CulturalButton variant="secondary">Sign Contract</CulturalButton>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </CulturalCard>
           </TabsContent>
 
           {/* Payment Tracking Tab */}
           <TabsContent value="payments" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-green-500" />
-                    Payment Schedule
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <CulturalCard variant="default" title="Payment Schedule" culturalIcon="💰">
+                <div className="space-y-4">
                   {[{
-                  milestone: "Contract Signing",
-                  amount: 25,
-                  status: "pending",
-                  date: "Mar 5"
-                }, {
-                  milestone: "Sound Check",
-                  amount: 50,
-                  status: "pending",
-                  date: "Mar 14"
-                }, {
-                  milestone: "Performance Complete",
-                  amount: 25,
-                  status: "pending",
-                  date: "Mar 15"
-                }].map((payment, index) => <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    milestone: "Contract Signing",
+                    amount: 25,
+                    status: "pending",
+                    date: "Mar 5"
+                  }, {
+                    milestone: "Sound Check",
+                    amount: 50,
+                    status: "pending",
+                    date: "Mar 14"
+                  }, {
+                    milestone: "Performance Complete",
+                    amount: 25,
+                    status: "pending",
+                    date: "Mar 15"
+                  }].map((payment, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-hsl(var(--ocean-blue))/5 transition-colors">
                       <div>
-                        <div className="font-medium text-gray-900">{payment.milestone}</div>
-                        <div className="text-sm text-gray-900">{payment.date}</div>
+                        <div className="font-medium text-foreground">{payment.milestone}</div>
+                        <div className="text-sm text-muted-foreground">{payment.date}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">₹{Math.round((parseInt(proposedRate) || 0) * payment.amount / 100)}</div>
+                        <div className="font-semibold text-foreground">₹{Math.round((parseInt(proposedRate) || 0) * payment.amount / 100)}</div>
                         <Badge variant={payment.status === "pending" ? "secondary" : "default"}>
                           {payment.status}
                         </Badge>
                       </div>
-                    </div>)}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-gray-900">Earnings Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">₹0</div>
-                      <div className="text-sm text-gray-900">Received</div>
                     </div>
-                    <div className="text-center p-4 bg-orange-50 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-600">₹{proposedRate || 0}</div>
-                      <div className="text-sm text-gray-900">Pending</div>
+                  ))}
+                </div>
+              </CulturalCard>
+
+              <CulturalCard variant="default" title="Earnings Summary">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-hsl(var(--color-success-500))/10 border border-hsl(var(--color-success-500))/20 rounded-lg">
+                      <div className="text-2xl font-bold text-hsl(var(--color-success-500))">₹0</div>
+                      <div className="text-sm text-muted-foreground">Received</div>
+                    </div>
+                    <div className="text-center p-4 bg-hsl(var(--color-warning-500))/10 border border-hsl(var(--color-warning-500))/20 rounded-lg">
+                      <div className="text-2xl font-bold text-hsl(var(--color-warning-500))">₹{proposedRate || 0}</div>
+                      <div className="text-sm text-muted-foreground">Pending</div>
                     </div>
                   </div>
                   
-                  <Button className="w-full" variant="outline">
+                  <CulturalButton variant="secondary" className="w-full">
                     Generate Invoice
-                  </Button>
-                </CardContent>
-              </Card>
+                  </CulturalButton>
+                </div>
+              </CulturalCard>
             </div>
           </TabsContent>
 
@@ -496,67 +502,53 @@ const GigManagement = () => {
           <TabsContent value="communication" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <Card className="h-96">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-blue-500" />
-                      Chat with Event Organizer
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="h-full flex flex-col">
-                    <div className="flex-1 bg-gray-50 rounded p-4 mb-4 overflow-y-auto">
+                <CulturalCard variant="default" title="Chat with Event Organizer" culturalIcon="💬" className="h-96">
+                  <div className="h-full flex flex-col">
+                    <div className="flex-1 bg-hsl(var(--ocean-blue))/5 rounded p-4 mb-4 overflow-y-auto border border-hsl(var(--ocean-blue))/20">
                       <div className="space-y-3">
-                        <div className="bg-white p-3 rounded-lg shadow-sm">
-                          <div className="text-sm font-medium text-gray-900">Rajesh Kumar (Organizer)</div>
-                          <div className="text-sm text-gray-900">Looking forward to your performance! Do you need any specific arrangements?</div>
-                          <div className="text-xs text-gray-900 mt-1">2 hours ago</div>
+                        <div className="bg-background p-3 rounded-lg shadow-sm border border-border">
+                          <div className="text-sm font-medium text-foreground">Rajesh Kumar (Organizer)</div>
+                          <div className="text-sm text-foreground">Looking forward to your performance! Do you need any specific arrangements?</div>
+                          <div className="text-xs text-muted-foreground mt-1">2 hours ago</div>
                         </div>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Input placeholder="Type your message..." className="flex-1" />
-                      <Button>Send</Button>
+                      <Input placeholder="Type your message..." className="flex-1 border-hsl(var(--ocean-blue))/30 focus:border-hsl(var(--ocean-blue))" />
+                      <CulturalButton variant="primary">Send</CulturalButton>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </CulturalCard>
               </div>
 
               <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm text-gray-900">Quick Actions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start" size="sm">
+                <CulturalCard variant="default" title="Quick Actions">
+                  <div className="space-y-2">
+                    <CulturalButton variant="secondary" className="w-full justify-start" size="sm">
                       <Calendar className="w-4 h-4 mr-2" />
                       Schedule Video Call
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" size="sm">
+                    </CulturalButton>
+                    <CulturalButton variant="secondary" className="w-full justify-start" size="sm">
                       <Upload className="w-4 h-4 mr-2" />
                       Share Setlist
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" size="sm">
+                    </CulturalButton>
+                    <CulturalButton variant="secondary" className="w-full justify-start" size="sm">
                       <FileText className="w-4 h-4 mr-2" />
                       Send Contract
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </CulturalButton>
+                  </div>
+                </CulturalCard>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm text-gray-900">Notifications</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="p-2 bg-orange-50 rounded text-orange-700">
-                        Application deadline in {gigDetails.daysUntilDeadline} days
-                      </div>
-                      <div className="p-2 bg-blue-50 rounded text-blue-700">
-                        New message from organizer
-                      </div>
+                <CulturalCard variant="default" title="Notifications">
+                  <div className="space-y-2 text-sm">
+                    <div className="p-2 bg-hsl(var(--color-warning-500))/10 border border-hsl(var(--color-warning-500))/20 rounded text-hsl(var(--color-warning-500))">
+                      Application deadline in {gigDetails.daysUntilDeadline} days
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="p-2 bg-hsl(var(--ocean-blue))/10 border border-hsl(var(--ocean-blue))/20 rounded text-hsl(var(--ocean-blue))">
+                      New message from organizer
+                    </div>
+                  </div>
+                </CulturalCard>
               </div>
             </div>
           </TabsContent>
@@ -564,77 +556,63 @@ const GigManagement = () => {
           {/* Performer Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-purple-500" />
-                    Upcoming Gigs
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium text-gray-900">Traditional Wedding Ceremony</div>
-                        <div className="text-sm text-gray-900">Mar 15, 2025 • Chandigarh</div>
-                      </div>
-                      <Badge className="bg-orange-100 text-orange-700">Applied</Badge>
+              <CulturalCard variant="default" title="Upcoming Gigs" culturalIcon="📅" className="lg:col-span-2">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-hsl(var(--ocean-blue))/5 transition-colors">
+                    <div>
+                      <div className="font-medium text-foreground">Traditional Wedding Ceremony</div>
+                      <div className="text-sm text-muted-foreground">Mar 15, 2025 • Chandigarh</div>
                     </div>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium text-gray-900">Corporate Event</div>
-                        <div className="text-sm text-gray-900">Mar 22, 2025 • Delhi</div>
-                      </div>
-                      <Badge className="bg-green-100 text-green-700">Confirmed</Badge>
-                    </div>
+                    <Badge className="bg-hsl(var(--color-warning-500))/20 text-hsl(var(--color-warning-500)) border-hsl(var(--color-warning-500))/30">Applied</Badge>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-hsl(var(--ocean-blue))/5 transition-colors">
+                    <div>
+                      <div className="font-medium text-foreground">Corporate Event</div>
+                      <div className="text-sm text-muted-foreground">Mar 22, 2025 • Delhi</div>
+                    </div>
+                    <Badge className="bg-hsl(var(--color-success-500))/20 text-hsl(var(--color-success-500)) border-hsl(var(--color-success-500))/30">Confirmed</Badge>
+                  </div>
+                </div>
+              </CulturalCard>
 
               <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm text-gray-900">Monthly Earnings</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-green-600">₹45,000</div>
-                    <div className="text-sm text-gray-900">March 2025</div>
-                  </CardContent>
-                </Card>
+                <CulturalCard variant="default" title="Monthly Earnings">
+                  <div>
+                    <div className="text-2xl font-bold text-hsl(var(--color-success-500))">₹45,000</div>
+                    <div className="text-sm text-muted-foreground">March 2025</div>
+                  </div>
+                </CulturalCard>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Star className="w-4 h-4 text-yellow-500" />
-                      Rating
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-gray-900">4.8</div>
-                    <div className="text-sm text-gray-900">Based on 24 reviews</div>
-                  </CardContent>
-                </Card>
+                <CulturalCard variant="default" title="Rating" culturalIcon="⭐">
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">4.8</div>
+                    <div className="text-sm text-muted-foreground">Based on 24 reviews</div>
+                  </div>
+                </CulturalCard>
               </div>
             </div>
           </TabsContent>
         </Tabs>
 
-        {applicationSubmitted && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <Card className="max-w-md mx-4">
-              <CardContent className="p-6 text-center">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2 text-gray-900">Application Submitted!</h3>
-                <p className="text-gray-900 mb-4">
+        {applicationSubmitted && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <CulturalCard variant="default" className="max-w-md mx-4">
+              <div className="p-6 text-center">
+                <CheckCircle2 className="w-12 h-12 text-hsl(var(--color-success-500)) mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-foreground">Application Submitted!</h3>
+                <p className="text-muted-foreground mb-4">
                   Your application has been sent to the event organizer. You'll receive a notification once they respond.
                 </p>
-                <Button onClick={() => setApplicationSubmitted(false)}>
+                <CulturalButton onClick={() => setApplicationSubmitted(false)} variant="primary">
                   Continue
-                </Button>
-              </CardContent>
-            </Card>
-          </div>}
+                </CulturalButton>
+              </div>
+            </CulturalCard>
+          </div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default GigManagement;

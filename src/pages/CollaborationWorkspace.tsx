@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { 
   Edit3, 
@@ -11,9 +12,10 @@ import {
   Users,
   Zap
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CulturalButton } from '@/components/ui/CulturalButton';
+import { CulturalCard } from '@/components/cards/CulturalCard';
 import CollaboratorSidebar from '@/components/collaboration/CollaboratorSidebar';
 import FilesTab from '@/components/collaboration/FilesTab';
 import TimelineTab from '@/components/collaboration/TimelineTab';
@@ -24,6 +26,7 @@ import VersionControl from '@/components/collaboration/VersionControl';
 import WebRTCCall from '@/components/collaboration/WebRTCCall';
 import AdvancedMediaPlayer from '@/components/collaboration/AdvancedMediaPlayer';
 import EnhancedTaskManager from '@/components/collaboration/EnhancedTaskManager';
+import { getCulturalNavigationStyle } from '@/lib/cultural-design';
 
 interface Collaborator {
   id: string;
@@ -84,42 +87,63 @@ const CollaborationWorkspace = () => {
     setIsEditingTitle(false);
   };
 
+  const tabItems = [
+    { id: 'files', label: 'Files', icon: FileText },
+    { id: 'timeline', label: 'Timeline', icon: Clock },
+    { id: 'chat', label: 'Chat', icon: MessageSquare },
+    { id: 'tasks', label: 'Tasks', icon: CheckSquare2 },
+    { id: 'enhanced-tasks', label: 'Enhanced Tasks', icon: Users },
+    { id: 'mixer', label: 'Audio Mixer', icon: Radio },
+    { id: 'media-player', label: 'Media Player', icon: Zap },
+    { id: 'versions', label: 'Version Control', icon: GitBranch },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-6 shadow-md">
+    <div className="min-h-screen bg-background">
+      {/* Cultural Header */}
+      <div className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal)) text-white py-6 shadow-xl shadow-hsl(var(--ocean-blue))/20 border-b border-hsl(var(--ocean-blue))/30">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <GitBranch className="h-8 w-8 text-yellow-400 animate-spin-slow" />
+            <GitBranch className="h-8 w-8 text-white animate-pulse" />
             {isEditingTitle ? (
               <div className="flex items-center">
                 <Input
                   type="text"
                   value={projectTitle}
                   onChange={handleTitleChange}
-                  className="text-lg font-semibold bg-transparent border-none focus:ring-0 focus:outline-none text-white"
+                  className="text-lg font-semibold bg-white/10 border-white/20 focus:border-white text-white placeholder:text-white/70 backdrop-blur-sm"
                 />
-                <Button onClick={handleTitleSave} variant="ghost" className="text-white hover:bg-purple-700">
+                <CulturalButton 
+                  onClick={handleTitleSave} 
+                  variant="secondary" 
+                  size="sm"
+                  className="ml-2 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                >
                   Save
-                </Button>
+                </CulturalButton>
               </div>
             ) : (
-              <h1 className="text-2xl font-semibold">{projectTitle}</h1>
+              <h1 className="text-2xl font-semibold tracking-wide">{projectTitle}</h1>
             )}
           </div>
           <div className="flex items-center space-x-2">
-            <Button 
+            <CulturalButton 
               onClick={() => setIsCallOpen(true)}
-              variant="ghost" 
-              className="text-white hover:bg-purple-700"
+              variant="secondary" 
+              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
             >
               <Phone className="h-5 w-5 mr-2" />
               Start Call
-            </Button>
+            </CulturalButton>
             {!isEditingTitle && (
-              <Button onClick={handleTitleEdit} variant="ghost" className="text-white hover:bg-purple-700">
+              <CulturalButton 
+                onClick={handleTitleEdit} 
+                variant="secondary"
+                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              >
                 <Edit3 className="h-5 w-5 mr-2" />
                 Edit Title
-              </Button>
+              </CulturalButton>
             )}
           </div>
         </div>
@@ -128,91 +152,90 @@ const CollaborationWorkspace = () => {
       <div className="flex h-[calc(100vh-120px)]">
         <CollaboratorSidebar collaborators={collaborators} />
         
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden bg-background">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="flex bg-muted/50 p-2 rounded-md">
-              <TabsTrigger value="files" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <FileText className="h-4 w-4 mr-2" />
-                Files
-              </TabsTrigger>
-              <TabsTrigger value="timeline" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <Clock className="h-4 w-4 mr-2" />
-                Timeline
-              </TabsTrigger>
-              <TabsTrigger value="chat" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Chat
-              </TabsTrigger>
-              <TabsTrigger value="tasks" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <CheckSquare2 className="h-4 w-4 mr-2" />
-                Tasks
-              </TabsTrigger>
-              <TabsTrigger value="enhanced-tasks" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <Users className="h-4 w-4 mr-2" />
-                Enhanced Tasks
-              </TabsTrigger>
-              <TabsTrigger value="mixer" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <Radio className="h-4 w-4 mr-2" />
-                Audio Mixer
-              </TabsTrigger>
-              <TabsTrigger value="media-player" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <Zap className="h-4 w-4 mr-2" />
-                Media Player
-              </TabsTrigger>
-              <TabsTrigger value="versions" className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground">
-                <GitBranch className="h-4 w-4 mr-2" />
-                Version Control
-              </TabsTrigger>
-            </TabsList>
+            <div className="border-b border-border bg-card/50 backdrop-blur-sm">
+              <TabsList className="bg-transparent p-2 rounded-none border-none h-auto">
+                {tabItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <TabsTrigger 
+                      key={item.id}
+                      value={item.id} 
+                      className={getCulturalNavigationStyle(activeTab === item.id)}
+                    >
+                      <Icon className="h-4 w-4 mr-2" />
+                      {item.label}
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+            </div>
             
-            <div className="flex-1 overflow-hidden">
-              <TabsContent value="files" className="h-full">
-                <FilesTab projectId="sample-project" />
+            <div className="flex-1 overflow-hidden bg-gradient-to-br from-hsl(var(--ocean-blue))/5 to-hsl(var(--teal))/5">
+              <TabsContent value="files" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <FilesTab projectId="sample-project" />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="timeline" className="h-full">
-                <TimelineTab projectData={{ phase: 'Recording', progress: 65, daysRemaining: 45 }} />
+              <TabsContent value="timeline" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <TimelineTab projectData={{ phase: 'Recording', progress: 65, daysRemaining: 45 }} />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="chat" className="h-full">
-                <ChatTab projectId="sample-project" collaborators={collaborators} />
+              <TabsContent value="chat" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <ChatTab projectId="sample-project" collaborators={collaborators} />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="tasks" className="h-full">
-                <TasksTab projectId="sample-project" collaborators={collaborators} />
+              <TabsContent value="tasks" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <TasksTab projectId="sample-project" collaborators={collaborators} />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="enhanced-tasks" className="h-full">
-                <EnhancedTaskManager projectId="sample-project" />
+              <TabsContent value="enhanced-tasks" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <EnhancedTaskManager projectId="sample-project" />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="mixer" className="h-full">
-                <AudioMixerPanel projectId="sample-project" />
+              <TabsContent value="mixer" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <AudioMixerPanel projectId="sample-project" />
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="media-player" className="h-full">
-                <div className="p-4 space-y-4">
-                  {selectedMediaFile ? (
-                    <AdvancedMediaPlayer
-                      fileUrl={selectedMediaFile}
-                      fileName="Sample Audio Track.mp3"
-                    />
-                  ) : (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">Select a media file to play</p>
-                      <Button 
-                        onClick={() => setSelectedMediaFile('/sample-audio.mp3')}
-                        className="mt-4"
-                      >
-                        Load Sample Audio
-                      </Button>
-                    </div>
-                  )}
-                </div>
+              <TabsContent value="media-player" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <div className="p-4 space-y-4">
+                    {selectedMediaFile ? (
+                      <AdvancedMediaPlayer
+                        fileUrl={selectedMediaFile}
+                        fileName="Sample Audio Track.mp3"
+                      />
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-muted-foreground mb-4">Select a media file to play</p>
+                        <CulturalButton 
+                          onClick={() => setSelectedMediaFile('/sample-audio.mp3')}
+                          variant="primary"
+                        >
+                          Load Sample Audio
+                        </CulturalButton>
+                      </div>
+                    )}
+                  </div>
+                </CulturalCard>
               </TabsContent>
               
-              <TabsContent value="versions" className="h-full">
-                <VersionControl projectId="sample-project" />
+              <TabsContent value="versions" className="h-full m-0 p-4">
+                <CulturalCard variant="glass" className="h-full">
+                  <VersionControl projectId="sample-project" />
+                </CulturalCard>
               </TabsContent>
             </div>
           </Tabs>
