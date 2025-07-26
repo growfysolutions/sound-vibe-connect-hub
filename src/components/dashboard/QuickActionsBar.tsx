@@ -40,12 +40,7 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
       </div>
 
       {/* Voice Search Button */}
-      <div className="fixed bottom-24 right-6 z-40">
-        <Button className={cn("w-14 h-14 rounded-full shadow-lg", "bg-gradient-to-r from-red-500 to-red-600", "hover:from-red-600 hover:to-red-700", "transition-all duration-300 hover:scale-110 active:scale-95")} size="icon">
-          <Mic className="w-6 h-6 text-white" />
-          <span className="sr-only">Voice Search</span>
-        </Button>
-      </div>
+      
     </>;
 };
 export default QuickActionsBar;
