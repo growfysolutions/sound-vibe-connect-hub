@@ -190,6 +190,35 @@ const CollaborationWorkspace = () => {
     setIsEditingTitle(false);
   };
 
+  // Create timeline project data from project
+  const getTimelineProjectData = () => {
+    if (!project) return { phase: 'Planning', progress: 0, daysRemaining: 0 };
+    
+    // Calculate some basic timeline data based on project
+    const createdDate = new Date(project.created_at);
+    const now = new Date();
+    const daysElapsed = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Simple logic to determine phase and progress
+    let phase = 'Pre-production';
+    let progress = 25;
+    let daysRemaining = 30;
+    
+    if (daysElapsed > 15) {
+      phase = 'Recording';
+      progress = 65;
+      daysRemaining = 15;
+    }
+    
+    if (daysElapsed > 45) {
+      phase = 'Mixing';
+      progress = 85;
+      daysRemaining = 5;
+    }
+    
+    return { phase, progress, daysRemaining };
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
@@ -356,19 +385,19 @@ const CollaborationWorkspace = () => {
                 </TabsContent>
                 
                 <TabsContent value="chat" className="h-full p-6 mt-0">
-                  <ChatTab projectId={projectId || ''} collaborators={collaborators} />
+                  <ChatTab projectId={projectId} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="tasks" className="h-full p-6 mt-0">
-                  <TasksTab projectId={projectId || ''} collaborators={collaborators} />
+                  <TasksTab projectId={projectId} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="timeline" className="h-full p-6 mt-0">
-                  <TimelineTab projectData={project} />
+                  <TimelineTab projectData={getTimelineProjectData()} />
                 </TabsContent>
                 
                 <TabsContent value="versions" className="h-full p-6 mt-0 overflow-y-auto">
-                  <VersionControl projectId={projectId || ''} />
+                  <VersionControl projectId={projectId} />
                 </TabsContent>
               </div>
             </Tabs>
