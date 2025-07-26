@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -219,6 +218,22 @@ const CollaborationWorkspace = () => {
     return { phase, progress, daysRemaining };
   };
 
+  // Early return if projectId is undefined
+  if (!projectId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-2xl font-bold mb-4">Invalid Project</h1>
+          <p className="mb-6">Project ID is missing from the URL.</p>
+          <Button onClick={() => navigate('/dashboard')} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
@@ -288,7 +303,7 @@ const CollaborationWorkspace = () => {
                     </div>
                   ) : (
                     <div className="flex items-center space-x-2">
-                      <h1 className="text-lg font-bold text-white">{project.title}</h1>
+                      <h1 className="text-lg font-bold text-white">{project?.title}</h1>
                       <Button 
                         size="sm" 
                         variant="ghost"
@@ -301,7 +316,7 @@ const CollaborationWorkspace = () => {
                   )}
                   
                   <div className="flex items-center space-x-4 text-sm text-white/60">
-                    <span>by {project.artist}</span>
+                    <span>by {project?.artist}</span>
                     <div className="flex items-center space-x-1">
                       <Users className="w-4 h-4" />
                       <span>{collaborators.length} collaborators</span>
@@ -381,7 +396,7 @@ const CollaborationWorkspace = () => {
 
               <div className="flex-1 overflow-hidden">
                 <TabsContent value="files" className="h-full p-6 mt-0 overflow-y-auto">
-                  <FilesTab projectId={project.id} />
+                  <FilesTab projectId={project?.id || 0} />
                 </TabsContent>
                 
                 <TabsContent value="chat" className="h-full p-6 mt-0">
@@ -406,7 +421,7 @@ const CollaborationWorkspace = () => {
 
         {/* Right Sidebar */}
         <div className="w-80 bg-black/30 backdrop-blur-sm border-l border-white/10 p-4 space-y-4 overflow-y-auto">
-          <RealTimeCollaborationPanel projectId={project.id} />
+          <RealTimeCollaborationPanel projectId={project?.id || 0} />
         </div>
       </div>
     </div>
