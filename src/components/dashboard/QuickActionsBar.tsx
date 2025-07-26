@@ -1,13 +1,16 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload, MessageCircle, Calendar, Plus, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
 interface QuickActionsBarProps {
   onNewCollaboration: () => void;
   onUploadTrack: () => void;
   onOpenMessages: () => void;
   onScheduleSession: () => void;
 }
+
 const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
   onNewCollaboration,
   onUploadTrack,
@@ -30,6 +33,7 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
     action: onScheduleSession,
     className: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
   }];
+
   return <>
       {/* Floating Action Button - Always Visible */}
       <div className="fixed bottom-6 right-6 z-50 lg:hidden">
@@ -39,8 +43,18 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
       </div>
 
       {/* Quick Actions Desktop Bar */}
-      <div className="hidden lg:flex fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40">
-        
+      <div className="hidden lg:flex fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 bg-card/90 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg">
+        {quickActions.map((action, index) => (
+          <Button
+            key={index}
+            onClick={action.action}
+            className={cn("mx-1 rounded-full", action.className)}
+            title={action.label}
+          >
+            <action.icon className="w-4 h-4" />
+            <span className="ml-2 hidden xl:inline">{action.label}</span>
+          </Button>
+        ))}
       </div>
 
       {/* Voice Search Button */}
@@ -51,4 +65,5 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
       </div>
     </>;
 };
+
 export default QuickActionsBar;
