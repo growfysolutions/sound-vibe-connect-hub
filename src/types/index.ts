@@ -16,7 +16,7 @@ export type Connection = Database['public']['Tables']['connections']['Row'];
 export type Project = Database['public']['Tables']['projects']['Row'];
 
 // Import the unified Message type
-export { Message } from './message';
+export type { Message } from './message';
 
 export type Conversation = BaseConversation & {
   conversation_participants: {

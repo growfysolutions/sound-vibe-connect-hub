@@ -1,13 +1,11 @@
 
-import { Profile } from './index';
-
 export interface Message {
   id: string;
   content: string | null;
   sender_id: string;
   conversation_id: string;
   created_at: string;
-  updated_at?: string;
+  updated_at?: string | null;
   file_path?: string | null;
   file_metadata?: {
     name: string;

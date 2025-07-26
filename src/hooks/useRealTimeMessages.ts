@@ -40,7 +40,7 @@ export const useRealTimeMessages = (conversationId: string) => {
           sender_id: msg.sender_id,
           conversation_id: msg.conversation_id,
           created_at: msg.created_at,
-          updated_at: msg.updated_at,
+          updated_at: msg.updated_at || undefined,
           file_path: msg.file_path,
           file_metadata: msg.file_metadata as any,
           sender: {
@@ -183,7 +183,7 @@ export const useRealTimeMessages = (conversationId: string) => {
                 sender_id: data.sender_id,
                 conversation_id: data.conversation_id,
                 created_at: data.created_at,
-                updated_at: data.updated_at,
+                updated_at: data.updated_at || undefined,
                 file_path: data.file_path,
                 file_metadata: data.file_metadata as any,
                 sender: {
@@ -208,7 +208,7 @@ export const useRealTimeMessages = (conversationId: string) => {
       )
       .subscribe((status) => {
         console.log('Real-time subscription status:', status);
-        if (status === 'SUBSCRIPTION_ERROR') {
+        if (status === 'SUBSCRIPTION_ERROR' || status === 'CLOSED') {
           console.error('Real-time subscription error');
           toast.error('Real-time messaging temporarily unavailable');
         }
