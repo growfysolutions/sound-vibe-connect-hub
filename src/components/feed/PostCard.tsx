@@ -1,415 +1,224 @@
 
 import { useState, useEffect } from 'react';
-import { MoreHorizontal, Heart, MessageCircle, Share, Bookmark } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Play, Pause } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { PostWithProfile } from '@/types';
-import { cn } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { useProfile } from '@/contexts/ProfileContext';
+import { useAuth } from '@/context/AuthContext';
 
 interface PostCardProps {
   post: PostWithProfile;
+  onLike: (postId: string) => void;
+  onComment: (postId: string, comment: string) => void;
+  onShare: (postId: string) => void;
 }
 
-interface Comment {
-  id: string;
-  content: string;
-  created_at: string;
-  user_id: string;
-  profiles?: {
-    full_name: string | null;
-    avatar_url?: string | null;
-  };
-}
-
-export function PostCard({ post }: PostCardProps) {
-  const { profile } = useProfile();
+export default function PostCard({ post, onLike, onComment, onShare }: PostCardProps) {
+  const { user } = useAuth();
+  const [likeCount, setLikeCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [commentsCount, setCommentsCount] = useState(0);
-  const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [isCommenting, setIsCommenting] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const isMobile = useIsMobile();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPostInteractions();
-    fetchComments();
-  }, [post.id]);
+    fetchInteractionData();
+  }, [post.id, user?.id]);
 
-  const fetchPostInteractions = async () => {
+  const fetchInteractionData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Check if user liked this post
-      const { data: likeData } = await supabase
+      // Fetch like count
+      const { count: likes } = await supabase
         .from('likes')
-        .select('id')
-        .eq('post_id', post.id)
-        .eq('user_id', user.id)
-        .single();
-
-      setIsLiked(!!likeData);
-
-      // Get likes count
-      const { count: likesCount } = await supabase
-        .from('likes')
-        .select('id', { count: 'exact' })
+        .select('*', { count: 'exact', head: true })
         .eq('post_id', post.id);
 
-      setLikesCount(likesCount || 0);
+      setLikeCount(likes || 0);
 
-      // Get comments count
-      const { count: commentsCount } = await supabase
+      // Fetch comment count
+      const { count: comments } = await supabase
         .from('comments')
-        .select('id', { count: 'exact' })
+        .select('*', { count: 'exact', head: true })
         .eq('post_id', post.id);
 
-      setCommentsCount(commentsCount || 0);
-    } catch (error) {
-      console.error('Error fetching post interactions:', error);
-    }
-  };
+      setCommentCount(comments || 0);
 
-  const fetchComments = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('comments')
-        .select(`
-          *,
-          profiles!inner(
-            full_name,
-            avatar_url
-          )
-        `)
-        .eq('post_id', post.id)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setComments(data || []);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
-  const handleLike = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please log in to like posts');
-        return;
-      }
-
-      setIsLoading(true);
-
-      if (isLiked) {
-        // Unlike
-        const { error } = await supabase
+      // Check if current user liked this post
+      if (user?.id) {
+        const { data: userLike } = await supabase
           .from('likes')
-          .delete()
+          .select('id')
           .eq('post_id', post.id)
-          .eq('user_id', user.id);
+          .eq('user_id', user.id)
+          .single();
 
-        if (error) throw error;
-        setIsLiked(false);
-        setLikesCount(prev => prev - 1);
-      } else {
-        // Like
-        const { error } = await supabase
-          .from('likes')
-          .insert({
-            post_id: post.id,
-            user_id: user.id
-          });
-
-        if (error) throw error;
-        setIsLiked(true);
-        setLikesCount(prev => prev + 1);
+        setIsLiked(!!userLike);
       }
-    } catch (error: any) {
-      console.error('Error toggling like:', error);
-      toast.error('Failed to update like');
+    } catch (error) {
+      console.error('Error fetching interaction data:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleComment = async () => {
-    if (!newComment.trim()) return;
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.error('Please log in to comment');
-        return;
-      }
-
-      setIsCommenting(true);
-
-      const { error } = await supabase
-        .from('comments')
-        .insert({
-          content: newComment.trim(),
-          post_id: post.id,
-          user_id: user.id
-        });
-
-      if (error) throw error;
-
-      setNewComment('');
-      setCommentsCount(prev => prev + 1);
-      await fetchComments();
-      toast.success('Comment added!');
-    } catch (error: any) {
-      console.error('Error adding comment:', error);
-      toast.error('Failed to add comment');
-    } finally {
-      setIsCommenting(false);
-    }
+  const handleLike = () => {
+    onLike(post.id);
+    // Optimistically update UI
+    setIsLiked(!isLiked);
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
-  const handleShare = async () => {
-    if (navigator.share && isMobile) {
-      try {
-        await navigator.share({
-          title: `Post by ${post.profiles?.full_name || 'Unknown User'}`,
-          text: post.content,
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.error('Error sharing:', error);
-      }
-    } else {
-      // Fallback: Copy to clipboard
-      try {
-        await navigator.clipboard.writeText(`${post.content}\n\n- ${post.profiles?.full_name || 'Unknown User'} on SoundVibe`);
-        toast.success('Post copied to clipboard!');
-      } catch (error) {
-        toast.error('Failed to copy post');
-      }
-    }
-  };
+  const renderMedia = () => {
+    if (!post.media_url || post.media_type === 'text') return null;
 
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-    toast.success(isSaved ? 'Post removed from saved' : 'Post saved!');
-  };
-
-  // Handle case where post.profiles might be null
-  const profileName = post.profiles?.full_name || 'Unknown User';
-  const avatarUrl = post.profiles?.avatar_url;
-  const profileInitial = profileName.charAt(0).toUpperCase();
-
-  return (
-    <Card className="border-none shadow-none bg-transparent">
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <Avatar className="w-12 h-12 border-2 border-border">
-              <AvatarImage src={avatarUrl || undefined} />
-              <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-                {profileInitial}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-foreground truncate">
-                  {profileName}
-                </h3>
-                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
-                  ✓ Verified Artist
-                </span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <button 
-                  className="hover:text-primary transition-colors"
-                  onClick={() => toast.info('Post details coming soon!')}
-                >
-                  {formatDistanceToNow(new Date(post.created_at))} ago
-                </button>
-                <span>•</span>
-                <span className="flex items-center">
-                  📍 Punjab Traditional
-                </span>
-              </div>
+    switch (post.media_type) {
+      case 'image':
+        return (
+          <img
+            src={post.media_url}
+            alt="Post media"
+            className="w-full rounded-lg border object-cover max-h-96"
+          />
+        );
+      case 'video':
+        return (
+          <video
+            src={post.media_url}
+            controls
+            className="w-full rounded-lg border max-h-96"
+          />
+        );
+      case 'audio':
+        return (
+          <div className="flex items-center space-x-4 p-4 bg-muted rounded-lg">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="text-primary"
+            >
+              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+            </Button>
+            <div className="flex-1">
+              <audio
+                src={post.media_url}
+                controls
+                className="w-full"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
             </div>
           </div>
-          
-          <Button variant="ghost" size="sm" className="p-2">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
-        </div>
+        );
+      default:
+        return null;
+    }
+  };
 
-        {/* Content */}
-        <div className="mb-4">
-          <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-            {post.content}
-          </p>
-        </div>
-
-        {/* Engagement Stats */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4 px-2">
-          <div className="flex items-center space-x-4">
-            <button 
-              className="flex items-center hover:text-primary transition-colors"
-              onClick={() => setShowComments(!showComments)}
-            >
-              ❤️ {likesCount} likes
-            </button>
-            <button 
-              className="flex items-center hover:text-primary transition-colors"
-              onClick={() => setShowComments(!showComments)}
-            >
-              💬 {commentsCount} comments
-            </button>
+  if (loading) {
+    return (
+      <Card className="animate-pulse">
+        <CardHeader className="space-y-0">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-muted rounded-full" />
+            <div className="space-y-2 flex-1">
+              <div className="h-4 bg-muted rounded w-1/4" />
+              <div className="h-3 bg-muted rounded w-1/6" />
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-primary">🎵 Traditional</span>
-            <span>•</span>
-            <span style={{ fontFamily: 'serif' }} className="text-primary">ਪਰੰਪਰਾਗਤ</span>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="h-4 bg-muted rounded" />
+            <div className="h-4 bg-muted rounded w-3/4" />
           </div>
-        </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-between border-t border-border pt-4">
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "flex items-center space-x-2 transition-all duration-200",
-                isLiked ? "text-red-500 hover:text-red-600" : "hover:text-red-500"
-              )}
-              onClick={handleLike}
-              disabled={isLoading}
-            >
-              <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
-              <span>Like</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center space-x-2 hover:text-primary transition-colors"
-              onClick={() => {
-                setShowComments(!showComments);
-                if (!showComments) {
-                  setTimeout(() => {
-                    document.getElementById(`comment-input-${post.id}`)?.focus();
-                  }, 100);
-                }
-              }}
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Comment</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center space-x-2 hover:text-green-600 transition-colors"
-              onClick={handleShare}
-            >
-              <Share className="w-4 h-4" />
-              <span>Share</span>
-            </Button>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "flex items-center space-x-2 transition-all duration-200",
-              isSaved ? "text-yellow-600 hover:text-yellow-700" : "hover:text-yellow-600"
-            )}
-            onClick={handleSave}
-          >
-            <Bookmark className={cn("w-4 h-4", isSaved && "fill-current")} />
-            <span>Save</span>
-          </Button>
-        </div>
-
-        {/* Comments Section */}
-        {showComments && (
-          <div className="mt-4 border-t border-border pt-4">
-            {/* Comment Input */}
-            <div className="flex space-x-3 mb-4">
-              <Avatar className="w-8 h-8 border border-border">
-                <AvatarImage src={profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                  {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-2">
-                <Input
-                  id={`comment-input-${post.id}`}
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment... ਟਿੱਪਣੀ ਲਿਖੋ..."
-                  className="border-border focus:border-primary"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleComment();
-                    }
-                  }}
-                />
-                {newComment.trim() && (
-                  <div className="flex justify-end">
-                    <Button
-                      size="sm"
-                      onClick={handleComment}
-                      disabled={isCommenting}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                    >
-                      {isCommenting ? 'Posting...' : 'Post Comment'}
-                    </Button>
-                  </div>
+  return (
+    <Card className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={post.profiles?.avatar_url || undefined} />
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {post.profiles?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h4 className="font-semibold text-foreground">
+                {post.profiles?.full_name || 'Anonymous'}
+              </h4>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                </span>
+                {post.profiles?.role && (
+                  <Badge variant="secondary" className="text-xs">
+                    {post.profiles.role}
+                  </Badge>
                 )}
               </div>
             </div>
-
-            {/* Comments List */}
-            <div className="space-y-3 max-h-64 overflow-y-auto">
-              {comments.map((comment) => (
-                <div key={comment.id} className="flex space-x-3">
-                  <Avatar className="w-8 h-8 border border-border">
-                    <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                      {comment.profiles?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 bg-muted rounded-lg p-3">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="font-medium text-sm text-foreground">{comment.profiles?.full_name || 'Unknown User'}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(comment.created_at))} ago
-                      </span>
-                    </div>
-                    <p className="text-sm text-foreground">{comment.content}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {comments.length === 0 && (
-              <div className="text-center py-4 text-muted-foreground">
-                <p className="text-sm">No comments yet. Be the first to comment!</p>
-              </div>
-            )}
           </div>
-        )}
+          <Button variant="ghost" size="sm">
+            <MoreHorizontal className="w-4 h-4" />
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        {/* Post Content */}
+        <p className="text-foreground leading-relaxed">{post.content}</p>
+
+        {/* Media */}
+        {renderMedia()}
+
+        {/* Interaction Buttons */}
+        <div className="flex items-center justify-between pt-3 border-t border-border">
+          <div className="flex space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLike}
+              className={`transition-colors ${
+                isLiked 
+                  ? 'text-red-500 hover:text-red-600' 
+                  : 'text-muted-foreground hover:text-red-500'
+              }`}
+            >
+              <Heart className={`w-4 h-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
+              {likeCount}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onComment(post.id, '')}
+              className="text-muted-foreground hover:text-blue-500"
+            >
+              <MessageCircle className="w-4 h-4 mr-1" />
+              {commentCount}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onShare(post.id)}
+              className="text-muted-foreground hover:text-green-500"
+            >
+              <Share2 className="w-4 h-4 mr-1" />
+              Share
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

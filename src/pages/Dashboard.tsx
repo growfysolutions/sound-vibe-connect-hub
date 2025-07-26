@@ -10,20 +10,37 @@ import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { CalendarTab } from '@/components/dashboard/CalendarTab';
+import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import { useSearch } from '@/hooks/useSearch';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   
+  const {
+    professionals,
+    projects,
+    connections,
+    incomingRequests,
+    pendingConnections,
+    loading,
+    handleConnect,
+    handleRequestAction,
+    refetchProjects
+  } = useDashboardData();
+
+  const { searchQuery, handleSearch, setSearchQuery } = useSearch();
+  
   // Extract tab from URL path
   const getTabFromPath = (path: string) => {
     const pathParts = path.split('/');
     const tabFromPath = pathParts[pathParts.length - 1];
     
-    // Map URL paths to tab IDs
     const tabMap: Record<string, string> = {
       'dashboard': 'feed',
       'feed': 'feed',
@@ -39,11 +56,11 @@ export default function Dashboard() {
   };
 
   const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     
-    // Update URL when tab changes
     const tabPaths: Record<string, string> = {
       'feed': '/dashboard',
       'discover': '/dashboard/discover',
@@ -60,26 +77,27 @@ export default function Dashboard() {
     }
   };
 
-  // Mock data and handlers for components that require props
-  const mockData = {
-    professionals: [],
-    pendingConnections: [],
-    connections: [],
-    incomingRequests: [],
-    projects: [],
-    searchQuery: '',
+  const handleSendMessage = (userId: string) => {
+    // Navigate to messages with the specific user
+    navigate(`/messages?user=${userId}`);
   };
 
-  const mockHandlers = {
-    handleConnect: (id: string) => console.log('Connect:', id),
-    handleSendMessage: (id: string) => console.log('Send message:', id),
-    handleSearch: (query: string) => console.log('Search:', query),
-    handleRequestAction: (connectionId: number, status: 'accepted' | 'declined') => 
-      console.log('Request action:', connectionId, status),
-    setSearchQuery: (query: string) => console.log('Set search query:', query),
-    handleFindConnections: () => console.log('Find connections'),
-    handleViewProfile: (id: string) => console.log('View profile:', id),
-    handleOpenModal: () => console.log('Open modal'),
+  const handleViewProfile = (userId: string) => {
+    navigate(`/profile/${userId}`);
+  };
+
+  const handleFindConnections = () => {
+    setActiveTab('discover');
+    navigate('/dashboard/discover');
+  };
+
+  const handleOpenModal = () => {
+    setIsProjectModalOpen(true);
+  };
+
+  const handleProjectCreated = () => {
+    refetchProjects();
+    toast.success('Project created successfully!');
   };
 
   // Error boundary component for tab content
@@ -100,28 +118,36 @@ export default function Dashboard() {
   };
 
   const renderTabContent = () => {
+    if (loading && (activeTab === 'discover' || activeTab === 'network' || activeTab === 'projects')) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      );
+    }
+
     const tabComponents = {
       feed: <FeedTimeline />,
       discover: <DiscoverTab 
-        professionals={mockData.professionals}
-        pendingConnections={mockData.pendingConnections}
-        handleConnect={mockHandlers.handleConnect}
-        handleSendMessage={mockHandlers.handleSendMessage}
-        handleSearch={mockHandlers.handleSearch}
+        professionals={professionals}
+        pendingConnections={pendingConnections}
+        handleConnect={handleConnect}
+        handleSendMessage={handleSendMessage}
+        handleSearch={handleSearch}
       />,
       network: <NetworkTab 
-        connections={mockData.connections}
-        incomingRequests={mockData.incomingRequests}
-        handleRequestAction={mockHandlers.handleRequestAction}
-        searchQuery={mockData.searchQuery}
-        setSearchQuery={mockHandlers.setSearchQuery}
-        handleFindConnections={mockHandlers.handleFindConnections}
-        handleViewProfile={mockHandlers.handleViewProfile}
-        handleSendMessage={mockHandlers.handleSendMessage}
+        connections={connections}
+        incomingRequests={incomingRequests}
+        handleRequestAction={handleRequestAction}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleFindConnections={handleFindConnections}
+        handleViewProfile={handleViewProfile}
+        handleSendMessage={handleSendMessage}
       />,
       projects: <MyProjectsTab 
-        projects={mockData.projects}
-        handleOpenModal={mockHandlers.handleOpenModal}
+        projects={projects}
+        handleOpenModal={handleOpenModal}
       />,
       achievements: <AchievementsTab />,
       analytics: <AnalyticsDashboard />,
@@ -155,6 +181,12 @@ export default function Dashboard() {
           </div>
         </div>
         <MobileBottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+        
+        <CreateProjectModal
+          isOpen={isProjectModalOpen}
+          onClose={() => setIsProjectModalOpen(false)}
+          onProjectCreated={handleProjectCreated}
+        />
       </div>
     );
   }
@@ -181,6 +213,12 @@ export default function Dashboard() {
           <DashboardRightSidebar />
         </div>
       </div>
+      
+      <CreateProjectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        onProjectCreated={handleProjectCreated}
+      />
     </div>
   );
 }
