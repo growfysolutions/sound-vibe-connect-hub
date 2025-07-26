@@ -6,7 +6,7 @@ import { getCulturalCardStyle, culturalStyles } from '@/lib/cultural-design';
 
 interface CulturalCardProps {
   children: React.ReactNode;
-  variant?: 'default' | 'profile' | 'project' | 'testimonial';
+  variant?: 'default' | 'profile' | 'project' | 'testimonial' | 'premium' | 'glass';
   title?: string;
   subtitle?: string;
   culturalIcon?: string;

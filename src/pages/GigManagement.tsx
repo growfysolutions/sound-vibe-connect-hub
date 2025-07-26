@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, DollarSign, FileText, MessageSquare, Star, Upload, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, MapPin, FileText, Upload, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
@@ -12,7 +11,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import { Badge } from '@/components/ui/badge';
 import { CulturalButton } from '@/components/ui/CulturalButton';
 import { CulturalCard } from '@/components/cards/CulturalCard';
-import { getCulturalNavigationStyle, culturalStyles } from '@/lib/cultural-design';
+import { getCulturalNavigationStyle } from '@/lib/cultural-design';
 
 const GigManagement = () => {
   const navigate = useNavigate();
