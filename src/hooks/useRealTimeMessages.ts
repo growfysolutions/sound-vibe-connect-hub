@@ -208,8 +208,8 @@ export const useRealTimeMessages = (conversationId: string) => {
       )
       .subscribe((status) => {
         console.log('Real-time subscription status:', status);
-        if (status === 'SUBSCRIPTION_ERROR' || status === 'CLOSED') {
-          console.error('Real-time subscription error');
+        if (status !== 'SUBSCRIBED') {
+          console.error('Real-time subscription error, status:', status);
           toast.error('Real-time messaging temporarily unavailable');
         }
       });

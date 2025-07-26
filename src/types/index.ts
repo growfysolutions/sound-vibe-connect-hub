@@ -23,7 +23,7 @@ export type Conversation = BaseConversation & {
     user_id: string;
     profiles: Profile;
   }[];
-  messages?: Message[];
+  messages?: import('./message').Message[];
 };
 
 // A post with the author's profile
