@@ -1,37 +1,59 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { 
-  Edit3, 
-  Clock, 
+  ArrowLeft,
+  Settings,
+  Users,
   FileText,
   MessageSquare,
-  CheckSquare2,
-  Radio,
+  Calendar,
   GitBranch,
-  Phone,
-  Users,
-  Zap
+  Video,
+  Share2,
+  Star,
+  PlayCircle,
+  Edit2,
+  Save,
+  X
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CulturalButton } from '@/components/ui/CulturalButton';
-import { CulturalCard } from '@/components/cards/CulturalCard';
+
+// Import existing components
 import CollaboratorSidebar from '@/components/collaboration/CollaboratorSidebar';
 import FilesTab from '@/components/collaboration/FilesTab';
-import TimelineTab from '@/components/collaboration/TimelineTab';
 import ChatTab from '@/components/collaboration/ChatTab';
 import TasksTab from '@/components/collaboration/TasksTab';
-import AudioMixerPanel from '@/components/collaboration/AudioMixerPanel';
+import TimelineTab from '@/components/collaboration/TimelineTab';
 import VersionControl from '@/components/collaboration/VersionControl';
-import WebRTCCall from '@/components/collaboration/WebRTCCall';
 import AdvancedMediaPlayer from '@/components/collaboration/AdvancedMediaPlayer';
-import EnhancedTaskManager from '@/components/collaboration/EnhancedTaskManager';
-import { getCulturalNavigationStyle } from '@/lib/cultural-design';
+import RealTimeCollaborationPanel from '@/components/cultural/RealTimeCollaborationPanel';
+
+// Import hooks
+import { supabase } from '@/integrations/supabase/client';
+import { useProfile } from '@/contexts/ProfileContext';
+
+interface Project {
+  id: number;
+  title: string;
+  artist: string;
+  genre: string | null;
+  duration: string | null;
+  thumbnail: string | null;
+  created_at: string;
+  user_id: string;
+  is_collaborative: boolean | null;
+}
 
 interface Collaborator {
   id: string;
   name: string;
-  avatarUrl: string;
   role: string;
   status: 'online' | 'away' | 'offline';
   avatar: string;
@@ -39,214 +61,313 @@ interface Collaborator {
 }
 
 const CollaborationWorkspace = () => {
-  const [activeTab, setActiveTab] = useState('files');
+  const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
+  const { profile } = useProfile();
+  
+  const [project, setProject] = useState<Project | null>(null);
+  const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [projectTitle, setProjectTitle] = useState('Sufi Romance - Wedding Album');
-  const [isCallOpen, setIsCallOpen] = useState(false);
-  const [selectedMediaFile, setSelectedMediaFile] = useState<string | null>(null);
+  const [editedTitle, setEditedTitle] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [collaborators] = useState<Collaborator[]>([
-    { 
-      id: '1', 
-      name: 'Arijit Singh', 
-      avatarUrl: '/avatars/arijit.jpg', 
-      role: 'Lead Vocalist',
-      status: 'online',
-      avatar: '/avatars/arijit.jpg',
-      permission: 'Admin'
-    },
-    { 
-      id: '2', 
-      name: 'Pritam Chakraborty', 
-      avatarUrl: '/avatars/pritam.jpg', 
-      role: 'Music Composer',
-      status: 'online',
-      avatar: '/avatars/pritam.jpg',
-      permission: 'Contributor'
-    },
-    { 
-      id: '3', 
-      name: 'Sunidhi Chauhan', 
-      avatarUrl: '/avatars/sunidhi.jpg', 
-      role: 'Playback Singer',
-      status: 'away',
-      avatar: '/avatars/sunidhi.jpg',
-      permission: 'Contributor'
-    },
-  ]);
+  // Fetch project data
+  useEffect(() => {
+    const fetchProject = async () => {
+      if (!projectId) {
+        setError('Project ID not provided');
+        setIsLoading(false);
+        return;
+      }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectTitle(e.target.value);
+      try {
+        const { data, error: projectError } = await supabase
+          .from('projects')
+          .select('*')
+          .eq('id', parseInt(projectId))
+          .single();
+
+        if (projectError) {
+          console.error('Error fetching project:', projectError);
+          setError('Project not found');
+          setIsLoading(false);
+          return;
+        }
+
+        setProject(data);
+        setEditedTitle(data.title);
+
+        // Fetch collaborators
+        const { data: collaboratorsData, error: collabError } = await supabase
+          .from('project_collaborators')
+          .select(`
+            user_id,
+            role,
+            profiles (
+              full_name,
+              avatar_url,
+              is_online
+            )
+          `)
+          .eq('project_id', parseInt(projectId));
+
+        if (!collabError && collaboratorsData) {
+          const formattedCollaborators: Collaborator[] = collaboratorsData.map(collab => ({
+            id: collab.user_id,
+            name: collab.profiles?.full_name || 'Unknown User',
+            role: collab.role,
+            status: collab.profiles?.is_online ? 'online' : 'offline',
+            avatar: collab.profiles?.avatar_url || '',
+            permission: collab.role as 'Admin' | 'Contributor' | 'Viewer'
+          }));
+
+          // Add project owner
+          if (data.user_id !== profile?.id) {
+            const { data: ownerData } = await supabase
+              .from('profiles')
+              .select('full_name, avatar_url, is_online')
+              .eq('id', data.user_id)
+              .single();
+
+            if (ownerData) {
+              formattedCollaborators.unshift({
+                id: data.user_id,
+                name: ownerData.full_name || 'Project Owner',
+                role: 'Owner',
+                status: ownerData.is_online ? 'online' : 'offline',
+                avatar: ownerData.avatar_url || '',
+                permission: 'Admin'
+              });
+            }
+          }
+
+          setCollaborators(formattedCollaborators);
+        }
+
+      } catch (err) {
+        console.error('Error in fetchProject:', err);
+        setError('Failed to load project');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProject();
+  }, [projectId, profile?.id]);
+
+  const handleSaveTitle = async () => {
+    if (!project || !editedTitle.trim()) return;
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({ title: editedTitle.trim() })
+        .eq('id', project.id);
+
+      if (error) {
+        console.error('Error updating title:', error);
+        return;
+      }
+
+      setProject({ ...project, title: editedTitle.trim() });
+      setIsEditingTitle(false);
+    } catch (error) {
+      console.error('Error updating title:', error);
+    }
   };
 
-  const handleTitleEdit = () => {
-    setIsEditingTitle(true);
-  };
-
-  const handleTitleSave = () => {
+  const handleCancelEdit = () => {
+    setEditedTitle(project?.title || '');
     setIsEditingTitle(false);
   };
 
-  const tabItems = [
-    { id: 'files', label: 'Files', icon: FileText },
-    { id: 'timeline', label: 'Timeline', icon: Clock },
-    { id: 'chat', label: 'Chat', icon: MessageSquare },
-    { id: 'tasks', label: 'Tasks', icon: CheckSquare2 },
-    { id: 'enhanced-tasks', label: 'Enhanced Tasks', icon: Users },
-    { id: 'mixer', label: 'Audio Mixer', icon: Radio },
-    { id: 'media-player', label: 'Media Player', icon: Zap },
-    { id: 'versions', label: 'Version Control', icon: GitBranch },
-  ];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading collaboration workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="text-center text-white">
+          <h1 className="text-2xl font-bold mb-4">Project Not Found</h1>
+          <p className="mb-6">{error || 'The requested project could not be found.'}</p>
+          <Button onClick={() => navigate('/dashboard')} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Cultural Header */}
-      <div className="bg-gradient-to-r from-hsl(var(--ocean-blue)) to-hsl(var(--teal)) text-white py-6 shadow-xl shadow-hsl(var(--ocean-blue))/20 border-b border-hsl(var(--ocean-blue))/30">
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <GitBranch className="h-8 w-8 text-white animate-pulse" />
-            {isEditingTitle ? (
-              <div className="flex items-center">
-                <Input
-                  type="text"
-                  value={projectTitle}
-                  onChange={handleTitleChange}
-                  className="text-lg font-semibold bg-white/10 border-white/20 focus:border-white text-white placeholder:text-white/70 backdrop-blur-sm"
-                />
-                <CulturalButton 
-                  onClick={handleTitleSave} 
-                  variant="secondary" 
-                  size="sm"
-                  className="ml-2 bg-white/20 border-white/30 text-white hover:bg-white/30"
-                >
-                  Save
-                </CulturalButton>
-              </div>
-            ) : (
-              <h1 className="text-2xl font-semibold tracking-wide">{projectTitle}</h1>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            <CulturalButton 
-              onClick={() => setIsCallOpen(true)}
-              variant="secondary" 
-              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-            >
-              <Phone className="h-5 w-5 mr-2" />
-              Start Call
-            </CulturalButton>
-            {!isEditingTitle && (
-              <CulturalButton 
-                onClick={handleTitleEdit} 
-                variant="secondary"
-                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900">
+      {/* Header */}
+      <header className="bg-black/20 backdrop-blur-lg border-b border-white/10 sticky top-0 z-40">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/dashboard')}
+                className="text-white/80 hover:text-white hover:bg-white/10"
               >
-                <Edit3 className="h-5 w-5 mr-2" />
-                Edit Title
-              </CulturalButton>
-            )}
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-blue-500 rounded-lg flex items-center justify-center">
+                  <PlayCircle className="w-6 h-6 text-white" />
+                </div>
+                
+                <div>
+                  {isEditingTitle ? (
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        className="text-lg font-bold bg-white/10 border-white/20 text-white"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveTitle();
+                          if (e.key === 'Escape') handleCancelEdit();
+                        }}
+                      />
+                      <Button size="sm" onClick={handleSaveTitle} variant="ghost">
+                        <Save className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" onClick={handleCancelEdit} variant="ghost">
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <h1 className="text-lg font-bold text-white">{project.title}</h1>
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => setIsEditingTitle(true)}
+                        className="text-white/60 hover:text-white"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center space-x-4 text-sm text-white/60">
+                    <span>by {project.artist}</span>
+                    {project.genre && (
+                      <Badge variant="secondary" className="bg-white/10 text-white/80">
+                        {project.genre}
+                      </Badge>
+                    )}
+                    <div className="flex items-center space-x-1">
+                      <Users className="w-4 h-4" />
+                      <span>{collaborators.length} collaborators</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                <Video className="w-4 h-4 mr-2" />
+                Call
+              </Button>
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                <Star className="w-4 h-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-white/80 hover:text-white">
+                <Settings className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div className="flex h-[calc(100vh-120px)]">
+      </header>
+
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Collaborators Sidebar */}
         <CollaboratorSidebar collaborators={collaborators} />
         
-        <div className="flex-1 flex flex-col overflow-hidden bg-background">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <div className="border-b border-border bg-card/50 backdrop-blur-sm">
-              <TabsList className="bg-transparent p-2 rounded-none border-none h-auto">
-                {tabItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <TabsTrigger 
-                      key={item.id}
-                      value={item.id} 
-                      className={getCulturalNavigationStyle(activeTab === item.id)}
-                    >
-                      <Icon className="h-4 w-4 mr-2" />
-                      {item.label}
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </div>
-            
-            <div className="flex-1 overflow-hidden bg-gradient-to-br from-hsl(var(--ocean-blue))/5 to-hsl(var(--teal))/5">
-              <TabsContent value="files" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <FilesTab projectId="sample-project" />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="timeline" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <TimelineTab projectData={{ phase: 'Recording', progress: 65, daysRemaining: 45 }} />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="chat" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <ChatTab projectId="sample-project" collaborators={collaborators} />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="tasks" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <TasksTab projectId="sample-project" collaborators={collaborators} />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="enhanced-tasks" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <EnhancedTaskManager projectId="sample-project" />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="mixer" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <AudioMixerPanel projectId="sample-project" />
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="media-player" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <div className="p-4 space-y-4">
-                    {selectedMediaFile ? (
-                      <AdvancedMediaPlayer
-                        fileUrl={selectedMediaFile}
-                        fileName="Sample Audio Track.mp3"
-                      />
-                    ) : (
-                      <div className="text-center py-12">
-                        <p className="text-muted-foreground mb-4">Select a media file to play</p>
-                        <CulturalButton 
-                          onClick={() => setSelectedMediaFile('/sample-audio.mp3')}
-                          variant="primary"
-                        >
-                          Load Sample Audio
-                        </CulturalButton>
-                      </div>
-                    )}
-                  </div>
-                </CulturalCard>
-              </TabsContent>
-              
-              <TabsContent value="versions" className="h-full m-0 p-4">
-                <CulturalCard variant="glass" className="h-full">
-                  <VersionControl projectId="sample-project" />
-                </CulturalCard>
-              </TabsContent>
-            </div>
-          </Tabs>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Media Player Section */}
+          <div className="h-64 bg-black/30 backdrop-blur-sm border-b border-white/10">
+            <AdvancedMediaPlayer projectId={project.id} />
+          </div>
+
+          {/* Collaboration Tabs */}
+          <div className="flex-1 bg-black/20 backdrop-blur-sm">
+            <Tabs defaultValue="files" className="h-full flex flex-col">
+              <div className="px-6 py-4 border-b border-white/10">
+                <TabsList className="bg-black/30 border-white/10">
+                  <TabsTrigger value="files" className="text-white/80 data-[state=active]:text-white data-[state=active]:bg-white/10">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Files
+                  </TabsTrigger>
+                  <TabsTrigger value="chat" className="text-white/80 data-[state=active]:text-white data-[state=active]:bg-white/10">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="tasks" className="text-white/80 data-[state=active]:text-white data-[state=active]:bg-white/10">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Tasks
+                  </TabsTrigger>
+                  <TabsTrigger value="timeline" className="text-white/80 data-[state=active]:text-white data-[state=active]:bg-white/10">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Timeline
+                  </TabsTrigger>
+                  <TabsTrigger value="versions" className="text-white/80 data-[state=active]:text-white data-[state=active]:bg-white/10">
+                    <GitBranch className="w-4 h-4 mr-2" />
+                    Versions
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <div className="flex-1 overflow-hidden">
+                <TabsContent value="files" className="h-full p-6 mt-0 overflow-y-auto">
+                  <FilesTab projectId={project.id} />
+                </TabsContent>
+                
+                <TabsContent value="chat" className="h-full p-6 mt-0">
+                  <ChatTab projectId={project.id.toString()} />
+                </TabsContent>
+                
+                <TabsContent value="tasks" className="h-full p-6 mt-0">
+                  <TasksTab projectId={project.id.toString()} />
+                </TabsContent>
+                
+                <TabsContent value="timeline" className="h-full p-6 mt-0">
+                  <TimelineTab projectId={project.id.toString()} />
+                </TabsContent>
+                
+                <TabsContent value="versions" className="h-full p-6 mt-0 overflow-y-auto">
+                  <VersionControl projectId={project.id.toString()} />
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-80 bg-black/30 backdrop-blur-sm border-l border-white/10 p-4 space-y-4 overflow-y-auto">
+          <RealTimeCollaborationPanel projectId={project.id} />
         </div>
       </div>
-
-      {/* WebRTC Call Component */}
-      <WebRTCCall
-        isOpen={isCallOpen}
-        onClose={() => setIsCallOpen(false)}
-      />
     </div>
   );
 };

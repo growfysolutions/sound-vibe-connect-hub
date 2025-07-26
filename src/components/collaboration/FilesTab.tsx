@@ -16,21 +16,19 @@ import {
   Trash2
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { useProjectFiles } from '@/hooks/useProjectFiles';
+import { useProjectComments } from '@/hooks/useProjectComments';
 
 interface FilesTabProps {
-  projectId: string;
+  projectId: number;
 }
 
 const FilesTab = ({ projectId }: FilesTabProps) => {
   console.log('FilesTab loaded for project:', projectId);
   
-  const { uploads, isLoading, uploadFile, fetchUploads, deleteUpload } = useMediaUpload();
+  const { files, isLoading, uploadFile, deleteFile, getFileUrl } = useProjectFiles(projectId);
+  const { comments, createComment } = useProjectComments(projectId);
   const [playingId, setPlayingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUploads();
-  }, [fetchUploads]);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     console.log('Files dropped:', acceptedFiles);
@@ -52,19 +50,26 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
     setPlayingId(prev => prev === fileId ? null : fileId);
   };
 
-  const handleDownload = (fileUrl: string, fileName: string) => {
-    const link = document.createElement('a');
-    link.href = fileUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (filePath: string, fileName: string) => {
+    const url = await getFileUrl(filePath);
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
-  const handleDelete = async (id: string, filePath: string) => {
+  const handleDelete = async (fileId: string, filePath: string) => {
     if (window.confirm('Are you sure you want to delete this file?')) {
-      await deleteUpload(id, filePath);
+      await deleteFile(fileId, filePath);
     }
+  };
+
+  const getFileCommentCount = (fileId: string) => {
+    return comments.filter(comment => comment.file_id === fileId).length;
   };
 
   const WaveformVisualization = ({ isPlaying }: { isPlaying: boolean }) => {
@@ -117,11 +122,11 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Project Files</h3>
           <Badge variant="secondary" className="text-xs">
-            {uploads.length} files
+            {files.length} files
           </Badge>
         </div>
 
-        {uploads.length === 0 ? (
+        {files.length === 0 ? (
           <Card className="bg-card/50 backdrop-blur-sm">
             <CardContent className="p-8 text-center">
               <FileAudio className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
@@ -132,7 +137,7 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
             </CardContent>
           </Card>
         ) : (
-          uploads.map((file) => (
+          files.map((file) => (
             <Card key={file.id} className="bg-card/50 backdrop-blur-sm hover:bg-card/70 transition-all">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -156,11 +161,16 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
                       <div className="flex items-center space-x-2 mb-1">
                         <FileAudio className="w-4 h-4 text-primary shrink-0" />
                         <h4 className="font-medium truncate">{file.file_name}</h4>
+                        <Badge variant="outline" className="text-xs">
+                          v{file.version_number}
+                        </Badge>
                       </div>
                       
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                         <span>{(file.file_size / 1024 / 1024).toFixed(1)} MB</span>
-                        {file.duration && <span>{Math.floor(file.duration / 60)}:{(file.duration % 60).toString().padStart(2, '0')}</span>}
+                        {file.duration && (
+                          <span>{Math.floor(file.duration / 60)}:{(file.duration % 60).toString().padStart(2, '0')}</span>
+                        )}
                         <div className="flex items-center space-x-1">
                           <Clock className="w-3 h-3" />
                           <span>{new Date(file.created_at).toLocaleDateString()}</span>
@@ -178,7 +188,7 @@ const FilesTab = ({ projectId }: FilesTabProps) => {
                   <div className="flex items-center space-x-2">
                     <Button variant="ghost" size="sm">
                       <MessageCircle className="w-4 h-4 mr-1" />
-                      0
+                      {getFileCommentCount(file.id)}
                     </Button>
                     <Button variant="ghost" size="sm">
                       <History className="w-4 h-4" />

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useRealTimeCollaboration } from '@/hooks/useRealTimeCollaboration';
-import { Users, Play, Square, Clock } from 'lucide-react';
+import { Users, Play, Square, Clock, User } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface RealTimeCollaborationPanelProps {
@@ -17,7 +17,8 @@ const RealTimeCollaborationPanel = ({ projectId }: RealTimeCollaborationPanelPro
     activeSessions, 
     currentSession, 
     startSession, 
-    endSession 
+    endSession,
+    isLoading 
   } = useRealTimeCollaboration(projectId);
   const [sessionType, setSessionType] = useState<'collaboration' | 'review' | 'practice'>('collaboration');
 
@@ -58,14 +59,20 @@ const RealTimeCollaborationPanel = ({ projectId }: RealTimeCollaborationPanelPro
                   variant={sessionType === type ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSessionType(type)}
+                  disabled={isLoading}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </Button>
               ))}
             </div>
-            <Button onClick={handleStartSession} className="w-full" size="sm">
+            <Button 
+              onClick={handleStartSession} 
+              className="w-full" 
+              size="sm"
+              disabled={isLoading}
+            >
               <Play className="w-4 h-4 mr-2" />
-              Start {sessionType} Session
+              {isLoading ? 'Starting...' : `Start ${sessionType} Session`}
             </Button>
           </div>
         ) : (
@@ -77,7 +84,12 @@ const RealTimeCollaborationPanel = ({ projectId }: RealTimeCollaborationPanelPro
                   Started {formatDistanceToNow(new Date(currentSession.created_at))} ago
                 </p>
               </div>
-              <Button onClick={handleEndSession} variant="destructive" size="sm">
+              <Button 
+                onClick={handleEndSession} 
+                variant="destructive" 
+                size="sm"
+                disabled={isLoading}
+              >
                 <Square className="w-4 h-4 mr-2" />
                 End Session
               </Button>
@@ -93,22 +105,30 @@ const RealTimeCollaborationPanel = ({ projectId }: RealTimeCollaborationPanelPro
                 <div className="flex items-center gap-2">
                   <Avatar className="w-6 h-6">
                     <AvatarFallback className="text-xs">
-                      {session.user_id.charAt(0).toUpperCase()}
+                      <User className="w-3 h-3" />
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium">{session.session_type}</p>
+                    <p className="text-sm font-medium capitalize">{session.session_type}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {formatDistanceToNow(new Date(session.last_activity))} ago
                     </p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs capitalize">
                   {session.status}
                 </Badge>
               </div>
             ))}
+          </div>
+        )}
+
+        {activeSessions.length === 0 && !currentSession && (
+          <div className="text-center p-4 text-muted-foreground">
+            <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No active sessions</p>
+            <p className="text-xs">Start a session to collaborate in real-time</p>
           </div>
         )}
       </CardContent>
