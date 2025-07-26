@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +23,6 @@ interface FilesTabProps {
 const FilesTab: React.FC<FilesTabProps> = ({ projectId }) => {
   const { files, isLoading, uploadFile, deleteFile, getFileUrl } = useProjectFiles(projectId);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles = event.target.files;

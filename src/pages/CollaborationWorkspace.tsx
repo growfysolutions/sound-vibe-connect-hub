@@ -34,6 +34,7 @@ import RealTimeCollaborationPanel from '@/components/cultural/RealTimeCollaborat
 // Import hooks
 import { supabase } from '@/integrations/supabase/client';
 import { useProfile } from '@/contexts/ProfileContext';
+import { useProjectFiles } from '@/hooks/useProjectFiles';
 
 interface Project {
   id: number;
@@ -60,6 +61,7 @@ const CollaborationWorkspace = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { profile } = useProfile();
+  const { files } = useProjectFiles(projectId ? parseInt(projectId) : undefined);
   
   const [project, setProject] = useState<Project | null>(null);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
@@ -67,6 +69,9 @@ const CollaborationWorkspace = () => {
   const [editedTitle, setEditedTitle] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Get the first audio/video file for the media player
+  const currentFile = files.find(f => f.file_type === 'audio' || f.file_type === 'video');
 
   // Fetch project data
   useEffect(() => {
@@ -104,18 +109,20 @@ const CollaborationWorkspace = () => {
           // Get profile info for each collaborator
           const collaboratorProfiles = await Promise.all(
             collaboratorsData.map(async (collab) => {
-              const { data: profile } = await supabase
+              const { data: profileData } = await supabase
                 .from('profiles')
                 .select('full_name, avatar_url, is_online')
                 .eq('id', collab.user_id)
                 .single();
 
+              const status: 'online' | 'away' | 'offline' = profileData?.is_online ? 'online' : 'offline';
+
               return {
                 id: collab.user_id,
-                name: profile?.full_name || 'Unknown User',
+                name: profileData?.full_name || 'Unknown User',
                 role: collab.role,
-                status: profile?.is_online ? 'online' : 'offline' as const,
-                avatar: profile?.avatar_url || '',
+                status,
+                avatar: profileData?.avatar_url || '',
                 permission: collab.role as 'Admin' | 'Contributor' | 'Viewer'
               };
             })
@@ -130,11 +137,13 @@ const CollaborationWorkspace = () => {
               .single();
 
             if (ownerData) {
+              const ownerStatus: 'online' | 'away' | 'offline' = ownerData.is_online ? 'online' : 'offline';
+              
               collaboratorProfiles.unshift({
                 id: data.user_id,
                 name: ownerData.full_name || 'Project Owner',
                 role: 'Owner',
-                status: ownerData.is_online ? 'online' : 'offline' as const,
+                status: ownerStatus,
                 avatar: ownerData.avatar_url || '',
                 permission: 'Admin' as const
               });
@@ -301,7 +310,16 @@ const CollaborationWorkspace = () => {
         <div className="flex-1 flex flex-col">
           {/* Media Player Section */}
           <div className="h-64 bg-black/30 backdrop-blur-sm border-b border-white/10">
-            <AdvancedMediaPlayer />
+            {currentFile ? (
+              <AdvancedMediaPlayer 
+                fileUrl={`/api/files/${currentFile.file_path}`} 
+                fileName={currentFile.file_name} 
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-white/60">
+                <p>No audio or video files uploaded yet</p>
+              </div>
+            )}
           </div>
 
           {/* Collaboration Tabs */}
@@ -338,19 +356,19 @@ const CollaborationWorkspace = () => {
                 </TabsContent>
                 
                 <TabsContent value="chat" className="h-full p-6 mt-0">
-                  <ChatTab projectId={projectId} collaborators={collaborators} />
+                  <ChatTab projectId={projectId || ''} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="tasks" className="h-full p-6 mt-0">
-                  <TasksTab projectId={projectId} collaborators={collaborators} />
+                  <TasksTab projectId={projectId || ''} collaborators={collaborators} />
                 </TabsContent>
                 
                 <TabsContent value="timeline" className="h-full p-6 mt-0">
-                  <TimelineTab />
+                  <TimelineTab projectData={project} />
                 </TabsContent>
                 
                 <TabsContent value="versions" className="h-full p-6 mt-0 overflow-y-auto">
-                  <VersionControl projectId={projectId} />
+                  <VersionControl projectId={projectId || ''} />
                 </TabsContent>
               </div>
             </Tabs>

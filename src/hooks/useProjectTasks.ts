@@ -56,7 +56,7 @@ export const useProjectTasks = (projectId?: number) => {
         ...task,
         status: task.status as ProjectTask['status'],
         priority: task.priority as ProjectTask['priority'],
-        tags: Array.isArray(task.tags) ? task.tags : [],
+        tags: Array.isArray(task.tags) ? task.tags.filter((tag): tag is string => typeof tag === 'string') : [],
         attachments: Array.isArray(task.attachments) ? task.attachments : []
       }));
 
