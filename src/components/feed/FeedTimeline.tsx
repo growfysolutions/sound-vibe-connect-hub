@@ -1,10 +1,10 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import PostCard from './PostCard';
 import CreatePostForm from './CreatePostForm';
 import FeedFilters from './FeedFilters';
+import EditPostModal from './EditPostModal';
 import { PostWithProfile } from '@/types';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
@@ -31,6 +31,7 @@ export function FeedTimeline() {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [editingPost, setEditingPost] = useState<PostWithProfile | null>(null);
 
   const fetchPosts = useCallback(async (reset = false) => {
     try {
@@ -206,9 +207,17 @@ export function FeedTimeline() {
   };
 
   const handleEdit = (postId: string) => {
-    // TODO: Implement edit functionality
-    console.log('Edit post:', postId);
-    toast.info('Edit functionality coming soon!');
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setEditingPost(post);
+    }
+  };
+
+  const handlePostUpdated = (postId: string) => {
+    // Refresh the posts to get the updated data
+    setOffset(0);
+    fetchPosts(true);
+    setEditingPost(null);
   };
 
   const handleFiltersChange = (newFilters: FilterOptions) => {
@@ -278,6 +287,16 @@ export function FeedTimeline() {
           </div>
         )}
       </div>
+
+      {/* Edit Post Modal */}
+      {editingPost && (
+        <EditPostModal
+          post={editingPost}
+          isOpen={!!editingPost}
+          onClose={() => setEditingPost(null)}
+          onPostUpdated={handlePostUpdated}
+        />
+      )}
     </div>
   );
 }
