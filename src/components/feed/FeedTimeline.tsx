@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -120,11 +119,6 @@ export function FeedTimeline() {
     }
   };
 
-  const handleComment = (postId: string, comment: string) => {
-    // Comments are now handled by the CommentSection component
-    console.log('Comment handled by CommentSection');
-  };
-
   const handleShare = async (postId: string) => {
     try {
       const postUrl = `${window.location.origin}/posts/${postId}`;
@@ -162,7 +156,6 @@ export function FeedTimeline() {
               key={post.id}
               post={post}
               onLike={handleLike}
-              onComment={handleComment}
               onShare={handleShare}
             />
           ))

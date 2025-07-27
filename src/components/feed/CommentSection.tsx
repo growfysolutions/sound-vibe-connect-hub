@@ -9,10 +9,9 @@ import { Separator } from '@/components/ui/separator';
 
 interface CommentSectionProps {
   postId: string;
-  initialCommentCount?: number;
 }
 
-export default function CommentSection({ postId, initialCommentCount = 0 }: CommentSectionProps) {
+export default function CommentSection({ postId }: CommentSectionProps) {
   const [showComments, setShowComments] = useState(false);
   const { comments, loading, creating, createComment, deleteComment } = useComments(postId);
 

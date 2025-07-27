@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,11 +13,10 @@ import CommentSection from './CommentSection';
 interface PostCardProps {
   post: PostWithProfile;
   onLike: (postId: string) => void;
-  onComment: (postId: string, comment: string) => void;
   onShare: (postId: string) => void;
 }
 
-export default function PostCard({ post, onLike, onComment, onShare }: PostCardProps) {
+export default function PostCard({ post, onLike, onShare }: PostCardProps) {
   const { user } = useAuth();
   const [likeCount, setLikeCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
