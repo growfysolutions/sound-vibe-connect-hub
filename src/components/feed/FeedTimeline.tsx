@@ -213,7 +213,7 @@ export function FeedTimeline() {
     }
   };
 
-  const handlePostUpdated = (postId: string) => {
+  const handlePostUpdated = () => {
     // Refresh the posts to get the updated data
     setOffset(0);
     fetchPosts(true);
