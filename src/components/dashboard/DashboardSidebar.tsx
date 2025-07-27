@@ -1,3 +1,5 @@
+
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Home, 
@@ -17,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ProjectSelectionModal } from '@/components/modals/ProjectSelectionModal';
 
 interface DashboardSidebarProps {
   activeTab: string;
@@ -27,6 +30,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
   const { profile } = useProfile();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
   const navigationItems = [
     { 
@@ -91,8 +95,7 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
       punjabi: 'ਸਹਿਯੋਗ',
       color: 'text-ocean-blue',
       badge: undefined,
-      type: 'route',
-      route: '/collaboration-workspace'
+      type: 'modal'
     }
   ];
 
@@ -163,6 +166,8 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
   const handleItemClick = (item: typeof navigationItems[0] | typeof secondaryItems[0]) => {
     if (item.type === 'route' && item.route) {
       navigate(item.route);
+    } else if (item.type === 'modal' && item.id === 'collaboration') {
+      setIsProjectModalOpen(true);
     } else {
       setActiveTab(item.id);
     }
@@ -203,102 +208,114 @@ export function DashboardSidebar({ activeTab, setActiveTab }: DashboardSidebarPr
   };
 
   return (
-    <div className="h-full flex flex-col bg-card text-card-foreground">
-      {/* Profile Section */}
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center space-x-3 mb-4">
-          <Avatar className="w-12 h-12 border-2 border-ocean-blue/30">
-            <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-ocean-gradient text-white font-semibold">
-              {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-foreground font-semibold text-sm truncate">
-              {profile?.full_name || 'Music Enthusiast'}
-            </h3>
-            <p className="text-muted-foreground text-xs truncate">
-              {profile?.role || 'Aspiring Artist'}
-            </p>
+    <>
+      <div className="h-full flex flex-col bg-card text-card-foreground">
+        {/* Profile Section */}
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center space-x-3 mb-4">
+            <Avatar className="w-12 h-12 border-2 border-ocean-blue/30">
+              <AvatarImage src={profile?.avatar_url || undefined} />
+              <AvatarFallback className="bg-ocean-gradient text-white font-semibold">
+                {profile?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-foreground font-semibold text-sm truncate">
+                {profile?.full_name || 'Music Enthusiast'}
+              </h3>
+              <p className="text-muted-foreground text-xs truncate">
+                {profile?.role || 'Aspiring Artist'}
+              </p>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-teal rounded-full"></div>
+              <span className="text-xs text-muted-foreground">Online</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-1">
-            <div className="w-2 h-2 bg-teal rounded-full"></div>
-            <span className="text-xs text-muted-foreground">Online</span>
+          
+          {/* Level Progress */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground">Level {profile?.level || 1}</span>
+              <span className="text-xs text-ocean-blue">75% to next</span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-ocean-gradient h-2 rounded-full transition-all duration-300"
+                style={{ width: '75%' }}
+              ></div>
+            </div>
           </div>
         </div>
-        
-        {/* Level Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground">Level {profile?.level || 1}</span>
-            <span className="text-xs text-ocean-blue">75% to next</span>
+
+        {/* Navigation */}
+        <div className="flex-1 py-6 overflow-y-auto">
+          <div className="mb-8">
+            <div className="px-6 mb-3">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Main Menu
+              </h3>
+            </div>
+            {navigationItems.map(renderNavItem)}
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div 
-              className="bg-ocean-gradient h-2 rounded-full transition-all duration-300"
-              style={{ width: '75%' }}
-            ></div>
+
+          <div className="mb-8">
+            <div className="px-6 mb-3">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Tools & Analytics
+              </h3>
+            </div>
+            {secondaryItems.map(renderNavItem)}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="px-6">
+            <div className="mb-3">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Quick Actions
+              </h3>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.id}
+                    className="flex flex-col items-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
+                    onClick={() => {
+                      if (action.id === 'collab') {
+                        setIsProjectModalOpen(true);
+                      }
+                    }}
+                  >
+                    <Icon className="w-4 h-4 mb-1" />
+                    <span className="text-xs font-medium">{action.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-border">
+          <div className="bg-ocean-gradient p-4 rounded-lg text-white text-center">
+            <div className="text-sm font-semibold mb-1">Upgrade to Pro</div>
+            <div className="text-xs opacity-90 mb-3">
+              Unlock premium features and expand your musical journey
+            </div>
+            <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-md text-xs font-medium transition-colors flex items-center justify-center w-full">
+              <Zap className="w-4 h-4 mr-1" />
+              Upgrade Now
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 py-6 overflow-y-auto">
-        <div className="mb-8">
-          <div className="px-6 mb-3">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              Main Menu
-            </h3>
-          </div>
-          {navigationItems.map(renderNavItem)}
-        </div>
-
-        <div className="mb-8">
-          <div className="px-6 mb-3">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              Tools & Analytics
-            </h3>
-          </div>
-          {secondaryItems.map(renderNavItem)}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="px-6">
-          <div className="mb-3">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              Quick Actions
-            </h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {quickActions.map((action) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.id}
-                  className="flex flex-col items-center p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors"
-                >
-                  <Icon className="w-4 h-4 mb-1" />
-                  <span className="text-xs font-medium">{action.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="p-6 border-t border-border">
-        <div className="bg-ocean-gradient p-4 rounded-lg text-white text-center">
-          <div className="text-sm font-semibold mb-1">Upgrade to Pro</div>
-          <div className="text-xs opacity-90 mb-3">
-            Unlock premium features and expand your musical journey
-          </div>
-          <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-md text-xs font-medium transition-colors flex items-center justify-center w-full">
-            <Zap className="w-4 h-4 mr-1" />
-            Upgrade Now
-          </button>
-        </div>
-      </div>
-    </div>
+      <ProjectSelectionModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+      />
+    </>
   );
 }

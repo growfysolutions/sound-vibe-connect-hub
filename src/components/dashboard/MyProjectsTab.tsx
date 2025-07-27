@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { CulturalButton } from '@/components/ui/CulturalButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +14,7 @@ interface MyProjectsTabProps {
 
 const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal }) => {
   const [filter, setFilter] = useState<'all' | 'collaborative' | 'solo'>('all');
+  const navigate = useNavigate();
 
   const filteredProjects = projects.filter(project => {
     if (filter === 'all') return true;
@@ -20,6 +22,10 @@ const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal
     if (filter === 'solo') return !project.is_collaborative;
     return true;
   });
+
+  const handleViewChat = (projectId: number) => {
+    navigate(`/collaboration-workspace/${projectId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -78,7 +84,7 @@ const MyProjectsTab: React.FC<MyProjectsTabProps> = ({ projects, handleOpenModal
               project={project}
               onEdit={() => console.log('Edit project:', project.id)}
               onDelete={() => console.log('Delete project:', project.id)}
-              onViewChat={() => console.log('View chat for project:', project.id)}
+              onViewChat={() => handleViewChat(project.id)}
             />
           ))}
         </div>
