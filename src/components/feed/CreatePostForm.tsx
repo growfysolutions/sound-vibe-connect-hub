@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ImageIcon, Music, Video, Send, X } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
-import { usePostCreation } from '@/hooks/usePostCreation';
+import { useEnhancedPostCreation } from '@/hooks/useEnhancedPostCreation';
 import { toast } from 'sonner';
 
 interface CreatePostFormProps {
@@ -15,58 +15,70 @@ interface CreatePostFormProps {
 
 export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const { profile } = useProfile();
-  const { createPost, creating } = usePostCreation();
+  const { createPost, creating } = useEnhancedPostCreation();
   const [content, setContent] = useState('');
-  const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaPreview, setMediaPreview] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleMediaUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
 
-    // Validate file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be less than 10MB');
-      return;
-    }
+    // Validate file sizes (10MB limit each)
+    const validFiles = files.filter(file => {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} is too large. File size must be less than 10MB`);
+        return false;
+      }
+      return true;
+    });
 
-    setMediaFile(file);
+    if (validFiles.length === 0) return;
 
-    // Create preview for images and videos
-    if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setMediaPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setMediaPreview(null);
-    }
+    setMediaFiles(prev => [...prev, ...validFiles]);
+
+    // Create previews for images and videos
+    const newPreviews: string[] = [];
+    validFiles.forEach(file => {
+      if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const result = e.target?.result as string;
+          newPreviews.push(result);
+          if (newPreviews.length === validFiles.length) {
+            setMediaPreview(prev => [...prev, ...newPreviews]);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
   };
 
-  const removeMedia = () => {
-    setMediaFile(null);
-    setMediaPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+  const removeMedia = (index: number) => {
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+    setMediaPreview(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!content.trim() && !mediaFile) {
+    if (!content.trim() && mediaFiles.length === 0) {
       toast.error('Please add some content or media to your post');
       return;
     }
 
-    const success = await createPost(content, mediaFile || undefined);
+    const success = await createPost({
+      content,
+      mediaFiles,
+      tags: [],
+      category: 'general'
+    });
     
     if (success) {
       setContent('');
-      setMediaFile(null);
-      setMediaPreview(null);
+      setMediaFiles([]);
+      setMediaPreview([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -101,49 +113,53 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
           </div>
 
           {/* Media Preview */}
-          {mediaPreview && (
-            <div className="relative">
-              {mediaFile?.type.startsWith('image/') ? (
-                <img
-                  src={mediaPreview}
-                  alt="Preview"
-                  className="max-w-full h-auto rounded-lg border"
-                />
-              ) : mediaFile?.type.startsWith('video/') ? (
-                <video
-                  src={mediaPreview}
-                  controls
-                  className="max-w-full h-auto rounded-lg border"
-                />
-              ) : null}
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={removeMedia}
-                className="absolute top-2 right-2"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+          {mediaPreview.length > 0 && (
+            <div className="grid grid-cols-2 gap-2">
+              {mediaPreview.map((preview, index) => (
+                <div key={index} className="relative">
+                  {mediaFiles[index]?.type.startsWith('image/') ? (
+                    <img
+                      src={preview}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                  ) : mediaFiles[index]?.type.startsWith('video/') ? (
+                    <video
+                      src={preview}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                  ) : null}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => removeMedia(index)}
+                    className="absolute top-2 right-2 w-6 h-6 p-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
           )}
 
-          {mediaFile && !mediaPreview && (
-            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+          {/* Non-preview media files */}
+          {mediaFiles.filter((file, index) => !mediaPreview[index]).map((file, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div className="flex items-center space-x-2">
                 <Music className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{mediaFile.name}</span>
+                <span className="text-sm font-medium">{file.name}</span>
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={removeMedia}
+                onClick={() => removeMedia(index)}
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
-          )}
+          ))}
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between pt-3 border-t border-border">
@@ -152,6 +168,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*,video/*,audio/*"
+                multiple
                 onChange={handleMediaUpload}
                 className="hidden"
               />
@@ -202,7 +219,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
 
             <Button
               type="submit"
-              disabled={(!content.trim() && !mediaFile) || creating}
+              disabled={(!content.trim() && mediaFiles.length === 0) || creating}
               className="bg-primary hover:bg-primary/90"
             >
               {creating ? (
