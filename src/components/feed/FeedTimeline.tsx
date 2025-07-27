@@ -121,14 +121,8 @@ export function FeedTimeline() {
   };
 
   const handleComment = (postId: string, comment: string) => {
-    if (!user?.id) {
-      toast.error('Please log in to comment');
-      return;
-    }
-
-    // Navigate to post detail or open comment modal
-    console.log('Comment on post:', postId, comment);
-    toast.success('Comment functionality coming soon!');
+    // Comments are now handled by the CommentSection component
+    console.log('Comment handled by CommentSection');
   };
 
   const handleShare = async (postId: string) => {

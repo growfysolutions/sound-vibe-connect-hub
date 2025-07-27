@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, MoreHorizontal, Play, Pause } from 'lucide-react';
+import { Heart, Share2, MoreHorizontal, Play, Pause } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PostWithProfile } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import CommentSection from './CommentSection';
 
 interface PostCardProps {
   post: PostWithProfile;
@@ -20,7 +21,6 @@ interface PostCardProps {
 export default function PostCard({ post, onLike, onComment, onShare }: PostCardProps) {
   const { user } = useAuth();
   const [likeCount, setLikeCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,14 +38,6 @@ export default function PostCard({ post, onLike, onComment, onShare }: PostCardP
         .eq('post_id', post.id);
 
       setLikeCount(likes || 0);
-
-      // Fetch comment count
-      const { count: comments } = await supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .eq('post_id', post.id);
-
-      setCommentCount(comments || 0);
 
       // Check if current user liked this post
       if (user?.id) {
@@ -201,16 +193,6 @@ export default function PostCard({ post, onLike, onComment, onShare }: PostCardP
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onComment(post.id, '')}
-              className="text-muted-foreground hover:text-blue-500"
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              {commentCount}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
               onClick={() => onShare(post.id)}
               className="text-muted-foreground hover:text-green-500"
             >
@@ -219,6 +201,9 @@ export default function PostCard({ post, onLike, onComment, onShare }: PostCardP
             </Button>
           </div>
         </div>
+
+        {/* Comments Section */}
+        <CommentSection postId={post.id} />
       </CardContent>
     </Card>
   );
