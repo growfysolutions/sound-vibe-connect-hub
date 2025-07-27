@@ -19,19 +19,26 @@ export const usePostCreation = () => {
   const uploadMultipleFiles = async (files: File[]): Promise<string[]> => {
     const uploadPromises = files.map(async (file, index) => {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user?.id}-${Date.now()}-${index}.${fileExt}`;
-      const filePath = `posts/${fileName}`;
+      const fileName = `${Date.now()}-${index}.${fileExt}`;
+      // Updated path to match RLS policy: user-id/posts/filename
+      const filePath = `${user?.id}/posts/${fileName}`;
+
+      console.log('Uploading file to path:', filePath);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('media-uploads')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('media-uploads')
         .getPublicUrl(uploadData.path);
 
+      console.log('File uploaded successfully:', publicUrl);
       return publicUrl;
     });
 
@@ -44,8 +51,8 @@ export const usePostCreation = () => {
       return false;
     }
 
-    if (!content.trim()) {
-      toast.error('Post content cannot be empty');
+    if (!content.trim() && mediaFiles.length === 0) {
+      toast.error('Post content or media is required');
       return false;
     }
 
@@ -58,15 +65,27 @@ export const usePostCreation = () => {
 
       // Upload media if provided
       if (mediaFiles.length > 0) {
-        setUploadProgress(25);
-        mediaUrls = await uploadMultipleFiles(mediaFiles);
-        setUploadProgress(75);
-        
-        // Determine media type based on first file
-        const firstFile = mediaFiles[0];
-        mediaType = firstFile.type.startsWith('image/') ? 'image' : 
-                   firstFile.type.startsWith('video/') ? 'video' : 
-                   firstFile.type.startsWith('audio/') ? 'audio' : 'file';
+        try {
+          console.log('Starting media upload for', mediaFiles.length, 'files');
+          setUploadProgress(25);
+          
+          mediaUrls = await uploadMultipleFiles(mediaFiles);
+          setUploadProgress(75);
+          
+          // Determine media type based on first file
+          const firstFile = mediaFiles[0];
+          mediaType = firstFile.type.startsWith('image/') ? 'image' : 
+                     firstFile.type.startsWith('video/') ? 'video' : 
+                     firstFile.type.startsWith('audio/') ? 'audio' : 'file';
+          
+          console.log('Media upload completed successfully');
+        } catch (uploadError) {
+          console.error('Media upload failed:', uploadError);
+          toast.error('Failed to upload media files. Creating text-only post.');
+          // Continue with text-only post instead of failing completely
+          mediaUrls = [];
+          mediaType = 'text';
+        }
       }
 
       // Create the post
@@ -82,13 +101,17 @@ export const usePostCreation = () => {
           user_id: user.id
         });
 
-      if (postError) throw postError;
+      if (postError) {
+        console.error('Post creation error:', postError);
+        throw postError;
+      }
 
       setUploadProgress(100);
+      toast.success('Post created successfully!');
       return true;
     } catch (error) {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post');
+      toast.error('Failed to create post. Please try again.');
       return false;
     } finally {
       setCreating(false);

@@ -34,19 +34,27 @@ export const useMediaUpload = () => {
     try {
       const fileExt = file.name.split('.').pop()?.toLowerCase();
       const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${profile.id}/${fileName}`;
+      // Updated path to match RLS policy: user-id/media/filename
+      const filePath = `${profile.id}/media/${fileName}`;
+
+      console.log('Uploading file to path:', filePath);
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('media-uploads')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('media-uploads')
         .getPublicUrl(uploadData.path);
+
+      console.log('File uploaded successfully:', publicUrl);
 
       // Save metadata to database
       const { data: mediaData, error: dbError } = await supabase
@@ -66,7 +74,10 @@ export const useMediaUpload = () => {
         .select()
         .single();
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Database error:', dbError);
+        throw dbError;
+      }
 
       const transformedData: MediaUploadData = {
         ...mediaData,
@@ -80,7 +91,7 @@ export const useMediaUpload = () => {
       return transformedData;
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload file');
+      toast.error('Failed to upload file. Please try again.');
       return null;
     } finally {
       setIsLoading(false);
@@ -119,14 +130,17 @@ export const useMediaUpload = () => {
     if (!profile?.id) return;
 
     try {
-      // Delete from storage
+      // Extract filename from the public URL path
       const fileName = filePath.split('/').pop();
       if (fileName) {
+        const storagePath = `${profile.id}/media/${fileName}`;
         const { error: storageError } = await supabase.storage
           .from('media-uploads')
-          .remove([`${profile.id}/${fileName}`]);
+          .remove([storagePath]);
         
-        if (storageError) console.warn('Storage deletion failed:', storageError);
+        if (storageError) {
+          console.warn('Storage deletion failed:', storageError);
+        }
       }
 
       // Delete from database
