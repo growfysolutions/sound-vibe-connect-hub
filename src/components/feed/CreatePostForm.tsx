@@ -68,12 +68,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
       return;
     }
 
-    const success = await createPost({
-      content,
-      mediaFiles,
-      tags: [],
-      category: 'general'
-    });
+    const success = await createPost(content, mediaFiles);
     
     if (success) {
       setContent('');
@@ -144,7 +139,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
           )}
 
           {/* Non-preview media files */}
-          {mediaFiles.filter((file, index) => !mediaPreview[index]).map((file, index) => (
+          {mediaFiles.filter((_, index) => !mediaPreview[index]).map((file, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div className="flex items-center space-x-2">
                 <Music className="w-4 h-4 text-muted-foreground" />
