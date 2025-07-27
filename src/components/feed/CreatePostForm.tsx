@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,7 +67,12 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
       return;
     }
 
-    const success = await createPost(content, mediaFiles);
+    const success = await createPost({
+      content,
+      mediaFiles,
+      tags: [],
+      category: 'general'
+    });
     
     if (success) {
       setContent('');
