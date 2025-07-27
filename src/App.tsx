@@ -60,7 +60,7 @@ function App() {
                   <Route path="/submit-proposal/:gigId" element={<SubmitProposal />} />
                   <Route path="/my-contracts" element={<MyContracts />} />
                   <Route path="/marketplace" element={<Marketplace />} />
-                  <Route path="/collaboration-workspace" element={<CollaborationWorkspace />} />
+                  <Route path="/collaboration-workspace/:projectId" element={<CollaborationWorkspace />} />
                   <Route path="/platform-expansion" element={<PlatformExpansion />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
