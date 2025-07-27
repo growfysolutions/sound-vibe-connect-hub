@@ -1,40 +1,108 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import PostCard from './PostCard';
 import CreatePostForm from './CreatePostForm';
+import FeedFilters from './FeedFilters';
 import { PostWithProfile } from '@/types';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+
+interface FilterOptions {
+  category: string;
+  tags: string[];
+  searchQuery: string;
+}
+
+const POSTS_PER_PAGE = 10;
 
 export function FeedTimeline() {
   const { user } = useAuth();
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState<FilterOptions>({
+    category: 'All',
+    tags: [],
+    searchQuery: ''
+  });
+  const [showFilters, setShowFilters] = useState(false);
+  const [offset, setOffset] = useState(0);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async (reset = false) => {
     try {
-      const { data, error } = await supabase
+      const currentOffset = reset ? 0 : offset;
+      setLoadingMore(!reset);
+
+      let query = supabase
         .from('posts')
         .select(`
           *,
           profiles (*)
         `)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .range(currentOffset, currentOffset + POSTS_PER_PAGE - 1);
+
+      // Apply filters
+      if (filters.category !== 'All') {
+        query = query.eq('category', filters.category);
+      }
+
+      if (filters.tags.length > 0) {
+        query = query.overlaps('tags', filters.tags);
+      }
+
+      if (filters.searchQuery) {
+        query = query.ilike('content', `%${filters.searchQuery}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
-      setPosts(data as PostWithProfile[]);
+
+      const newPosts = data as PostWithProfile[];
+      
+      if (reset) {
+        setPosts(newPosts);
+        setOffset(POSTS_PER_PAGE);
+      } else {
+        setPosts(prev => [...prev, ...newPosts]);
+        setOffset(prev => prev + POSTS_PER_PAGE);
+      }
+
+      setHasMore(newPosts.length === POSTS_PER_PAGE);
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast.error('Failed to load posts');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, [filters, offset]);
+
+  const loadMorePosts = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      fetchPosts(false);
+    }
+  }, [fetchPosts, loadingMore, hasMore]);
+
+  useInfiniteScroll({
+    hasMore,
+    isLoading: loadingMore,
+    onLoadMore: loadMorePosts,
+    threshold: 200
+  });
 
   useEffect(() => {
-    fetchPosts();
+    setOffset(0);
+    fetchPosts(true);
+  }, [filters]);
+
+  useEffect(() => {
+    fetchPosts(true);
 
     // Set up real-time subscription for new posts
     const channel = supabase
@@ -110,9 +178,6 @@ export function FeedTimeline() {
         if (insertError) throw insertError;
         toast.success('Post liked!');
       }
-
-      // Refresh posts to update like counts
-      fetchPosts();
     } catch (error) {
       console.error('Error toggling like:', error);
       toast.error('Failed to update like');
@@ -131,8 +196,23 @@ export function FeedTimeline() {
   };
 
   const handlePostCreated = () => {
-    fetchPosts();
+    setOffset(0);
+    fetchPosts(true);
     toast.success('Post created successfully!');
+  };
+
+  const handlePostDeleted = (postId: string) => {
+    setPosts(prev => prev.filter(post => post.id !== postId));
+  };
+
+  const handleEdit = (postId: string) => {
+    // TODO: Implement edit functionality
+    console.log('Edit post:', postId);
+    toast.info('Edit functionality coming soon!');
+  };
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
   };
 
   if (loading) {
@@ -148,24 +228,52 @@ export function FeedTimeline() {
       {/* Create Post Form */}
       <CreatePostForm onPostCreated={handlePostCreated} />
       
+      {/* Filters */}
+      <FeedFilters
+        onFiltersChange={handleFiltersChange}
+        isVisible={showFilters}
+        onToggle={() => setShowFilters(!showFilters)}
+      />
+      
       {/* Posts Feed */}
       <div className="space-y-6">
         {posts.length > 0 ? (
-          posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onLike={handleLike}
-              onShare={handleShare}
-            />
-          ))
+          <>
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onLike={handleLike}
+                onShare={handleShare}
+                onEdit={handleEdit}
+                onDelete={handlePostDeleted}
+              />
+            ))}
+            
+            {/* Loading more indicator */}
+            {loadingMore && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                <span className="ml-2 text-muted-foreground">Loading more posts...</span>
+              </div>
+            )}
+            
+            {/* End of posts indicator */}
+            {!hasMore && posts.length > 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                You've reached the end of the feed
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12 bg-card rounded-lg border">
             <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-              No posts yet
+              No posts found
             </h3>
             <p className="text-muted-foreground">
-              Be the first to share something with the community!
+              {filters.searchQuery || filters.category !== 'All' || filters.tags.length > 0
+                ? 'Try adjusting your filters or search terms'
+                : 'Be the first to share something with the community!'}
             </p>
           </div>
         )}

@@ -4,14 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
-interface PostCreationData {
+interface PostData {
   content: string;
-  mediaFiles?: File[];
-  tags?: string[];
-  category?: string;
+  mediaFiles: File[];
+  tags: string[];
+  category: string;
 }
 
-export const usePostCreation = () => {
+export const useEnhancedPostCreation = () => {
   const { user } = useAuth();
   const [creating, setCreating] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -38,7 +38,7 @@ export const usePostCreation = () => {
     return Promise.all(uploadPromises);
   };
 
-  const createPost = async ({ content, mediaFiles = [], tags = [], category }: PostCreationData) => {
+  const createPost = async ({ content, mediaFiles, tags, category }: PostData) => {
     if (!user?.id) {
       toast.error('Please log in to create posts');
       return false;
@@ -56,7 +56,6 @@ export const usePostCreation = () => {
       let mediaUrls: string[] = [];
       let mediaType = 'text';
 
-      // Upload media if provided
       if (mediaFiles.length > 0) {
         setUploadProgress(25);
         mediaUrls = await uploadMultipleFiles(mediaFiles);
@@ -69,7 +68,6 @@ export const usePostCreation = () => {
                    firstFile.type.startsWith('audio/') ? 'audio' : 'file';
       }
 
-      // Create the post
       const { error: postError } = await supabase
         .from('posts')
         .insert({

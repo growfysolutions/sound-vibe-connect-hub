@@ -1,27 +1,47 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, Share2, MoreHorizontal, Play, Pause } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Heart, 
+  Share2, 
+  MoreHorizontal, 
+  Bookmark, 
+  Edit, 
+  Trash2,
+  BookmarkCheck 
+} from 'lucide-react';
 import { PostWithProfile } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { useBookmarks } from '@/hooks/useBookmarks';
 import CommentSection from './CommentSection';
+import MediaGallery from './MediaGallery';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface PostCardProps {
   post: PostWithProfile;
   onLike: (postId: string) => void;
   onShare: (postId: string) => void;
+  onEdit?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
 }
 
-export default function PostCard({ post, onLike, onShare }: PostCardProps) {
+export default function PostCard({ post, onLike, onShare, onEdit, onDelete }: PostCardProps) {
   const { user } = useAuth();
   const [likeCount, setLikeCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { isBookmarked, toggleBookmark } = useBookmarks(post.id);
 
   useEffect(() => {
     fetchInteractionData();
@@ -62,52 +82,29 @@ export default function PostCard({ post, onLike, onShare }: PostCardProps) {
     setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
   };
 
-  const renderMedia = () => {
-    if (!post.media_url || post.media_type === 'text') return null;
+  const handleDelete = async () => {
+    if (!user?.id || user.id !== post.user_id) {
+      toast.error('You can only delete your own posts');
+      return;
+    }
 
-    switch (post.media_type) {
-      case 'image':
-        return (
-          <img
-            src={post.media_url}
-            alt="Post media"
-            className="w-full rounded-lg border object-cover max-h-96"
-          />
-        );
-      case 'video':
-        return (
-          <video
-            src={post.media_url}
-            controls
-            className="w-full rounded-lg border max-h-96"
-          />
-        );
-      case 'audio':
-        return (
-          <div className="flex items-center space-x-4 p-4 bg-muted rounded-lg">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="text-primary"
-            >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </Button>
-            <div className="flex-1">
-              <audio
-                src={post.media_url}
-                controls
-                className="w-full"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
-            </div>
-          </div>
-        );
-      default:
-        return null;
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw error;
+      
+      toast.success('Post deleted successfully');
+      onDelete?.(post.id);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast.error('Failed to delete post');
     }
   };
+
+  const isOwner = user?.id === post.user_id;
 
   if (loading) {
     return (
@@ -158,9 +155,41 @@ export default function PostCard({ post, onLike, onShare }: PostCardProps) {
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="sm">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {isOwner && (
+                <>
+                  <DropdownMenuItem onClick={() => onEdit?.(post.id)}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuItem onClick={toggleBookmark}>
+                {isBookmarked ? (
+                  <>
+                    <BookmarkCheck className="w-4 h-4 mr-2" />
+                    Remove Bookmark
+                  </>
+                ) : (
+                  <>
+                    <Bookmark className="w-4 h-4 mr-2" />
+                    Bookmark
+                  </>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
 
@@ -168,8 +197,30 @@ export default function PostCard({ post, onLike, onShare }: PostCardProps) {
         {/* Post Content */}
         <p className="text-foreground leading-relaxed">{post.content}</p>
 
-        {/* Media */}
-        {renderMedia()}
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {post.tags.map((tag, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                #{tag}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Category */}
+        {post.category && (
+          <Badge variant="default" className="w-fit">
+            {post.category}
+          </Badge>
+        )}
+
+        {/* Media Gallery */}
+        {post.media_urls && post.media_urls.length > 0 ? (
+          <MediaGallery mediaUrls={post.media_urls} mediaType={post.media_type || 'image'} />
+        ) : post.media_url && (
+          <MediaGallery mediaUrls={[post.media_url]} mediaType={post.media_type || 'image'} />
+        )}
 
         {/* Interaction Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border">
@@ -196,6 +247,24 @@ export default function PostCard({ post, onLike, onShare }: PostCardProps) {
             >
               <Share2 className="w-4 h-4 mr-1" />
               Share
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleBookmark}
+              className={`transition-colors ${
+                isBookmarked 
+                  ? 'text-blue-500 hover:text-blue-600' 
+                  : 'text-muted-foreground hover:text-blue-500'
+              }`}
+            >
+              {isBookmarked ? (
+                <BookmarkCheck className="w-4 h-4 mr-1" />
+              ) : (
+                <Bookmark className="w-4 h-4 mr-1" />
+              )}
+              {isBookmarked ? 'Saved' : 'Save'}
             </Button>
           </div>
         </div>
