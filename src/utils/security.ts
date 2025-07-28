@@ -47,18 +47,19 @@ export const validateSession = async (): Promise<boolean> => {
   }
 };
 
-// User role validation
+// User role validation - simplified to use profiles table instead of user_roles
 export const validateUserRole = async (requiredRole: string): Promise<boolean> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const { data: roles } = await supabase
-      .from('user_roles')
+    const { data: profile } = await supabase
+      .from('profiles')
       .select('role')
-      .eq('user_id', user.id);
+      .eq('id', user.id)
+      .single();
 
-    return roles?.some(r => r.role === requiredRole) || false;
+    return profile?.role === requiredRole || false;
   } catch {
     return false;
   }

@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ImageIcon, Music, Video, Send, X } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useEnhancedPostCreation } from '@/hooks/useEnhancedPostCreation';
-import { useSecureUpload } from '@/hooks/useSecureUpload';
 import { validateInput, sanitizeText } from '@/utils/sanitization';
+import { validateFile } from '@/utils/fileValidation';
 import { toast } from 'sonner';
 
 interface CreatePostFormProps {
@@ -18,7 +17,6 @@ interface CreatePostFormProps {
 export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const { profile } = useProfile();
   const { createPost, creating } = useEnhancedPostCreation();
-  const { uploadFile, uploading } = useSecureUpload();
   const [content, setContent] = useState('');
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaPreview, setMediaPreview] = useState<string[]>([]);
@@ -203,7 +201,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 className="text-muted-foreground hover:text-foreground"
-                disabled={uploading}
+                disabled={creating}
               >
                 <ImageIcon className="w-4 h-4 mr-1" />
                 Photo
@@ -220,7 +218,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                   }
                 }}
                 className="text-muted-foreground hover:text-foreground"
-                disabled={uploading}
+                disabled={creating}
               >
                 <Video className="w-4 h-4 mr-1" />
                 Video
@@ -237,7 +235,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                   }
                 }}
                 className="text-muted-foreground hover:text-foreground"
-                disabled={uploading}
+                disabled={creating}
               >
                 <Music className="w-4 h-4 mr-1" />
                 Audio
@@ -246,15 +244,15 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
 
             <Button
               type="submit"
-              disabled={(!content.trim() && mediaFiles.length === 0) || creating || uploading}
+              disabled={(!content.trim() && mediaFiles.length === 0) || creating}
               className="bg-primary hover:bg-primary/90"
             >
-              {creating || uploading ? (
+              {creating ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
               ) : (
                 <Send className="w-4 h-4 mr-2" />
               )}
-              {creating || uploading ? 'Posting...' : 'Post'}
+              {creating ? 'Posting...' : 'Post'}
             </Button>
           </div>
         </form>

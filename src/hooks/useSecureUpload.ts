@@ -11,6 +11,12 @@ export const useSecureUpload = () => {
     setUploading(true);
     
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       // Validate file
       const validation = validateFile(file);
       if (!validation.isValid) {
@@ -39,6 +45,7 @@ export const useSecureUpload = () => {
       const { error: dbError } = await supabase
         .from('media_uploads')
         .insert({
+          user_id: user.id,
           file_name: sanitizedName,
           file_path: data.path,
           file_size: file.size,
