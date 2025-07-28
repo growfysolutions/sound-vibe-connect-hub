@@ -8,6 +8,7 @@ interface LoginFormProps {
     onSubmit: (data: Record<string, any>) => void;
     variant: Variant;
     onVariantChange: () => void;
+    isSubmitting?: boolean;
 }
 
 interface VideoBackgroundProps {
@@ -113,7 +114,7 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoUrl }) => {
 };
 
 // Main LoginForm Component
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChange }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChange, isSubmitting = false }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -122,8 +123,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
     });
     const [showPassword, setShowPassword] = useState(false);
     const [remember, setRemember] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -132,15 +131,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setIsSuccess(true);
-        await new Promise(resolve => setTimeout(resolve, 500));
-
+        
+        if (isSubmitting) return;
+        
+        // Basic validation
+        if (variant === 'signup' && formData.password !== formData.confirmPassword) {
+            return;
+        }
+        
         onSubmit({ ...formData, remember });
-        setIsSubmitting(false);
-        setIsSuccess(false);
     };
 
     return (
@@ -170,17 +169,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                    {variant === 'signup' && (
-                        <FormInput
-                            icon={<Mail className="text-white/60" size={18} />}
-                            type="text"
-                            placeholder="Full Name"
-                            value={formData.full_name}
-                            onChange={handleInputChange}
-                            name="full_name"
-                            required
-                        />
-                    )}
+                {variant === 'signup' && (
+                    <FormInput
+                        icon={<Mail className="text-white/60" size={18} />}
+                        type="text"
+                        placeholder="Full Name"
+                        value={formData.full_name}
+                        onChange={handleInputChange}
+                        name="full_name"
+                        required
+                    />
+                )}
+                
                 <FormInput
                     icon={<Mail className="text-white/60" size={18} />}
                     type="email"
@@ -211,6 +211,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
                     </button>
                 </div>
 
+                {variant === 'signup' && (
+                    <FormInput
+                        icon={<Lock className="text-white/60" size={18} />}
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Confirm Password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        name="confirmPassword"
+                        required
+                    />
+                )}
+
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                         <div onClick={() => setRemember(!remember)} className="cursor-pointer">
@@ -228,32 +240,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
                             Remember me
                         </label>
                     </div>
-                    <a href="#" className="text-sm text-white/80 hover:text-white transition-colors">
-                        Forgot password?
-                    </a>
-                </div>
-
-                {variant === 'signup' && (
-                        <FormInput
-                            icon={<Lock className="text-white/60" size={18} />}
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Confirm Password"
-                            value={formData.confirmPassword}
-                            onChange={handleInputChange}
-                            name="confirmPassword"
-                            required
-                        />
+                    {variant === 'login' && (
+                        <button
+                            type="button"
+                            className="text-sm text-white/80 hover:text-white transition-colors"
+                        >
+                            Forgot password?
+                        </button>
                     )}
+                </div>
 
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 rounded-lg ${isSuccess
-                            ? 'animate-success'
-                            : 'bg-purple-600 hover:bg-purple-700'
-                        } text-white font-medium transition-all duration-200 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40`}
+                    className={`w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-medium transition-all duration-200 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40`}
                 >
-                    {isSubmitting ? (variant === 'login' ? 'Signing In...' : 'Creating Account...') : (variant === 'login' ? 'Sign In' : 'Create Account')}
+                    {isSubmitting ? (
+                        <div className="flex items-center justify-center">
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                            {variant === 'login' ? 'Signing In...' : 'Creating Account...'}
+                        </div>
+                    ) : (
+                        variant === 'login' ? 'Sign In' : 'Create Account'
+                    )}
                 </button>
             </form>
 
@@ -274,7 +283,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, variant, onVariantChang
 
             <div className="mt-8 text-center text-sm text-white/60">
                 {variant === 'login' ? 'Don\'t have an account?' : 'Already have an account?'}{' '}
-                <button type="button" onClick={onVariantChange} className="font-medium text-white hover:text-purple-300 transition-colors bg-transparent border-none">
+                <button 
+                    type="button" 
+                    onClick={onVariantChange} 
+                    className="font-medium text-white hover:text-purple-300 transition-colors bg-transparent border-none"
+                    disabled={isSubmitting}
+                >
                     {variant === 'login' ? 'Create Account' : 'Sign In'}
                 </button>
             </div>
