@@ -4,6 +4,8 @@ import { useDropzone } from 'react-dropzone';
 import { Upload, Music, AlertTriangle, CheckCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { validateFile, sanitizeFileName } from '@/utils/fileValidation';
+import { useSecureUpload } from '@/hooks/useSecureUpload';
 import { cn } from '@/lib/utils';
 
 interface CulturalFileUploadProps {
@@ -23,42 +25,54 @@ export const CulturalFileUpload: React.FC<CulturalFileUploadProps> = ({
 }) => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const { uploading } = useSecureUpload();
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     const newErrors: string[] = [];
+    const validFiles: File[] = [];
     
-    // Check file type and size
+    // Validate each file using our secure validation
+    acceptedFiles.forEach((file) => {
+      const validation = validateFile(file);
+      if (!validation.isValid) {
+        newErrors.push(validation.error || `Invalid file: ${file.name}`);
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    // Handle rejected files
     rejectedFiles.forEach((file) => {
       if (file.errors) {
         file.errors.forEach((error: any) => {
           if (error.code === 'file-too-large') {
             newErrors.push(`File "${file.file.name}" is too large - Max ${maxFileSize / 1024 / 1024}MB`);
           } else if (error.code === 'file-invalid-type') {
-            newErrors.push(`File "${file.file.name}" is not a valid audio file`);
+            newErrors.push(`File "${file.file.name}" is not a valid file type`);
           }
         });
       }
     });
 
     // Check total files limit
-    if (uploadedFiles.length + acceptedFiles.length > maxFiles) {
+    if (uploadedFiles.length + validFiles.length > maxFiles) {
       newErrors.push(`Maximum ${maxFiles} files allowed`);
+      setErrors(newErrors);
       return;
     }
 
     setErrors(newErrors);
     
-    if (acceptedFiles.length > 0 && newErrors.length === 0) {
-      setIsUploading(true);
+    if (validFiles.length > 0 && newErrors.length === 0) {
+      // Sanitize file names
+      const sanitizedFiles = validFiles.map(file => {
+        const sanitizedName = sanitizeFileName(file.name);
+        return new File([file], sanitizedName, { type: file.type });
+      });
       
-      // Simulate upload progress
-      setTimeout(() => {
-        const newFiles = [...uploadedFiles, ...acceptedFiles];
-        setUploadedFiles(newFiles);
-        onFilesChange(newFiles);
-        setIsUploading(false);
-      }, 1500);
+      const newFiles = [...uploadedFiles, ...sanitizedFiles];
+      setUploadedFiles(newFiles);
+      onFilesChange(newFiles);
     }
   }, [uploadedFiles, maxFiles, maxFileSize, onFilesChange]);
 
@@ -94,7 +108,7 @@ export const CulturalFileUpload: React.FC<CulturalFileUploadProps> = ({
       >
         <input {...getInputProps()} />
         
-        {isUploading ? (
+        {uploading ? (
           <div className="space-y-4">
             <div className="animate-spin w-12 h-12 border-4 border-saffron border-t-transparent rounded-full mx-auto" />
             <p className="text-lg font-medium">Uploading your tracks...</p>
@@ -104,13 +118,13 @@ export const CulturalFileUpload: React.FC<CulturalFileUploadProps> = ({
           <>
             <Upload className="w-12 h-12 text-saffron mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {isDragActive ? "Drop your audio files here" : "Upload Your Audio Samples"}
+              {isDragActive ? "Drop your files here" : "Upload Your Files"}
             </h3>
             <p className="text-muted-foreground mb-4">
-              Drag and drop your audio files or click to browse
+              Drag and drop your files or click to browse
             </p>
             <div className="space-y-1 text-sm text-muted-foreground">
-              <p>Audio files only (MP3, WAV, FLAC)</p>
+              <p>Allowed file types: {acceptedTypes.join(', ')}</p>
               <p>Max {maxFileSize / 1024 / 1024}MB per file</p>
               <p>Up to {maxFiles} files</p>
             </div>

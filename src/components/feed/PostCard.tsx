@@ -18,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { useBookmarks } from '@/hooks/useBookmarks';
+import { sanitizeHtml } from '@/utils/sanitization';
 import CommentSection from './CommentSection';
 import MediaGallery from './MediaGallery';
 import { toast } from 'sonner';
@@ -128,6 +129,9 @@ export default function PostCard({ post, onLike, onShare, onEdit, onDelete }: Po
     );
   }
 
+  // Sanitize the post content before rendering
+  const sanitizedContent = sanitizeHtml(post.content);
+
   return (
     <Card className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
@@ -194,8 +198,11 @@ export default function PostCard({ post, onLike, onShare, onEdit, onDelete }: Po
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Post Content */}
-        <p className="text-foreground leading-relaxed">{post.content}</p>
+        {/* Post Content - Using sanitized content */}
+        <div 
+          className="text-foreground leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (

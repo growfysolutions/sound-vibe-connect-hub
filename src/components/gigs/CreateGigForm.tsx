@@ -1,3 +1,4 @@
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -8,16 +9,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { validateInput, sanitizeText } from '@/utils/sanitization';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
 const gigFormSchema = z.object({
-  title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
-  description: z.string().optional(),
-  budget: z.coerce.number().positive({ message: 'Budget must be a positive number.' }).optional(),
-  location: z.string().optional(),
+  title: z.string().min(5, { message: 'Title must be at least 5 characters.' }).max(100, { message: 'Title too long.' }),
+  description: z.string().max(1000, { message: 'Description too long.' }).optional(),
+  budget: z.coerce.number().positive({ message: 'Budget must be a positive number.' }).max(1000000, { message: 'Budget too high.' }).optional(),
+  location: z.string().max(100, { message: 'Location too long.' }).optional(),
   type: z.enum(['studio_session', 'live_performance', 'songwriting', 'mixing_mastering', 'other']),
-  skills_required: z.string().optional(),
+  skills_required: z.string().max(200, { message: 'Skills list too long.' }).optional(),
 });
 
 type GigFormValues = z.infer<typeof gigFormSchema>;
@@ -46,16 +48,35 @@ export const CreateGigForm: React.FC<CreateGigFormProps> = ({ onGigCreated, chil
       return;
     }
 
+    // Validate and sanitize inputs
+    if (!validateInput(values.title, 100)) {
+      toast.error('Title contains invalid characters');
+      return;
+    }
+
+    if (values.description && !validateInput(values.description, 1000)) {
+      toast.error('Description contains invalid characters');
+      return;
+    }
+
+    const sanitizedValues = {
+      ...values,
+      title: sanitizeText(values.title),
+      description: values.description ? sanitizeText(values.description) : undefined,
+      location: values.location ? sanitizeText(values.location) : undefined,
+      skills_required: values.skills_required?.split(',').map(skill => sanitizeText(skill.trim())).filter(Boolean),
+    };
+
     const { error } = await supabase.from('gigs').insert([
       {
-        ...values,
+        ...sanitizedValues,
         user_id: user.id,
-        skills_required: values.skills_required?.split(',').map(skill => skill.trim()),
       },
     ]);
 
     if (error) {
-      toast.error('Failed to create gig:', { description: error.message });
+      console.error('Gig creation error:', error);
+      toast.error('Failed to create gig. Please try again.');
     } else {
       toast.success('Gig created successfully!');
       onGigCreated();
@@ -83,7 +104,11 @@ export const CreateGigForm: React.FC<CreateGigFormProps> = ({ onGigCreated, chil
                 <FormItem>
                   <FormLabel>Gig Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Lead Vocalist for a Rock Ballad" {...field} />
+                    <Input 
+                      placeholder="e.g., Lead Vocalist for a Rock Ballad" 
+                      {...field}
+                      maxLength={100}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -96,7 +121,11 @@ export const CreateGigForm: React.FC<CreateGigFormProps> = ({ onGigCreated, chil
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Describe the project, what you're looking for, and any important details." {...field} />
+                    <Textarea 
+                      placeholder="Describe the project, what you're looking for, and any important details." 
+                      {...field}
+                      maxLength={1000}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +163,13 @@ export const CreateGigForm: React.FC<CreateGigFormProps> = ({ onGigCreated, chil
                   <FormItem>
                     <FormLabel>Budget ($)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="e.g., 500" {...field} />
+                      <Input 
+                        type="number" 
+                        placeholder="e.g., 500" 
+                        {...field}
+                        min="1"
+                        max="1000000"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -143,12 +178,33 @@ export const CreateGigForm: React.FC<CreateGigFormProps> = ({ onGigCreated, chil
             </div>
             <FormField
               control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g., New York, NY or Remote" 
+                      {...field}
+                      maxLength={100}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="skills_required"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Skills Required</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Pop, Vocals, Guitar (comma-separated)" {...field} />
+                    <Input 
+                      placeholder="e.g., Pop, Vocals, Guitar (comma-separated)" 
+                      {...field}
+                      maxLength={200}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

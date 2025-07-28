@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ImageIcon, Music, Video, Send, X } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useEnhancedPostCreation } from '@/hooks/useEnhancedPostCreation';
+import { useSecureUpload } from '@/hooks/useSecureUpload';
+import { validateInput, sanitizeText } from '@/utils/sanitization';
 import { toast } from 'sonner';
 
 interface CreatePostFormProps {
@@ -15,6 +18,7 @@ interface CreatePostFormProps {
 export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const { profile } = useProfile();
   const { createPost, creating } = useEnhancedPostCreation();
+  const { uploadFile, uploading } = useSecureUpload();
   const [content, setContent] = useState('');
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaPreview, setMediaPreview] = useState<string[]>([]);
@@ -24,13 +28,19 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
-    // Validate file sizes (10MB limit each)
+    // Validate files using secure upload validation
     const validFiles = files.filter(file => {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error(`${file.name} is too large. File size must be less than 10MB`);
+      try {
+        const validation = validateFile(file);
+        if (!validation.isValid) {
+          toast.error(`${file.name}: ${validation.error}`);
+          return false;
+        }
+        return true;
+      } catch {
+        toast.error(`${file.name}: Invalid file`);
         return false;
       }
-      return true;
     });
 
     if (validFiles.length === 0) return;
@@ -62,13 +72,21 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validate and sanitize content
     if (!content.trim() && mediaFiles.length === 0) {
       toast.error('Please add some content or media to your post');
       return;
     }
 
+    if (!validateInput(content, 500)) {
+      toast.error('Content contains invalid characters or exceeds length limit');
+      return;
+    }
+
+    const sanitizedContent = sanitizeText(content);
+
     const success = await createPost({
-      content,
+      content: sanitizedContent,
       mediaFiles,
       tags: [],
       category: 'general'
@@ -82,6 +100,13 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
         fileInputRef.current.value = '';
       }
       onPostCreated();
+    }
+  };
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= 500) {
+      setContent(value);
     }
   };
 
@@ -101,7 +126,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
               <Textarea
                 placeholder="What's on your mind? Share your musical journey..."
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={handleContentChange}
                 className="min-h-[100px] resize-none border-none bg-transparent text-foreground placeholder-muted-foreground focus:ring-0 focus:border-none"
                 maxLength={500}
               />
@@ -178,6 +203,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
                 className="text-muted-foreground hover:text-foreground"
+                disabled={uploading}
               >
                 <ImageIcon className="w-4 h-4 mr-1" />
                 Photo
@@ -194,6 +220,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                   }
                 }}
                 className="text-muted-foreground hover:text-foreground"
+                disabled={uploading}
               >
                 <Video className="w-4 h-4 mr-1" />
                 Video
@@ -210,6 +237,7 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
                   }
                 }}
                 className="text-muted-foreground hover:text-foreground"
+                disabled={uploading}
               >
                 <Music className="w-4 h-4 mr-1" />
                 Audio
@@ -218,15 +246,15 @@ export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) {
 
             <Button
               type="submit"
-              disabled={(!content.trim() && mediaFiles.length === 0) || creating}
+              disabled={(!content.trim() && mediaFiles.length === 0) || creating || uploading}
               className="bg-primary hover:bg-primary/90"
             >
-              {creating ? (
+              {creating || uploading ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
               ) : (
                 <Send className="w-4 h-4 mr-2" />
               )}
-              {creating ? 'Posting...' : 'Post'}
+              {creating || uploading ? 'Posting...' : 'Post'}
             </Button>
           </div>
         </form>

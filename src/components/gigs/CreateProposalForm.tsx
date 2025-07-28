@@ -1,3 +1,4 @@
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -7,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { validateInput, sanitizeText } from '@/utils/sanitization';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { Database } from '@/types/supabase';
@@ -14,8 +16,8 @@ import { Database } from '@/types/supabase';
 type Gig = Database['public']['Tables']['gigs']['Row'];
 
 const proposalFormSchema = z.object({
-  message: z.string().min(10, { message: 'Your message must be at least 10 characters.' }),
-  rate: z.coerce.number().positive({ message: 'Rate must be a positive number.' }),
+  message: z.string().min(10, { message: 'Your message must be at least 10 characters.' }).max(1000, { message: 'Message too long.' }),
+  rate: z.coerce.number().positive({ message: 'Rate must be a positive number.' }).max(1000000, { message: 'Rate too high.' }),
 });
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>;
@@ -42,9 +44,20 @@ export const CreateProposalForm: React.FC<CreateProposalFormProps> = ({ gig, chi
       return;
     }
 
+    // Validate and sanitize inputs
+    if (!validateInput(values.message, 1000)) {
+      toast.error('Message contains invalid characters');
+      return;
+    }
+
+    const sanitizedValues = {
+      message: sanitizeText(values.message),
+      rate: values.rate,
+    };
+
     const { error } = await supabase.from('proposals').insert([
       {
-        ...values,
+        ...sanitizedValues,
         gig_id: gig.id,
         user_id: user.id,
         status: 'pending',
@@ -52,7 +65,8 @@ export const CreateProposalForm: React.FC<CreateProposalFormProps> = ({ gig, chi
     ]);
 
     if (error) {
-      toast.error('Failed to submit proposal:', { description: error.message });
+      console.error('Proposal submission error:', error);
+      toast.error('Failed to submit proposal. Please try again.');
     } else {
       toast.success('Proposal submitted successfully!');
       onProposalSubmitted();
@@ -80,7 +94,12 @@ export const CreateProposalForm: React.FC<CreateProposalFormProps> = ({ gig, chi
                 <FormItem>
                   <FormLabel>Your Message</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Introduce yourself and highlight your relevant skills..." {...field} rows={5} />
+                    <Textarea 
+                      placeholder="Introduce yourself and highlight your relevant skills..." 
+                      {...field} 
+                      rows={5}
+                      maxLength={1000}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,7 +112,13 @@ export const CreateProposalForm: React.FC<CreateProposalFormProps> = ({ gig, chi
                 <FormItem>
                   <FormLabel>Your Proposed Rate ($)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 100" {...field} />
+                    <Input 
+                      type="number" 
+                      placeholder="e.g., 100" 
+                      {...field}
+                      min="1"
+                      max="1000000"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
