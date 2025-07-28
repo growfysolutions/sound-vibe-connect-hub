@@ -12,6 +12,8 @@ interface CulturalCardProps {
   culturalIcon?: string;
   className?: string;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const CulturalCard: React.FC<CulturalCardProps> = ({
@@ -21,7 +23,9 @@ export const CulturalCard: React.FC<CulturalCardProps> = ({
   subtitle,
   culturalIcon,
   className,
-  onClick
+  onClick,
+  onMouseEnter,
+  onMouseLeave
 }) => {
   return (
     <Card 
@@ -31,6 +35,8 @@ export const CulturalCard: React.FC<CulturalCardProps> = ({
         className
       )}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {/* Ocean-themed pattern background */}
       <div className="absolute inset-0 opacity-5 rounded-xl"
