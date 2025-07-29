@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, MessageCircle, Calendar, Plus, Mic } from 'lucide-react';
+import { Plus, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface QuickActionsBarProps {
@@ -17,23 +17,6 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
   onOpenMessages,
   onScheduleSession
 }) => {
-  const quickActions = [{
-    icon: Upload,
-    label: 'Upload Track',
-    action: onUploadTrack,
-    className: 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'
-  }, {
-    icon: MessageCircle,
-    label: 'Message',
-    action: onOpenMessages,
-    className: 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700'
-  }, {
-    icon: Calendar,
-    label: 'Schedule Session',
-    action: onScheduleSession,
-    className: 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
-  }];
-
   return <>
       {/* Floating Action Button - Always Visible */}
       <div className="fixed bottom-6 right-6 z-50 lg:hidden">
