@@ -12,6 +12,52 @@ export const useRealTimeMessages = (conversationId: string) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Validate conversation before sending messages
+  const validateConversation = useCallback(async () => {
+    if (!conversationId || !profile?.id) return false;
+
+    try {
+      // Check if conversation exists and user is a participant
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .select(`
+          id,
+          conversation_participants (
+            user_id,
+            profiles (id, full_name)
+          )
+        `)
+        .eq('id', conversationId)
+        .single();
+
+      if (convError) {
+        console.error('Conversation validation error:', convError);
+        setError('Conversation not found');
+        return false;
+      }
+
+      const participants = conversation?.conversation_participants || [];
+      const userIsParticipant = participants.some(p => p.user_id === profile.id);
+      const hasMultipleParticipants = participants.length >= 2;
+
+      if (!userIsParticipant) {
+        setError('You are not a participant in this conversation');
+        return false;
+      }
+
+      if (!hasMultipleParticipants) {
+        setError('Invalid conversation: needs at least 2 participants');
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('Error validating conversation:', err);
+      setError('Failed to validate conversation');
+      return false;
+    }
+  }, [conversationId, profile?.id]);
+
   const fetchMessages = useCallback(async () => {
     if (!conversationId) {
       setLoading(false);
@@ -20,6 +66,14 @@ export const useRealTimeMessages = (conversationId: string) => {
 
     try {
       setError(null);
+      
+      // First validate the conversation
+      const isValid = await validateConversation();
+      if (!isValid) {
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('messages')
         .select(`
@@ -58,7 +112,7 @@ export const useRealTimeMessages = (conversationId: string) => {
     } finally {
       setLoading(false);
     }
-  }, [conversationId]);
+  }, [conversationId, validateConversation]);
 
   const validateMessage = (data: SendMessageData): boolean => {
     if (!data.content?.trim() && !data.file_path) {
@@ -75,6 +129,13 @@ export const useRealTimeMessages = (conversationId: string) => {
     }
 
     if (!validateMessage(data)) {
+      return false;
+    }
+
+    // Validate conversation before sending
+    const isConversationValid = await validateConversation();
+    if (!isConversationValid) {
+      toast.error('Cannot send message: Invalid conversation');
       return false;
     }
 
@@ -106,14 +167,21 @@ export const useRealTimeMessages = (conversationId: string) => {
       if (error) {
         console.error('Error sending message:', error);
         
-        // Retry logic for transient errors
-        if (retryCount < 2 && (error.code === 'PGRST301' || error.message.includes('timeout'))) {
-          console.log(`Retrying message send (attempt ${retryCount + 1})`);
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          return sendMessage(data, retryCount + 1);
+        // Provide more specific error messages
+        if (error.message.includes('permission denied')) {
+          toast.error('Permission denied: You may not be a member of this conversation');
+          setError('Permission denied for this conversation');
+        } else if (error.code === 'PGRST301' || error.message.includes('timeout')) {
+          if (retryCount < 2) {
+            console.log(`Retrying message send (attempt ${retryCount + 1})`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return sendMessage(data, retryCount + 1);
+          }
+          toast.error('Message sending timed out. Please try again.');
+        } else {
+          toast.error(`Failed to send message: ${error.message}`);
         }
         
-        toast.error(`Failed to send message: ${error.message}`);
         setError(error.message);
         return false;
       }
@@ -139,14 +207,14 @@ export const useRealTimeMessages = (conversationId: string) => {
     } finally {
       setSending(false);
     }
-  }, [profile?.id, conversationId]);
+  }, [profile?.id, conversationId, validateConversation]);
 
   useEffect(() => {
     fetchMessages();
 
     if (!conversationId) return;
 
-    // Set up real-time subscription with error handling
+    // Set up real-time subscription
     const channel = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -194,7 +262,6 @@ export const useRealTimeMessages = (conversationId: string) => {
               };
               
               setMessages(prev => {
-                // Avoid duplicates
                 if (prev.find(msg => msg.id === transformedMessage.id)) {
                   return prev;
                 }
@@ -210,7 +277,6 @@ export const useRealTimeMessages = (conversationId: string) => {
         console.log('Real-time subscription status:', status);
         if (status !== 'SUBSCRIBED') {
           console.error('Real-time subscription error, status:', status);
-          toast.error('Real-time messaging temporarily unavailable');
         }
       });
 

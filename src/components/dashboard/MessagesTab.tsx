@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, Paperclip, AlertCircle, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { MessageSquare, Send, Paperclip, AlertCircle, Wifi, WifiOff, RefreshCw, Plus } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Conversation } from '@/types';
 import { toast } from 'sonner';
 import { useRealTimeMessages } from '@/hooks/useRealTimeMessages';
+import { validateConversationStructure } from '@/utils/conversationHelpers';
 
 const getOtherParticipants = (conversation: Conversation, currentUserId: string) => {
   return conversation.conversation_participants.filter(p => p.user_id !== currentUserId);
@@ -41,6 +41,7 @@ export const MessagesTab = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [conversationsError, setConversationsError] = useState<string | null>(null);
+  const [conversationValidation, setConversationValidation] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -74,6 +75,25 @@ export const MessagesTab = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  // Validate selected conversation when it changes
+  useEffect(() => {
+    const validateSelectedConversation = async () => {
+      if (selectedConversation?.id) {
+        const validation = await validateConversationStructure(selectedConversation.id);
+        setConversationValidation(validation);
+        
+        if (!validation.isValid) {
+          console.error('Invalid conversation selected:', validation.error);
+          toast.error(`Conversation issue: ${validation.error}`);
+        }
+      } else {
+        setConversationValidation(null);
+      }
+    };
+
+    validateSelectedConversation();
+  }, [selectedConversation]);
 
   const fetchConversations = async () => {
     try {
@@ -137,7 +157,24 @@ export const MessagesTab = () => {
         throw conversationsError;
       }
 
-      setConversations(conversationsData as Conversation[] || []);
+      // Filter out malformed conversations and show warnings
+      const validConversations = [];
+      const invalidConversations = [];
+
+      for (const conv of conversationsData || []) {
+        if (conv.conversation_participants?.length >= 2) {
+          validConversations.push(conv);
+        } else {
+          invalidConversations.push(conv);
+        }
+      }
+
+      if (invalidConversations.length > 0) {
+        console.warn('Found invalid conversations:', invalidConversations);
+        toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden`);
+      }
+
+      setConversations(validConversations as Conversation[]);
     } catch (error: any) {
       console.error('Error fetching conversations:', error);
       setConversationsError(error.message || 'Failed to load conversations');
@@ -158,6 +195,12 @@ export const MessagesTab = () => {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || sending || !isOnline) return;
+
+    // Additional validation check
+    if (conversationValidation && !conversationValidation.isValid) {
+      toast.error(`Cannot send message: ${conversationValidation.error}`);
+      return;
+    }
 
     const success = await sendMessage({ content: newMessage.trim() });
     if (success) {
@@ -322,7 +365,12 @@ export const MessagesTab = () => {
         {/* Conversations List */}
         <div className="w-80 border-r border-border bg-card">
           <div className="p-4 border-b border-border">
-            <h3 className="font-semibold">Chats</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Chats</h3>
+              <Button variant="ghost" size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-1">
@@ -365,6 +413,9 @@ export const MessagesTab = () => {
                           {convo.messages?.[0]?.content || 'No messages yet'}
                         </p>
                       </div>
+                      <div className="text-xs text-muted-foreground">
+                        {convo.conversation_participants?.length || 0} members
+                      </div>
                     </div>
                   );
                 })
@@ -382,9 +433,19 @@ export const MessagesTab = () => {
               {/* Chat Header */}
               <div className="p-4 border-b border-border bg-card">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">
-                    {getConversationDisplayInfo(selectedConversation, currentUser.id).name}
-                  </h3>
+                  <div>
+                    <h3 className="font-semibold">
+                      {getConversationDisplayInfo(selectedConversation, currentUser.id).name}
+                    </h3>
+                    {conversationValidation && (
+                      <p className="text-xs text-muted-foreground">
+                        {conversationValidation.isValid 
+                          ? `${conversationValidation.participantCount} participants`
+                          : `⚠️ ${conversationValidation.error}`
+                        }
+                      </p>
+                    )}
+                  </div>
                   {!isOnline && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <WifiOff className="w-4 h-4" />
@@ -413,6 +474,15 @@ export const MessagesTab = () => {
                   </Alert>
                 )}
                 
+                {conversationValidation && !conversationValidation.isValid && (
+                  <Alert className="mb-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      This conversation has structural issues: {conversationValidation.error}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
                 <div className="space-y-4">
                   {messagesLoading ? (
                     <p className="text-center text-muted-foreground">Loading messages...</p>
@@ -433,14 +503,14 @@ export const MessagesTab = () => {
                     variant="ghost" 
                     size="icon" 
                     onClick={() => fileInputRef.current?.click()}
-                    disabled={!isOnline || sending}
+                    disabled={!isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
                   >
                     <Paperclip className="w-4 h-4" />
                   </Button>
                   
                   <VoiceMessageRecorder 
                     onSendVoiceMessage={handleSendVoiceMessage}
-                    disabled={!selectedConversation || !isOnline || sending}
+                    disabled={!selectedConversation || !isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
                   />
                   
                   <input
@@ -454,16 +524,22 @@ export const MessagesTab = () => {
                   <Input
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder={isOnline ? "Type a message..." : "Connect to internet to send messages"}
+                    placeholder={
+                      conversationValidation && !conversationValidation.isValid 
+                        ? "Cannot send to invalid conversation"
+                        : isOnline 
+                          ? "Type a message..." 
+                          : "Connect to internet to send messages"
+                    }
                     autoComplete="off"
                     className="flex-1"
-                    disabled={!isOnline || sending}
+                    disabled={!isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
                   />
                   
                   <Button 
                     type="submit" 
                     size="icon" 
-                    disabled={!newMessage.trim() || sending || !isOnline}
+                    disabled={!newMessage.trim() || sending || !isOnline || (conversationValidation && !conversationValidation.isValid)}
                   >
                     <Send className="w-4 h-4" />
                   </Button>
