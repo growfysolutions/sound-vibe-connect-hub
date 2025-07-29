@@ -10,6 +10,7 @@ import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
 import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
 import { CalendarTab } from '@/components/dashboard/CalendarTab';
+import { MessagesTab } from '@/components/dashboard/MessagesTab';
 import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -49,7 +50,8 @@ export default function Dashboard() {
       'projects': 'projects',
       'achievements': 'achievements',
       'analytics': 'analytics',
-      'calendar': 'calendar'
+      'calendar': 'calendar',
+      'messages': 'messages'
     };
     
     return tabMap[tabFromPath] || 'feed';
@@ -68,7 +70,8 @@ export default function Dashboard() {
       'projects': '/dashboard/projects',
       'achievements': '/dashboard/achievements',
       'analytics': '/dashboard/analytics',
-      'calendar': '/dashboard/calendar'
+      'calendar': '/dashboard/calendar',
+      'messages': '/dashboard/messages'
     };
     
     const newPath = tabPaths[tabId] || '/dashboard';
@@ -78,8 +81,9 @@ export default function Dashboard() {
   };
 
   const handleSendMessage = (userId: string) => {
-    // Navigate to messages with the specific user
-    navigate(`/messages?user=${userId}`);
+    // Navigate to messages tab instead of separate page
+    setActiveTab('messages');
+    navigate('/dashboard/messages', { replace: true });
   };
 
   const handleViewProfile = (userId: string) => {
@@ -151,7 +155,8 @@ export default function Dashboard() {
       />,
       achievements: <AchievementsTab />,
       analytics: <AnalyticsDashboard />,
-      calendar: <CalendarTab />
+      calendar: <CalendarTab />,
+      messages: <MessagesTab />
     };
 
     const TabComponent = tabComponents[activeTab as keyof typeof tabComponents];
@@ -201,8 +206,8 @@ export default function Dashboard() {
         
         {/* Main Content */}
         <div className="flex-1 bg-background">
-          <main className="p-6 max-w-none">
-            <div className="bg-background min-h-[calc(100vh-3rem)]">
+          <main className="h-screen overflow-hidden">
+            <div className="bg-background h-full">
               {renderTabContent()}
             </div>
           </main>

@@ -27,7 +27,7 @@ export function DashboardNavigation({ activeTab, setActiveTab }: DashboardNaviga
     { id: 'discover', label: 'Discover', icon: Users, type: 'tab' },
     { id: 'network', label: 'Network', icon: Users, type: 'tab' },
     { id: 'projects', label: 'Projects', icon: FileMusic, type: 'tab' },
-    { id: 'messages', label: 'Messages', icon: MessageCircle, type: 'route', route: '/messages' },
+    { id: 'messages', label: 'Messages', icon: MessageCircle, type: 'tab' },
     { id: 'gigs', label: 'Gigs', icon: Briefcase, type: 'route', route: '/gig-management' },
     { id: 'collaboration', label: 'Collaborate', icon: GitBranch, type: 'modal' },
     { id: 'settings', label: 'Settings', icon: Settings, type: 'route', route: '/unified-settings' },

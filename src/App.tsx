@@ -83,6 +83,19 @@ function App() {
                       <Dashboard />
                     </ProtectedRoute>
                   } />
+                  <Route path="/dashboard/messages" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Redirect old messages route to dashboard */}
+                  <Route path="/messages" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <Profile />
@@ -101,11 +114,6 @@ function App() {
                   <Route path="/unified-settings" element={
                     <ProtectedRoute>
                       <UnifiedSettings />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/messages" element={
-                    <ProtectedRoute>
-                      <Messages />
                     </ProtectedRoute>
                   } />
                   <Route path="/gig-management" element={
