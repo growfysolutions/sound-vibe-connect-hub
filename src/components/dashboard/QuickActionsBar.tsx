@@ -42,21 +42,6 @@ const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
         </Button>
       </div>
 
-      {/* Quick Actions Desktop Bar */}
-      <div className="hidden lg:flex fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 bg-card/90 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg">
-        {quickActions.map((action, index) => (
-          <Button
-            key={index}
-            onClick={action.action}
-            className={cn("mx-1 rounded-full", action.className)}
-            title={action.label}
-          >
-            <action.icon className="w-4 h-4" />
-            <span className="ml-2 hidden xl:inline">{action.label}</span>
-          </Button>
-        ))}
-      </div>
-
       {/* Voice Search Button */}
       <div className="fixed bottom-24 right-6 z-40 lg:hidden">
         <Button className={cn("w-12 h-12 rounded-full shadow-md", "bg-card/90 backdrop-blur-sm border border-border", "text-muted-foreground hover:text-foreground", "hover:scale-105 transition-all duration-300")} title="Voice Search">
