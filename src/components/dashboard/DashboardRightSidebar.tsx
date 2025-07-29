@@ -10,12 +10,9 @@ import { LearningCornerWidget } from '@/components/dashboard/LearningCornerWidge
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export function DashboardRightSidebar() {
-  // Mock handlers for QuickActionsBar
-  const quickActionHandlers = {
-    onNewCollaboration: () => console.log('New collaboration'),
-    onUploadTrack: () => console.log('Upload track'),
-    onOpenMessages: () => console.log('Open messages'),
-    onScheduleSession: () => console.log('Schedule session'),
+  // Mock handler for QuickActionsBar
+  const handleNewCollaboration = () => {
+    console.log('New collaboration');
   };
 
   return (
@@ -48,7 +45,7 @@ export function DashboardRightSidebar() {
       
       {/* Fixed Quick Actions Bar at Bottom */}
       <div className="flex-shrink-0">
-        <QuickActionsBar {...quickActionHandlers} />
+        <QuickActionsBar onNewCollaboration={handleNewCollaboration} />
       </div>
     </div>
   );

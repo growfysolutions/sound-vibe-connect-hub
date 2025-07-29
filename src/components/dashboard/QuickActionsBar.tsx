@@ -6,16 +6,10 @@ import { cn } from '@/lib/utils';
 
 interface QuickActionsBarProps {
   onNewCollaboration: () => void;
-  onUploadTrack: () => void;
-  onOpenMessages: () => void;
-  onScheduleSession: () => void;
 }
 
 const QuickActionsBar: React.FC<QuickActionsBarProps> = ({
-  onNewCollaboration,
-  onUploadTrack,
-  onOpenMessages,
-  onScheduleSession
+  onNewCollaboration
 }) => {
   return <>
       {/* Floating Action Button - Always Visible */}
