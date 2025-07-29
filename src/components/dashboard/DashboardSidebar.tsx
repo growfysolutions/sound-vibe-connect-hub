@@ -12,8 +12,7 @@ import {
   Calendar, 
   MessageSquare,
   Settings, 
-  LogOut, 
-  Plus,
+  LogOut,
   Briefcase,
   GitBranch
 } from 'lucide-react';

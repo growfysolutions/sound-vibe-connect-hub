@@ -80,7 +80,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleSendMessage = (userId: string) => {
+  const handleSendMessage = () => {
     // Navigate to messages tab instead of separate page
     setActiveTab('messages');
     navigate('/dashboard/messages', { replace: true });

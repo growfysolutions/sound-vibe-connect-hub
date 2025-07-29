@@ -15,7 +15,6 @@ import ProfileSetup from "./pages/ProfileSetup";
 import PublicProfile from "./pages/PublicProfile";
 import Settings from "./pages/Settings";
 import UnifiedSettings from "./pages/UnifiedSettings";
-import Messages from "./pages/Messages";
 import GigManagement from "./pages/GigManagement";
 import GigDetails from "./pages/GigDetails";
 import GigProposals from "./pages/GigProposals";
