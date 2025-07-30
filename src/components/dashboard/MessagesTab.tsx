@@ -1,142 +1,44 @@
-import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, Paperclip, AlertCircle, Wifi, WifiOff, RefreshCw, Plus } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import FileAttachment from '@/components/chat/FileAttachment';
-import { VoiceMessageRecorder } from '@/components/chat/VoiceMessageRecorder';
-import { VoiceMessagePlayer } from '@/components/chat/VoiceMessagePlayer';
+
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Conversation } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { useRealTimeMessages } from '@/hooks/useRealTimeMessages';
-import { validateConversationStructure } from '@/utils/conversationHelpers';
+import { MessageCircle, Search, Plus, Users } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 
-const getOtherParticipants = (conversation: Conversation, currentUserId: string) => {
-  return conversation.conversation_participants.filter(p => p.user_id !== currentUserId);
-};
+interface Profile {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+}
 
-const getConversationDisplayInfo = (conversation: Conversation, currentUserId: string) => {
-  if (conversation.is_group_chat) {
-    return {
-      name: conversation.name || 'Group Chat',
-      avatar_url: '/group-avatar.png',
-    };
-  }
-  const otherParticipant = getOtherParticipants(conversation, currentUserId)[0];
-  return {
-    name: otherParticipant?.profiles.full_name || 'Unknown User',
-    avatar_url: otherParticipant?.profiles.avatar_url || '/placeholder.jpg',
-  };
-};
+interface Conversation {
+  id: string;
+  name: string | null;
+  is_group_chat: boolean;
+  last_message_at: string | null;
+  created_at: string;
+  conversation_participants: {
+    user_id: string;
+    profiles: Profile;
+  }[];
+}
 
 export const MessagesTab = () => {
+  const { user } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [newMessage, setNewMessage] = useState('');
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [conversationsError, setConversationsError] = useState<string | null>(null);
-  const [conversationValidation, setConversationValidation] = useState<any>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Use the updated hook for real-time messages
-  const { 
-    messages, 
-    loading: messagesLoading, 
-    sending, 
-    error: messagesError, 
-    sendMessage, 
-    refetch: refetchMessages 
-  } = useRealTimeMessages(selectedConversation?.id || '');
-
-  // Network status monitoring
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      toast.success('Connection restored');
-    };
-    
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast.error('Connection lost');
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  // Validate selected conversation when it changes
-  useEffect(() => {
-    const validateSelectedConversation = async () => {
-      if (selectedConversation?.id) {
-        const validation = await validateConversationStructure(selectedConversation.id);
-        setConversationValidation(validation);
-        
-        if (!validation.isValid) {
-          console.error('Invalid conversation selected:', validation.error);
-          toast.error(`Conversation issue: ${validation.error}`);
-        }
-      } else {
-        setConversationValidation(null);
-      }
-    };
-
-    validateSelectedConversation();
-  }, [selectedConversation]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchConversations = async () => {
+    if (!user) return;
+    
     try {
-      setConversationsError(null);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      setCurrentUser(user);
-
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError) {
-        console.error('Profile error:', profileError);
-        toast.error('Failed to fetch user profile.');
-      } else {
-        setCurrentUserProfile(profileData);
-      }
-
-      // Get conversations where user is a participant
-      const { data: participantData, error: participantError } = await supabase
-        .from('conversation_participants')
-        .select('conversation_id')
-        .eq('user_id', user.id);
-
-      if (participantError) {
-        throw participantError;
-      }
-
-      const conversationIds = participantData?.map(p => p.conversation_id) || [];
+      setLoading(true);
       
-      if (conversationIds.length === 0) {
-        setConversations([]);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch conversations with all participants
       const { data: conversationsData, error: conversationsError } = await supabase
         .from('conversations')
         .select(`
@@ -150,52 +52,28 @@ export const MessagesTab = () => {
             )
           )
         `)
-        .in('id', conversationIds)
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
       if (conversationsError) {
+        console.error('Error fetching conversations:', conversationsError);
         throw conversationsError;
       }
 
-      // Debug: Log the data structure
-      console.log('Raw conversations data:', conversationsData);
-      console.log('Sample conversation structure:', conversationsData?.[0]);
-
-      // Improved validation logic
+      // Filter out conversations with insufficient participants
       const validConversations = [];
       const invalidConversations = [];
 
       for (const conv of conversationsData || []) {
-        console.log(`Validating conversation ${conv.id}:`, {
-          participants: conv.conversation_participants,
-          participantCount: conv.conversation_participants?.length || 0,
-          participantStructure: conv.conversation_participants?.map(p => ({
-            user_id: p.user_id,
-            hasProfile: !!p.profiles,
-            profileId: p.profiles?.id
-          }))
-        });
-
-        // Check if conversation_participants exists and is an array
         const participants = conv.conversation_participants;
-        if (!Array.isArray(participants)) {
-          console.warn(`Conversation ${conv.id} has no participants array:`, participants);
-          invalidConversations.push({ ...conv, invalidReason: 'No participants array' });
+        
+        if (!Array.isArray(participants) || participants.length < 2) {
+          invalidConversations.push(conv);
           continue;
         }
 
-        // Check if we have at least 2 participants
-        if (participants.length < 2) {
-          console.warn(`Conversation ${conv.id} has insufficient participants:`, participants.length);
-          invalidConversations.push({ ...conv, invalidReason: `Only ${participants.length} participant(s)` });
-          continue;
-        }
-
-        // Check if participants have valid user IDs
-        const validParticipants = participants.filter(p => p.user_id);
+        const validParticipants = participants.filter(p => p.user_id && p.profiles);
         if (validParticipants.length < 2) {
-          console.warn(`Conversation ${conv.id} has participants without valid user IDs:`, participants);
-          invalidConversations.push({ ...conv, invalidReason: `Only ${validParticipants.length} valid participant(s)` });
+          invalidConversations.push(conv);
           continue;
         }
 
@@ -203,19 +81,13 @@ export const MessagesTab = () => {
       }
 
       if (invalidConversations.length > 0) {
-        console.warn('Found invalid conversations:', invalidConversations);
-        const detailedMessage = invalidConversations.map(conv => 
-          `${conv.id}: ${conv.invalidReason}`
-        ).join(', ');
-        console.warn('Invalid conversation details:', detailedMessage);
-        toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden. Details: ${detailedMessage}`);
+        console.warn(`Found ${invalidConversations.length} invalid conversations that will be hidden`);
+        toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden`);
       }
 
-      console.log(`Valid conversations: ${validConversations.length}, Invalid: ${invalidConversations.length}`);
       setConversations(validConversations as Conversation[]);
     } catch (error: any) {
       console.error('Error fetching conversations:', error);
-      setConversationsError(error.message || 'Failed to load conversations');
       toast.error('Failed to load conversations');
     } finally {
       setLoading(false);
@@ -224,381 +96,165 @@ export const MessagesTab = () => {
 
   useEffect(() => {
     fetchConversations();
-  }, []);
+  }, [user]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || sending || !isOnline) return;
-
-    // Additional validation check
-    if (conversationValidation && !conversationValidation.isValid) {
-      toast.error(`Cannot send message: ${conversationValidation.error}`);
-      return;
+  const filteredConversations = conversations.filter(conversation => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    
+    // Search by conversation name
+    if (conversation.name && conversation.name.toLowerCase().includes(query)) {
+      return true;
     }
+    
+    // Search by participant names
+    return conversation.conversation_participants.some(participant => 
+      participant.profiles?.full_name?.toLowerCase().includes(query)
+    );
+  });
 
-    const success = await sendMessage({ content: newMessage.trim() });
-    if (success) {
-      setNewMessage('');
+  const getConversationDisplayName = (conversation: Conversation) => {
+    if (conversation.name) {
+      return conversation.name;
     }
+    
+    // For direct messages, show the other participant's name
+    const otherParticipant = conversation.conversation_participants.find(
+      p => p.user_id !== user?.id
+    );
+    
+    return otherParticipant?.profiles?.full_name || 'Unknown User';
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !selectedConversation || !currentUser || !isOnline) return;
-
-    const fileId = uuidv4();
-    const filePath = `${currentUser.id}/${selectedConversation.id}/${fileId}-${file.name}`;
-
-    const toastId = toast.loading(`Uploading ${file.name}...`);
-
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from('chat_attachments')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const success = await sendMessage({
-        file_path: filePath,
-        file_metadata: { 
-          name: file.name, 
-          type: file.type, 
-          size: file.size 
-        }
-      });
-
-      if (success) {
-        toast.success('File sent!', { id: toastId });
-      } else {
-        toast.error('Failed to send file', { id: toastId });
-      }
-    } catch (error: any) {
-      console.error('File upload error:', error);
-      toast.error(`Failed to upload file: ${error.message}`, { id: toastId });
-    }
+  const getConversationAvatar = (conversation: Conversation) => {
+    const otherParticipant = conversation.conversation_participants.find(
+      p => p.user_id !== user?.id
+    );
+    
+    return otherParticipant?.profiles?.avatar_url;
   };
 
-  const handleSendVoiceMessage = async (audioBlob: Blob, duration: number) => {
-    if (!selectedConversation || !currentUser || !isOnline) return;
-
-    const fileId = uuidv4();
-    const filePath = `${currentUser.id}/${selectedConversation.id}/voice_${fileId}.webm`;
-
-    const toastId = toast.loading('Sending voice message...');
-
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from('chat_attachments')
-        .upload(filePath, audioBlob);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const success = await sendMessage({
-        file_path: filePath,
-        file_metadata: { 
-          name: `voice_message_${Date.now()}.webm`, 
-          type: 'audio/webm', 
-          size: audioBlob.size,
-          duration: duration,
-          isVoiceMessage: true
-        }
-      });
-
-      if (success) {
-        toast.success('Voice message sent!', { id: toastId });
-      } else {
-        toast.error('Failed to send voice message', { id: toastId });
-      }
-    } catch (error: any) {
-      console.error('Voice message upload error:', error);
-      toast.error(`Failed to upload voice message: ${error.message}`, { id: toastId });
-    }
+  const handleConversationClick = (conversationId: string) => {
+    // Navigate to conversation - you can implement this based on your routing setup
+    console.log('Opening conversation:', conversationId);
+    toast.info('Conversation navigation not implemented yet');
   };
 
-  const renderMessage = (message: any) => {
-    const isCurrentUser = message.sender_id === currentUser?.id;
+  const handleNewConversation = () => {
+    toast.info('New conversation feature not implemented yet');
+  };
 
+  if (loading) {
     return (
-      <div key={message.id} className={`flex items-end gap-2 ${isCurrentUser ? 'justify-end' : ''}`}>
-        {!isCurrentUser && (
-          <img 
-            src={message.sender?.avatar_url || '/placeholder.jpg'} 
-            alt={message.sender?.full_name || 'Avatar'} 
-            className="w-8 h-8 rounded-full object-cover" 
-          />
-        )}
-        <div className={`rounded-lg px-3 py-2 max-w-sm ${
-          isCurrentUser 
-            ? 'bg-primary text-primary-foreground' 
-            : 'bg-muted'
-        }`}>
-          {message.content && <p className="text-sm">{message.content}</p>}
-          {message.file_path && message.file_metadata && (
-            message.file_metadata?.isVoiceMessage ? (
-              <VoiceMessagePlayer 
-                filePath={message.file_path} 
-                duration={message.file_metadata?.duration}
-              />
-            ) : (
-              <FileAttachment 
-                filePath={message.file_path} 
-                fileMetadata={message.file_metadata} 
-              />
-            )
-          )}
-          <p className={`text-xs mt-1 ${
-            isCurrentUser 
-              ? 'text-primary-foreground/80' 
-              : 'text-muted-foreground/80'
-          }`}>
-            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </p>
-        </div>
-        {isCurrentUser && currentUserProfile && (
-          <img 
-            src={currentUserProfile.avatar_url || '/placeholder.jpg'} 
-            alt={currentUserProfile.full_name || 'Avatar'} 
-            className="w-8 h-8 rounded-full object-cover" 
-          />
-        )}
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-muted rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-1/3"></div>
+                  <div className="h-3 bg-muted rounded w-2/3"></div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
-  };
+  }
 
   return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold text-foreground">Messages</h2>
-          <div className="text-sm text-muted-foreground">ਸੁਨੇਹੇ</div>
-        </div>
-        <div className="flex items-center gap-2">
-          {isOnline ? (
-            <Wifi className="w-4 h-4 text-green-500" />
-          ) : (
-            <WifiOff className="w-4 h-4 text-red-500" />
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={fetchConversations}
-            disabled={loading}
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </Button>
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Messages</h2>
+        <Button onClick={handleNewConversation} size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          New Chat
+        </Button>
       </div>
 
-      {/* Messages Interface */}
-      <div className="flex-1 flex min-h-0">
-        {/* Conversations List */}
-        <div className="w-80 border-r border-border bg-card">
-          <div className="p-4 border-b border-border">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Chats</h3>
-              <Button variant="ghost" size="sm">
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-          <ScrollArea className="flex-1">
-            <div className="p-2 space-y-1">
-              {loading ? (
-                <p className="p-4 text-muted-foreground">Loading conversations...</p>
-              ) : conversationsError ? (
-                <Alert className="m-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    {conversationsError}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={fetchConversations}
-                      className="ml-2"
-                    >
-                      Retry
-                    </Button>
-                  </AlertDescription>
-                </Alert>
-              ) : conversations.length > 0 ? (
-                conversations.map(convo => {
-                  const displayInfo = getConversationDisplayInfo(convo, currentUser?.id || '');
-                  return (
-                    <div
-                      key={convo.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors ${
-                        selectedConversation?.id === convo.id ? 'bg-muted' : ''
-                      }`}
-                      onClick={() => setSelectedConversation(convo)}
-                    >
-                      <img 
-                        src={displayInfo.avatar_url} 
-                        alt={displayInfo.name} 
-                        className="w-12 h-12 rounded-full object-cover" 
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm">{displayInfo.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {convo.messages?.[0]?.content || 'No messages yet'}
-                        </p>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {convo.conversation_participants?.length || 0} members
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="p-4 text-muted-foreground">No conversations yet.</p>
-              )}
-            </div>
-          </ScrollArea>
-        </div>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search conversations..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
 
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col bg-background">
-          {selectedConversation && currentUser ? (
-            <>
-              {/* Chat Header */}
-              <div className="p-4 border-b border-border bg-card">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold">
-                      {getConversationDisplayInfo(selectedConversation, currentUser.id).name}
-                    </h3>
-                    {conversationValidation && (
-                      <p className="text-xs text-muted-foreground">
-                        {conversationValidation.isValid 
-                          ? `${conversationValidation.participantCount} participants`
-                          : `⚠️ ${conversationValidation.error}`
-                        }
-                      </p>
+      {filteredConversations.length === 0 ? (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-semibold mb-2">No conversations yet</h3>
+            <p className="text-muted-foreground mb-4">
+              Start a new conversation to connect with other users
+            </p>
+            <Button onClick={handleNewConversation}>
+              <Plus className="h-4 w-4 mr-2" />
+              Start Chatting
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-2">
+          {filteredConversations.map((conversation) => (
+            <Card 
+              key={conversation.id} 
+              className="cursor-pointer hover:bg-accent/50 transition-colors"
+              onClick={() => handleConversationClick(conversation.id)}
+            >
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    {getConversationAvatar(conversation) ? (
+                      <img
+                        src={getConversationAvatar(conversation)!}
+                        alt="Avatar"
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                        {conversation.is_group_chat ? (
+                          <Users className="h-6 w-6 text-muted-foreground" />
+                        ) : (
+                          <MessageCircle className="h-6 w-6 text-muted-foreground" />
+                        )}
+                      </div>
                     )}
                   </div>
-                  {!isOnline && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <WifiOff className="w-4 h-4" />
-                      Offline
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold truncate">
+                        {getConversationDisplayName(conversation)}
+                      </h3>
+                      {conversation.last_message_at && (
+                        <span className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+                        </span>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Messages Area */}
-              <ScrollArea className="flex-1 p-4">
-                {messagesError && (
-                  <Alert className="mb-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      {messagesError}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={refetchMessages}
-                        className="ml-2"
-                      >
-                        Retry
-                      </Button>
-                    </AlertDescription>
-                  </Alert>
-                )}
-                
-                {conversationValidation && !conversationValidation.isValid && (
-                  <Alert className="mb-4">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      This conversation has structural issues: {conversationValidation.error}
-                    </AlertDescription>
-                  </Alert>
-                )}
-                
-                <div className="space-y-4">
-                  {messagesLoading ? (
-                    <p className="text-center text-muted-foreground">Loading messages...</p>
-                  ) : messages.length > 0 ? (
-                    messages.map(renderMessage)
-                  ) : (
-                    <p className="text-center text-muted-foreground">No messages yet. Say hello!</p>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-
-              {/* Message Input */}
-              <div className="p-4 border-t border-border bg-card">
-                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={!isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
-                  >
-                    <Paperclip className="w-4 h-4" />
-                  </Button>
-                  
-                  <VoiceMessageRecorder 
-                    onSendVoiceMessage={handleSendVoiceMessage}
-                    disabled={!selectedConversation || !isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
-                  />
-                  
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    accept="image/jpeg,image/png,audio/mpeg,audio/wav,application/pdf"
-                  />
-                  
-                  <Input
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder={
-                      conversationValidation && !conversationValidation.isValid 
-                        ? "Cannot send to invalid conversation"
-                        : isOnline 
-                          ? "Type a message..." 
-                          : "Connect to internet to send messages"
-                    }
-                    autoComplete="off"
-                    className="flex-1"
-                    disabled={!isOnline || sending || (conversationValidation && !conversationValidation.isValid)}
-                  />
-                  
-                  <Button 
-                    type="submit" 
-                    size="icon" 
-                    disabled={!newMessage.trim() || sending || !isOnline || (conversationValidation && !conversationValidation.isValid)}
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </form>
-                
-                {sending && (
-                  <div className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
-                    <RefreshCw className="w-3 h-3 animate-spin" />
-                    Sending message...
+                    
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-sm text-muted-foreground">
+                        {conversation.is_group_chat ? (
+                          `${conversation.conversation_participants.length} participants`
+                        ) : (
+                          'Direct message'
+                        )}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-              <MessageSquare size={48} className="mb-4" />
-              <p>Select a conversation to start chatting.</p>
-            </div>
-          )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 };
