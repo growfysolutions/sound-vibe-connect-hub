@@ -157,23 +157,61 @@ export const MessagesTab = () => {
         throw conversationsError;
       }
 
-      // Filter out malformed conversations and show warnings
+      // Debug: Log the data structure
+      console.log('Raw conversations data:', conversationsData);
+      console.log('Sample conversation structure:', conversationsData?.[0]);
+
+      // Improved validation logic
       const validConversations = [];
       const invalidConversations = [];
 
       for (const conv of conversationsData || []) {
-        if (conv.conversation_participants?.length >= 2) {
-          validConversations.push(conv);
-        } else {
-          invalidConversations.push(conv);
+        console.log(`Validating conversation ${conv.id}:`, {
+          participants: conv.conversation_participants,
+          participantCount: conv.conversation_participants?.length || 0,
+          participantStructure: conv.conversation_participants?.map(p => ({
+            user_id: p.user_id,
+            hasProfile: !!p.profiles,
+            profileId: p.profiles?.id
+          }))
+        });
+
+        // Check if conversation_participants exists and is an array
+        const participants = conv.conversation_participants;
+        if (!Array.isArray(participants)) {
+          console.warn(`Conversation ${conv.id} has no participants array:`, participants);
+          invalidConversations.push({ ...conv, invalidReason: 'No participants array' });
+          continue;
         }
+
+        // Check if we have at least 2 participants
+        if (participants.length < 2) {
+          console.warn(`Conversation ${conv.id} has insufficient participants:`, participants.length);
+          invalidConversations.push({ ...conv, invalidReason: `Only ${participants.length} participant(s)` });
+          continue;
+        }
+
+        // Check if participants have valid user IDs
+        const validParticipants = participants.filter(p => p.user_id);
+        if (validParticipants.length < 2) {
+          console.warn(`Conversation ${conv.id} has participants without valid user IDs:`, participants);
+          invalidConversations.push({ ...conv, invalidReason: `Only ${validParticipants.length} valid participant(s)` });
+          continue;
+        }
+
+        validConversations.push(conv);
       }
 
       if (invalidConversations.length > 0) {
         console.warn('Found invalid conversations:', invalidConversations);
-        toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden`);
+        const detailedMessage = invalidConversations.map(conv => 
+          `${conv.id}: ${conv.invalidReason}`
+        ).join(', ');
+        console.warn('Invalid conversation details:', detailedMessage);
+        toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden. Details: ${detailedMessage}`);
       }
 
+      console.log(`Valid conversations: ${validConversations.length}, Invalid: ${invalidConversations.length}`);
       setConversations(validConversations as Conversation[]);
     } catch (error: any) {
       console.error('Error fetching conversations:', error);
