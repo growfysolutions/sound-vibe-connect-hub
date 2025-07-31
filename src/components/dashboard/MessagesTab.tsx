@@ -27,17 +27,50 @@ interface Conversation {
 }
 
 export const MessagesTab = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const fetchConversations = async () => {
-    if (!user) return;
+    // Authentication guard - don't run if user is not authenticated
+    if (!user?.id) {
+      console.log('MessagesTab: No authenticated user, skipping conversation fetch');
+      setLoading(false);
+      setError('User not authenticated');
+      return;
+    }
     
     try {
       setLoading(true);
+      setError(null);
       
+      console.log('MessagesTab: Fetching conversations for user:', user.id);
+      
+      // First, let's check if the user exists in any conversation_participants
+      const { data: participantCheck, error: participantError } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('user_id', user.id);
+
+      console.log('MessagesTab: User participant check:', { participantCheck, participantError });
+
+      if (participantError) {
+        console.error('MessagesTab: Error checking participants:', participantError);
+        throw participantError;
+      }
+
+      if (!participantCheck || participantCheck.length === 0) {
+        console.log('MessagesTab: User is not a participant in any conversations');
+        setConversations([]);
+        setLoading(false);
+        return;
+      }
+
+      console.log('MessagesTab: User is participant in', participantCheck.length, 'conversations');
+
+      // Now fetch the full conversation data
       const { data: conversationsData, error: conversationsError } = await supabase
         .from('conversations')
         .select(`
@@ -51,14 +84,17 @@ export const MessagesTab = () => {
             )
           )
         `)
+        .in('id', participantCheck.map(p => p.conversation_id))
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
+      console.log('MessagesTab: Conversations query result:', { conversationsData, conversationsError });
+
       if (conversationsError) {
-        console.error('Error fetching conversations:', conversationsError);
+        console.error('MessagesTab: Error fetching conversations:', conversationsError);
         throw conversationsError;
       }
 
-      // Filter out conversations with insufficient participants
+      // Filter and validate conversations
       const validConversations = [];
       const invalidConversations = [];
 
@@ -79,23 +115,35 @@ export const MessagesTab = () => {
         validConversations.push(conv);
       }
 
+      console.log('MessagesTab: Valid conversations:', validConversations.length);
+      console.log('MessagesTab: Invalid conversations:', invalidConversations.length);
+
       if (invalidConversations.length > 0) {
-        console.warn(`Found ${invalidConversations.length} invalid conversations that will be hidden`);
+        console.warn(`MessagesTab: Found ${invalidConversations.length} invalid conversations that will be hidden`);
         toast.warning(`Found ${invalidConversations.length} invalid conversation(s) that will be hidden`);
       }
 
       setConversations(validConversations as Conversation[]);
     } catch (error: any) {
-      console.error('Error fetching conversations:', error);
-      toast.error('Failed to load conversations');
+      console.error('MessagesTab: Error in fetchConversations:', error);
+      setError(error.message || 'Failed to load conversations');
+      toast.error('Failed to load conversations: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }
   };
 
+  // Only fetch conversations when user is authenticated and not loading
   useEffect(() => {
-    fetchConversations();
-  }, [user]);
+    if (!authLoading && user) {
+      console.log('MessagesTab: Auth loaded, user available, fetching conversations');
+      fetchConversations();
+    } else if (!authLoading && !user) {
+      console.log('MessagesTab: Auth loaded, no user available');
+      setLoading(false);
+      setError('Please log in to view conversations');
+    }
+  }, [user, authLoading]);
 
   const filteredConversations = conversations.filter(conversation => {
     if (!searchQuery) return true;
@@ -144,7 +192,8 @@ export const MessagesTab = () => {
     toast.info('New conversation feature not implemented yet');
   };
 
-  if (loading) {
+  // Show loading while auth is loading or conversations are loading
+  if (authLoading || loading) {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
@@ -160,6 +209,32 @@ export const MessagesTab = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Messages</h2>
+          <Button onClick={handleNewConversation} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            New Chat
+          </Button>
+        </div>
+
+        <Card>
+          <CardContent className="p-8 text-center">
+            <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-semibold mb-2 text-red-600">Error Loading Conversations</h3>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Button onClick={fetchConversations} variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
