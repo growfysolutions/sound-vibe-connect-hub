@@ -5,8 +5,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { MessageCircle, Search, Plus, Users } from 'lucide-react';
+import { MessageCircle, Search, Plus, Users, ArrowLeft } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import ConversationView from '@/components/chat/ConversationView';
 
 interface Profile {
   id: string;
@@ -32,6 +33,7 @@ export const MessagesTab = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
 
   const fetchConversations = async () => {
     // Authentication guard - don't run if user is not authenticated
@@ -183,14 +185,26 @@ export const MessagesTab = () => {
   };
 
   const handleConversationClick = (conversationId: string) => {
-    // Navigate to conversation - you can implement this based on your routing setup
-    console.log('Opening conversation:', conversationId);
-    toast.info('Conversation navigation not implemented yet');
+    setSelectedConversationId(conversationId);
+  };
+
+  const handleBackToList = () => {
+    setSelectedConversationId(null);
   };
 
   const handleNewConversation = () => {
-    toast.info('New conversation feature not implemented yet');
+    toast.info('New conversation feature will be implemented in Phase 2');
   };
+
+  // If a conversation is selected, show the conversation view
+  if (selectedConversationId) {
+    return (
+      <ConversationView 
+        conversationId={selectedConversationId}
+        onBack={handleBackToList}
+      />
+    );
+  }
 
   // Show loading while auth is loading or conversations are loading
   if (authLoading || loading) {
