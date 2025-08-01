@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Paperclip, AlertCircle, RefreshCw } from 'lucide-react';
@@ -7,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Card } from '@/components/ui/card';
 import FileAttachment from '@/components/chat/FileAttachment';
 import { VoiceMessageRecorder } from '@/components/chat/VoiceMessageRecorder';
 import { VoiceMessagePlayer } from '@/components/chat/VoiceMessagePlayer';

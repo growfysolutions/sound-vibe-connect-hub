@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { MessageCircle, Search, Plus, Users, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Search, Plus, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import ConversationView from '@/components/chat/ConversationView';
 
