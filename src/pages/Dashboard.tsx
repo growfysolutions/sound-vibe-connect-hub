@@ -204,11 +204,13 @@ export default function Dashboard() {
           <DashboardSidebar activeTab={activeTab} setActiveTab={handleTabChange} />
         </div>
         
-        {/* Main Content */}
+        {/* Main Content - Removed h-screen overflow-hidden to allow natural scrolling */}
         <div className="flex-1 bg-background">
-          <main className="h-screen overflow-hidden">
-            <div className="bg-background h-full">
-              {renderTabContent()}
+          <main className="min-h-screen">
+            <div className="bg-background">
+              <div className="p-6">
+                {renderTabContent()}
+              </div>
             </div>
           </main>
         </div>

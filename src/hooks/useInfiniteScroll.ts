@@ -23,15 +23,25 @@ export const useInfiniteScroll = ({
     const scrollHeight = document.documentElement.scrollHeight;
     const clientHeight = document.documentElement.clientHeight;
 
+    // Check if we're near the bottom of the page
     if (scrollTop + clientHeight >= scrollHeight - threshold) {
+      console.log('Infinite scroll triggered', { scrollTop, scrollHeight, clientHeight, threshold });
       setIsFetching(true);
       onLoadMore();
     }
   }, [hasMore, isLoading, isFetching, onLoadMore, threshold]);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const debouncedHandleScroll = () => {
+      clearTimeout((window as any).scrollTimeout);
+      (window as any).scrollTimeout = setTimeout(handleScroll, 50);
+    };
+
+    window.addEventListener('scroll', debouncedHandleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', debouncedHandleScroll);
+      clearTimeout((window as any).scrollTimeout);
+    };
   }, [handleScroll]);
 
   useEffect(() => {

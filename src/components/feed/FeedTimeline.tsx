@@ -75,6 +75,7 @@ export function FeedTimeline() {
       }
 
       setHasMore(newPosts.length === POSTS_PER_PAGE);
+      console.log('Posts fetched:', { newPostsCount: newPosts.length, hasMore: newPosts.length === POSTS_PER_PAGE, currentOffset });
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast.error('Failed to load posts');
@@ -85,6 +86,7 @@ export function FeedTimeline() {
   }, [filters, offset]);
 
   const loadMorePosts = useCallback(() => {
+    console.log('Load more posts called', { loadingMore, hasMore });
     if (!loadingMore && hasMore) {
       fetchPosts(false);
     }
@@ -233,7 +235,7 @@ export function FeedTimeline() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 pb-8">
       {/* Create Post Form */}
       <CreatePostForm onPostCreated={handlePostCreated} />
       
