@@ -44,7 +44,7 @@ export const CulturalButton = React.forwardRef<HTMLButtonElement, CulturalButton
 
       // Sound feedback simulation (placeholder - would integrate with actual audio)
       if (soundFeedback) {
-        console.log('🥁 Tabla beat sound effect');
+        console.log('🥁 Button click sound effect');
       }
 
       onClick?.(e);
@@ -55,7 +55,7 @@ export const CulturalButton = React.forwardRef<HTMLButtonElement, CulturalButton
     const handleMouseLeave = () => setIsPressed(false);
 
     const baseClasses = cn(
-      'relative overflow-hidden font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-saffron/50 focus:ring-offset-2',
+      'relative overflow-hidden font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2',
       'transform active:scale-[0.98]',
       // Size variants
       size === 'sm' && 'px-4 py-2 text-sm rounded-md',
@@ -69,20 +69,23 @@ export const CulturalButton = React.forwardRef<HTMLButtonElement, CulturalButton
 
     const variantClasses = cn(
       variant === 'primary' && [
-        'bg-gradient-to-r from-saffron to-gold-600 text-white shadow-lg',
-        'hover:shadow-xl hover:scale-[1.02] hover:shadow-saffron/25',
-        'active:shadow-inner active:from-saffron/90 active:to-gold-700',
+        'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg',
+        'hover:shadow-xl hover:scale-[1.02] hover:shadow-blue-500/25',
+        'active:shadow-inner active:from-blue-700 active:to-blue-800',
+        'focus:ring-blue-500/50',
         'tracking-wide'
       ],
       variant === 'secondary' && [
-        'bg-transparent border-2 border-blue-700 text-blue-700',
-        'hover:bg-blue-700/10 hover:border-blue-600',
-        'active:bg-blue-700/20'
+        'bg-transparent border-2 border-blue-600 text-blue-600',
+        'hover:bg-blue-600/10 hover:border-blue-700',
+        'active:bg-blue-600/20',
+        'focus:ring-blue-500/50'
       ],
       variant === 'destructive' && [
         'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-lg',
         'hover:shadow-xl hover:scale-[1.02] hover:shadow-red-500/25',
-        'active:shadow-inner active:from-red-700 active:to-red-900'
+        'active:shadow-inner active:from-red-700 active:to-red-900',
+        'focus:ring-red-500/50'
       ]
     );
 
@@ -107,8 +110,8 @@ export const CulturalButton = React.forwardRef<HTMLButtonElement, CulturalButton
               top: ripple.y - 10,
               width: 20,
               height: 20,
-              backgroundColor: variant === 'primary' ? '#FFD700' : 
-                             variant === 'secondary' ? '#1E40AF' : '#DC2626',
+              backgroundColor: variant === 'primary' ? '#3B82F6' : 
+                             variant === 'secondary' ? '#2563EB' : '#DC2626',
               opacity: 0.6,
             }}
           />
@@ -124,7 +127,7 @@ export const CulturalButton = React.forwardRef<HTMLButtonElement, CulturalButton
 
         {/* Glow effect for primary buttons */}
         {variant === 'primary' && (
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-saffron to-gold-600 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm" />
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm" />
         )}
       </button>
     );
