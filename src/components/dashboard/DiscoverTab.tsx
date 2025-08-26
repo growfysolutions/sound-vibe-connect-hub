@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -15,10 +14,18 @@ interface DiscoverTabProps {
   pendingConnections: string[];
   handleConnect: (id: string) => void;
   handleSendMessage: (id: string) => void;
+  handleViewProfile: (id: string) => void;
   handleSearch: (query: string) => void;
 }
 
-const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect, handleSendMessage, handleSearch }) => {
+const DiscoverTab: React.FC<DiscoverTabProps> = ({ 
+  professionals, 
+  pendingConnections,
+  handleConnect, 
+  handleSendMessage,
+  handleViewProfile,
+  handleSearch 
+}) => {
   const { user } = useAuth();
   const [scores, setScores] = useState<{ [key: string]: any }>({});
   const [loadingScores, setLoadingScores] = useState(true);
@@ -108,33 +115,38 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({ professionals, handleConnect,
           </div>
         ) : professionals.length > 0 ? (
           <div className="grid md:grid-cols-2 gap-6">
-            {professionals.map((professional) => (
-              <ArtistProfileCard 
-                key={professional.id} 
-                artist={{
-                  id: professional.id,
-                  name: professional.full_name || professional.username || 'Unknown',
-                  avatar: professional.avatar_url || '',
-                  role: professional.role || 'Musician',
-                  location: professional.location || '',
-                  skills: professional.genres ? 
-                    (Array.isArray(professional.genres) ? 
-                      professional.genres : 
-                      (professional.genres as string).split(',').map((g: string) => g.trim())
-                    ) : [],
-                  rating: scores[professional.id]?.totalScore || 0,
-                  reviewCount: 10,
-                  experience: '2+ years',
-                  recentWork: 'Latest project',
-                  isVerified: true,
-                  collaborations: 5
-                }}
-                onConnect={() => handleConnect(professional.id)}
-                onViewProfile={() => handleSendMessage(professional.id)}
-                onSave={(id) => console.log('Saved artist:', id)}
-                onShare={(id) => console.log('Shared artist:', id)}
-              />
-            ))}
+            {professionals.map((professional) => {
+              const isPending = pendingConnections.includes(professional.id);
+              
+              return (
+                <ArtistProfileCard 
+                  key={professional.id} 
+                  artist={{
+                    id: professional.id,
+                    name: professional.full_name || professional.username || 'Unknown',
+                    avatar: professional.avatar_url || '',
+                    role: professional.role || 'Musician',
+                    location: professional.location || '',
+                    skills: professional.genres ? 
+                      (Array.isArray(professional.genres) ? 
+                        professional.genres : 
+                        (professional.genres as string).split(',').map((g: string) => g.trim())
+                      ) : [],
+                    rating: scores[professional.id]?.totalScore || 0,
+                    reviewCount: 10,
+                    experience: '2+ years',
+                    recentWork: 'Latest project',
+                    isVerified: true,
+                    collaborations: 5
+                  }}
+                  onConnect={() => handleConnect(professional.id)}
+                  onViewProfile={() => handleViewProfile(professional.id)}
+                  onSave={(id) => console.log('Saved artist:', id)}
+                  onShare={(id) => console.log('Shared artist:', id)}
+                  isConnectPending={isPending}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-10 text-muted-foreground">No professionals found. Try adjusting your filters.</div>

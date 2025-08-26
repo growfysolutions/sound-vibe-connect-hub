@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -177,6 +176,31 @@ export const useDashboardData = () => {
     }
 
     try {
+      // Check if there's already a connection or pending request between these users
+      const { data: existingConnections, error: checkError } = await supabase
+        .from('connections')
+        .select('id, status, requester_id, addressee_id')
+        .or(`and(requester_id.eq.${user.id},addressee_id.eq.${targetUserId}),and(requester_id.eq.${targetUserId},addressee_id.eq.${user.id})`);
+
+      if (checkError) throw checkError;
+
+      if (existingConnections && existingConnections.length > 0) {
+        const connection = existingConnections[0];
+        
+        if (connection.status === 'accepted') {
+          toast.info('You are already connected with this user');
+          return;
+        } else if (connection.status === 'pending') {
+          if (connection.requester_id === user.id) {
+            toast.info('Connection request already sent');
+          } else {
+            toast.info('This user has already sent you a connection request');
+          }
+          return;
+        }
+      }
+
+      // No existing connection found, create new request
       const { error } = await supabase
         .from('connections')
         .insert({

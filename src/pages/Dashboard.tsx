@@ -1,27 +1,25 @@
-
 import { useState } from 'react';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
-import { DashboardRightSidebar } from '@/components/dashboard/DashboardRightSidebar';
-import { MobileBottomNav } from '@/components/dashboard/MobileBottomNav';
-import { FeedTimeline } from '@/components/feed/FeedTimeline';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/context/AuthContext';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import { findOrCreateDirectConversation } from '@/utils/conversationHelpers';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import DashboardRightSidebar from '@/components/dashboard/DashboardRightSidebar';
+import ProfileHeader from '@/components/dashboard/ProfileHeader';
+import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
-import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
-import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
-import { AnalyticsDashboard } from '@/components/dashboard/AnalyticsDashboard';
-import { CalendarTab } from '@/components/dashboard/CalendarTab';
-import { MessagesTab } from '@/components/dashboard/MessagesTab';
-import CreateProjectModal from '@/components/dashboard/CreateProjectModal';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useDashboardData } from '@/hooks/useDashboardData';
-import { useSearch } from '@/hooks/useSearch';
-import { toast } from 'sonner';
+import MessagesTab from '@/components/dashboard/MessagesTab';
+import CalendarTab from '@/components/dashboard/CalendarTab';
+import AchievementsTab from '@/components/dashboard/AchievementsTab';
 
-export default function Dashboard() {
-  const isMobile = useIsMobile();
-  const location = useLocation();
+const Dashboard = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('discover');
+  const [searchQuery, setSearchQuery] = useState('');
   
   const {
     professionals,
@@ -35,197 +33,116 @@ export default function Dashboard() {
     refetchProjects
   } = useDashboardData();
 
-  const { searchQuery, handleSearch, setSearchQuery } = useSearch();
-  
-  // Extract tab from URL path
-  const getTabFromPath = (path: string) => {
-    const pathParts = path.split('/');
-    const tabFromPath = pathParts[pathParts.length - 1];
-    
-    const tabMap: Record<string, string> = {
-      'dashboard': 'feed',
-      'feed': 'feed',
-      'discover': 'discover',
-      'network': 'network',
-      'projects': 'projects',
-      'achievements': 'achievements',
-      'analytics': 'analytics',
-      'calendar': 'calendar',
-      'messages': 'messages'
-    };
-    
-    return tabMap[tabFromPath] || 'feed';
-  };
+  const filteredProfessionals = professionals.filter(professional =>
+    professional.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    professional.role?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (professional.genres && Array.isArray(professional.genres) && 
+     professional.genres.some((genre: string) => 
+       genre.toLowerCase().includes(searchQuery.toLowerCase())
+     ))
+  );
 
-  const [activeTab, setActiveTab] = useState(() => getTabFromPath(location.pathname));
-  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
-    
-    const tabPaths: Record<string, string> = {
-      'feed': '/dashboard',
-      'discover': '/dashboard/discover',
-      'network': '/dashboard/network',
-      'projects': '/dashboard/projects',
-      'achievements': '/dashboard/achievements',
-      'analytics': '/dashboard/analytics',
-      'calendar': '/dashboard/calendar',
-      'messages': '/dashboard/messages'
-    };
-    
-    const newPath = tabPaths[tabId] || '/dashboard';
-    if (location.pathname !== newPath) {
-      navigate(newPath, { replace: true });
-    }
-  };
-
-  const handleSendMessage = () => {
-    // Navigate to messages tab instead of separate page
-    setActiveTab('messages');
-    navigate('/dashboard/messages', { replace: true });
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
   const handleViewProfile = (userId: string) => {
     navigate(`/profile/${userId}`);
   };
 
-  const handleFindConnections = () => {
-    setActiveTab('discover');
-    navigate('/dashboard/discover');
-  };
+  const handleSendMessage = async (userId: string) => {
+    if (!user?.id) {
+      toast.error('Please log in to send messages');
+      return;
+    }
 
-  const handleOpenModal = () => {
-    setIsProjectModalOpen(true);
-  };
-
-  const handleProjectCreated = () => {
-    refetchProjects();
-    toast.success('Project created successfully!');
-  };
-
-  // Error boundary component for tab content
-  const TabErrorBoundary = ({ children }: { children: React.ReactNode }) => {
     try {
-      return <>{children}</>;
+      // Create or find existing conversation with the user
+      const conversation = await findOrCreateDirectConversation(userId);
+      
+      if (conversation) {
+        // Navigate to messages with the specific conversation
+        setActiveTab('messages');
+        toast.success('Opening conversation...');
+      }
     } catch (error) {
-      console.error('Tab rendering error:', error);
-      return (
-        <div className="flex items-center justify-center h-64 bg-background">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Something went wrong</h3>
-            <p className="text-muted-foreground">Please try refreshing the page</p>
-          </div>
-        </div>
-      );
+      console.error('Error creating conversation:', error);
+      toast.error('Failed to start conversation');
     }
   };
 
-  const renderTabContent = () => {
-    if (loading && (activeTab === 'discover' || activeTab === 'network' || activeTab === 'projects')) {
-      return (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      );
-    }
-
-    const tabComponents = {
-      feed: <FeedTimeline />,
-      discover: <DiscoverTab 
-        professionals={professionals}
-        pendingConnections={pendingConnections}
-        handleConnect={handleConnect}
-        handleSendMessage={handleSendMessage}
-        handleSearch={handleSearch}
-      />,
-      network: <NetworkTab 
-        connections={connections}
-        incomingRequests={incomingRequests}
-        handleRequestAction={handleRequestAction}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        handleFindConnections={handleFindConnections}
-        handleViewProfile={handleViewProfile}
-        handleSendMessage={handleSendMessage}
-      />,
-      projects: <MyProjectsTab 
-        projects={projects}
-        handleOpenModal={handleOpenModal}
-      />,
-      achievements: <AchievementsTab />,
-      analytics: <AnalyticsDashboard />,
-      calendar: <CalendarTab />,
-      messages: <MessagesTab />
-    };
-
-    const TabComponent = tabComponents[activeTab as keyof typeof tabComponents];
-    
-    if (!TabComponent) {
-      return (
-        <div className="flex items-center justify-center h-64 bg-background">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Page not found</h3>
-            <p className="text-muted-foreground">The requested page could not be found</p>
-          </div>
-        </div>
-      );
-    }
-
-    return <TabErrorBoundary>{TabComponent}</TabErrorBoundary>;
-  };
-
-  if (isMobile) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="pb-20">
-          <div className="bg-background min-h-screen">
-            <div className="p-4">
-              {renderTabContent()}
-            </div>
-          </div>
-        </div>
-        <MobileBottomNav activeTab={activeTab} onTabChange={handleTabChange} />
-        
-        <CreateProjectModal
-          isOpen={isProjectModalOpen}
-          onClose={() => setIsProjectModalOpen(false)}
-          onProjectCreated={handleProjectCreated}
-        />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-hsl(var(--ocean-blue))/5 flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-hsl(var(--ocean-blue)) border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex w-full">
-        {/* Left Sidebar */}
-        <div className="w-64 border-r border-border bg-card">
-          <DashboardSidebar activeTab={activeTab} setActiveTab={handleTabChange} />
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-hsl(var(--ocean-blue))/5">
+      <div className="flex">
+        <DashboardSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         
-        {/* Main Content - Removed h-screen overflow-hidden to allow natural scrolling */}
-        <div className="flex-1 bg-background">
-          <main className="min-h-screen">
-            <div className="bg-background">
-              <div className="p-6">
-                {renderTabContent()}
-              </div>
-            </div>
-          </main>
-        </div>
-        
-        {/* Right Sidebar - Hidden on small screens */}
-        <div className="hidden xl:block">
-          <DashboardRightSidebar />
-        </div>
+        <main className="flex-1 lg:ml-64 lg:mr-80">
+          <div className="p-6 max-w-6xl mx-auto">
+            <ProfileHeader />
+            
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-6 bg-card/50 backdrop-blur-sm border border-hsl(var(--ocean-blue))/20">
+                <TabsTrigger value="discover">Discover</TabsTrigger>
+                <TabsTrigger value="my-projects">My Projects</TabsTrigger>
+                <TabsTrigger value="network">Network</TabsTrigger>
+                <TabsTrigger value="messages">Messages</TabsTrigger>
+                <TabsTrigger value="calendar">Calendar</TabsTrigger>
+                <TabsTrigger value="achievements">Achievements</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="discover" className="space-y-6 mt-8">
+                <DiscoverTab
+                  professionals={filteredProfessionals}
+                  pendingConnections={pendingConnections}
+                  handleConnect={handleConnect}
+                  handleSendMessage={handleSendMessage}
+                  handleViewProfile={handleViewProfile}
+                  handleSearch={handleSearch}
+                />
+              </TabsContent>
+
+              <TabsContent value="my-projects" className="space-y-6 mt-8">
+                <MyProjectsTab 
+                  projects={projects} 
+                  refetchProjects={refetchProjects}
+                />
+              </TabsContent>
+
+              <TabsContent value="network" className="space-y-6 mt-8">
+                <NetworkTab 
+                  connections={connections}
+                  incomingRequests={incomingRequests}
+                  handleRequestAction={handleRequestAction}
+                />
+              </TabsContent>
+
+              <TabsContent value="messages" className="space-y-6 mt-8">
+                <MessagesTab />
+              </TabsContent>
+
+              <TabsContent value="calendar" className="space-y-6 mt-8">
+                <CalendarTab />
+              </TabsContent>
+
+              <TabsContent value="achievements" className="space-y-6 mt-8">
+                <AchievementsTab />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </main>
+
+        <DashboardRightSidebar />
       </div>
-      
-      <CreateProjectModal
-        isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
-        onProjectCreated={handleProjectCreated}
-      />
     </div>
   );
-}
+};
+
+export default Dashboard;
