@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
@@ -30,8 +31,7 @@ const Dashboard = () => {
     pendingConnections,
     loading,
     handleConnect,
-    handleRequestAction,
-    refetchProjects
+    handleRequestAction
   } = useDashboardData();
 
   const filteredProfessionals = professionals.filter(professional =>
@@ -70,6 +70,11 @@ const Dashboard = () => {
       console.error('Error creating conversation:', error);
       toast.error('Failed to start conversation');
     }
+  };
+
+  const handleOpenModal = () => {
+    // For now, we'll show a toast. This can be expanded to open an actual modal later
+    toast.info('Project creation modal coming soon!');
   };
 
   if (loading) {
@@ -112,6 +117,7 @@ const Dashboard = () => {
               <TabsContent value="my-projects" className="space-y-6 mt-8">
                 <MyProjectsTab 
                   projects={projects}
+                  handleOpenModal={handleOpenModal}
                 />
               </TabsContent>
 
@@ -150,3 +156,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
