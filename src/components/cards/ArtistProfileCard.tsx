@@ -27,6 +27,7 @@ interface ArtistProfileCardProps {
   onViewProfile?: (artistId: string) => void;
   onSave?: (artistId: string) => void;
   onShare?: (artistId: string) => void;
+  isConnectPending?: boolean;
 }
 
 export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
@@ -34,7 +35,8 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
   onConnect,
   onViewProfile,
   onSave,
-  onShare
+  onShare,
+  isConnectPending = false
 }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -176,8 +178,9 @@ export const ArtistProfileCard: React.FC<ArtistProfileCardProps> = ({
           size="sm"
           onClick={() => onConnect?.(artist.id)}
           className="flex-1"
+          disabled={isConnectPending}
         >
-          Connect
+          {isConnectPending ? 'Pending...' : 'Connect'}
         </CulturalButton>
         <CulturalButton
           variant="secondary"

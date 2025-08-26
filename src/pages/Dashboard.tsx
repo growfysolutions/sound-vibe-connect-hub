@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/context/AuthContext';
@@ -5,15 +6,15 @@ import { useDashboardData } from '@/hooks/useDashboardData';
 import { findOrCreateDirectConversation } from '@/utils/conversationHelpers';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
-import DashboardRightSidebar from '@/components/dashboard/DashboardRightSidebar';
-import ProfileHeader from '@/components/dashboard/ProfileHeader';
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { DashboardRightSidebar } from '@/components/dashboard/DashboardRightSidebar';
+import { ProfileHeader } from '@/components/dashboard/ProfileHeader';
 import MyProjectsTab from '@/components/dashboard/MyProjectsTab';
 import DiscoverTab from '@/components/dashboard/DiscoverTab';
 import NetworkTab from '@/components/dashboard/NetworkTab';
-import MessagesTab from '@/components/dashboard/MessagesTab';
-import CalendarTab from '@/components/dashboard/CalendarTab';
-import AchievementsTab from '@/components/dashboard/AchievementsTab';
+import { MessagesTab } from '@/components/dashboard/MessagesTab';
+import { CalendarTab } from '@/components/dashboard/CalendarTab';
+import { AchievementsTab } from '@/components/dashboard/AchievementsTab';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -103,7 +104,6 @@ const Dashboard = () => {
                   professionals={filteredProfessionals}
                   pendingConnections={pendingConnections}
                   handleConnect={handleConnect}
-                  handleSendMessage={handleSendMessage}
                   handleViewProfile={handleViewProfile}
                   handleSearch={handleSearch}
                 />
@@ -111,8 +111,7 @@ const Dashboard = () => {
 
               <TabsContent value="my-projects" className="space-y-6 mt-8">
                 <MyProjectsTab 
-                  projects={projects} 
-                  refetchProjects={refetchProjects}
+                  projects={projects}
                 />
               </TabsContent>
 
@@ -121,6 +120,11 @@ const Dashboard = () => {
                   connections={connections}
                   incomingRequests={incomingRequests}
                   handleRequestAction={handleRequestAction}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  handleFindConnections={() => {}}
+                  handleViewProfile={handleViewProfile}
+                  handleSendMessage={handleSendMessage}
                 />
               </TabsContent>
 

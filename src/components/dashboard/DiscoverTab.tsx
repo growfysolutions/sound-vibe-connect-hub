@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -13,7 +14,6 @@ interface DiscoverTabProps {
   professionals: Profile[];
   pendingConnections: string[];
   handleConnect: (id: string) => void;
-  handleSendMessage: (id: string) => void;
   handleViewProfile: (id: string) => void;
   handleSearch: (query: string) => void;
 }
@@ -22,7 +22,6 @@ const DiscoverTab: React.FC<DiscoverTabProps> = ({
   professionals, 
   pendingConnections,
   handleConnect, 
-  handleSendMessage,
   handleViewProfile,
   handleSearch 
 }) => {
